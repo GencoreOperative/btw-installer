@@ -1,5 +1,6 @@
 package uk.co.gencoreoperative.btw;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -46,57 +47,50 @@ public class Main {
         // Remove previous BTW installation
         // - If folder present, delete
         // -- Validate folder not present
-        actionValidate("remove previous installation",
-                FOLDER.betterThanWolves(),
-                f -> {
+        new ActionBuilder<File, File>()
+                .description("remove previous installation")
+                .with(FOLDER.betterThanWolves())
+                .action(f -> {
                     if (f.exists()) recursiveDelete(f);
                     return f;
-                },
-                f -> !f.exists());
+                }).validate(f -> !f.exists());
 
         // Copy 1.5.2 to BetterThanWolves
         // - Copy folder to target
         // -- Validate folder present
-        actionValidate("create new version",
-                FOLDER.oneFiveTwo(),
-                f -> {
+        new ActionBuilder<File, File>()
+                .description("create new version")
+                .with(FOLDER.oneFiveTwo())
+                .action(f -> {
                     fileOperation(f, folder -> Files.copy(folder.toPath(), FOLDER.betterThanWolves().toPath()));
                     return f;
-                }, File::exists);
-
-        // Download JSON file
-        // - Download file from GIT to target
-        // -- Validate file present
-        actionValidate("download version JSON",
-                new URL("http://"),
-                s -> {
-                    // download the file, stream to target
-                    // new File(FOLDER.oneFiveTwo(), "BetterThanWolves.json");
-                    return new File(FOLDER.oneFiveTwo(), "BetterThanWolves.json");
-                }, File::exists);
-
-        // Download latest BTW installation
-        // - Download file from Website or GIT
-        // -- Validate file present
-
-        // Unpack zip and update Jar
-        // - Stream zip contents, merging into Jar
-        // -- Validate jar somehow (size increase, Jar test function)
-
-        // Update Jar META-INF
-        // - Delete META-INF from jar
-        // -- Validate jar
-
-        // Signal User
-    }
-
-    private static <T, R> void actionValidate(String item, T t, Function<T, R> action, Predicate<R> validate) {
-        R result = action.apply(t);
-        if (!validate.test(result)) {
-            System.err.println(format("✗ {0} failed", item));
-            System.exit(-1);
-        }
-        System.out.println(format("✓ {0}", item));
+                })
+                .validate(File::exists);
+//
+//        // Download JSON file
+//        // - Download file from GIT to target
+//        // -- Validate file present
+//        action("download version JSON",
+//                new URL("http://"),
+//                s -> {
+//                    // download the file, stream to target
+//                    // new File(FOLDER.oneFiveTwo(), "BetterThanWolves.json");
+//                    return new File(FOLDER.oneFiveTwo(), "BetterThanWolves.json");
+//                }, File::exists);
+//
+//        // Download latest BTW installation
+//        // - Download file from Website or GIT
+//        // -- Validate file present
+//
+//        // Unpack zip and update Jar
+//        // - Stream zip contents, merging into Jar
+//        // -- Validate jar somehow (size increase, Jar test function)
+//
+//        // Update Jar META-INF
+//        // - Delete META-INF from jar
+//        // -- Validate jar
+//
+//        // Signal User
     }
 
     private static void fileOperation(File file, CheckedFunction<File> operation) {
