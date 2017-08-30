@@ -1,24 +1,23 @@
 package uk.co.gencoreoperative.btw;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static java.text.MessageFormat.format;
 
 public class Main {
+    private static final String VERSION = "4.A2 Timing Rodent b";
 
     private static final MineCraftPathResolver FOLDER = new MineCraftPathResolver("/tmp/badger");
+    private static final String JSON = "https://bitbucket.org/rwapshott/btw-installer/raw/4f8d1c23e28d34aab7c42aafdcfc6fb52bac9570/static/BetterThanWolves.json";
+
     // Check 1.5.2 versions
     // Check internet connection
     // Check "jar" on command line
@@ -41,12 +40,7 @@ public class Main {
             System.exit(-1);
         }
 
-        // Perform installation.
-
-
-        // Remove previous BTW installation
-        // - If folder present, delete
-        // -- Validate folder not present
+        // Perform Installation Actions
         new ActionBuilder<File, File>()
                 .description("remove previous installation")
                 .with(FOLDER.betterThanWolves())
@@ -55,29 +49,25 @@ public class Main {
                     return f;
                 }).validate(f -> !f.exists());
 
-        // Copy 1.5.2 to BetterThanWolves
-        // - Copy folder to target
-        // -- Validate folder present
         new ActionBuilder<File, File>()
                 .description("create new version")
                 .with(FOLDER.oneFiveTwo())
                 .action(f -> {
-                    fileOperation(f, folder -> Files.copy(folder.toPath(), FOLDER.betterThanWolves().toPath()));
-                    return f;
+                    ioOperation(f, folder -> Files.copy(folder.toPath(), FOLDER.betterThanWolves().toPath()));
+                    return FOLDER.betterThanWolves();
                 })
                 .validate(File::exists);
-//
-//        // Download JSON file
-//        // - Download file from GIT to target
-//        // -- Validate file present
-//        action("download version JSON",
-//                new URL("http://"),
-//                s -> {
-//                    // download the file, stream to target
-//                    // new File(FOLDER.oneFiveTwo(), "BetterThanWolves.json");
-//                    return new File(FOLDER.oneFiveTwo(), "BetterThanWolves.json");
-//                }, File::exists);
-//
+
+        new ActionBuilder<URL, File>()
+                .description(format("download {0} JSON", VERSION))
+                .with(new URL(JSON))
+                .action(url -> {
+                    File target = new File(FOLDER.betterThanWolves(), "BetterThanWolves.json");
+                    copyStream(url, target);
+                    return target;
+                })
+                .validate(File::exists);
+
 //        // Download latest BTW installation
 //        // - Download file from Website or GIT
 //        // -- Validate file present
@@ -93,24 +83,31 @@ public class Main {
 //        // Signal User
     }
 
-    private static void fileOperation(File file, CheckedFunction<File> operation) {
+    /**
+     * Perform an operation which will generate an IOException. Catch the exception and indicate the failure.
+     *
+     * @param t
+     * @param operation
+     * @param <T> The type of the item the operation is being performed on.
+     */
+    private static <T> void ioOperation(T t, CheckedFunction<T> operation) {
         try {
-            operation.apply(file);
+            operation.apply(t);
         } catch (IOException e) {
-            System.err.println(MessageFormat.format("✗ operation failed: {0}", e.getMessage()));
+            System.err.println(format("✗ operation failed: {0}", e.getMessage()));
         }
     }
 
     private static void recursiveDelete(File f) {
-        fileOperation(f, folder -> Files.walk(folder.toPath())
+        ioOperation(f, folder -> Files.walk(folder.toPath())
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete));
     }
 
-    private static void folderCopy(File folder) {
+    private static void copyStream(URL url, File target) {
         try {
-            Files.copy(folder.toPath(), FOLDER.betterThanWolves().toPath());
+            Files.copy(url.openStream(), target.toPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
