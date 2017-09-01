@@ -1,12 +1,15 @@
 package uk.co.gencoreoperative.btw.utils;
 
-import uk.co.gencoreoperative.btw.Main;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static uk.co.gencoreoperative.btw.utils.FileUtils.copyStream;
 
 public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFileEntryAndData> {
 
@@ -29,7 +32,7 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
             result.entry = entry;
             if (!entry.isDirectory()) {
                 ByteArrayOutputStream zipContents = new ByteArrayOutputStream();
-                Main.copyStream(inputStream, zipContents, false, true);
+                copyStream(inputStream, zipContents, false, true);
                 result.data = new ByteArrayInputStream(zipContents.toByteArray());
             }
 
