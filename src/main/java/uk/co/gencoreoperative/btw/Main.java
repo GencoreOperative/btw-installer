@@ -1,30 +1,29 @@
 package uk.co.gencoreoperative.btw;
 
-import java.io.*;
+import uk.co.gencoreoperative.btw.zip.FileUtils;
+import uk.co.gencoreoperative.btw.zip.ZipFileSpliterator;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static java.text.MessageFormat.format;
-import static uk.co.gencoreoperative.btw.ZipFileSpliterator.*;
+import static uk.co.gencoreoperative.btw.zip.FileUtils.*;
 
 // Based on  http://www.sargunster.com/btwforum/viewtopic.php?f=9&t=8925
 public class Main {
     private static final String VERSION = "4.A2 Timing Rodent b";
 
     private static final MineCraftPathResolver FOLDER = new MineCraftPathResolver("/tmp/badger");
-    private static final String JSON = "https://bitbucket.org/rwapshott/btw-installer/raw/4f8d1c23e28d34aab7c42aafdcfc6fb52bac9570/static/BetterThanWolves.json";
-    private static final String ZIP = "https://bitbucket.org/rwapshott/btw-installer/raw/34ae27fcbde0ae34ed439ef984c33625049828b6/static/BTWMod4-A2TimingRodentb.zip";
 
     // Check 1.5.2 versions
     // Check internet connection
@@ -48,23 +47,19 @@ public class Main {
             System.exit(-1);
         }
 
-        // Perform Installation Actions
-        new ActionBuilder<File, File>()
-                .description("remove previous installation")
-                .with(FOLDER.betterThanWolves())
-                .action(folder -> {
-                    if (folder.exists()) recursiveDelete(folder);
-                    return folder;
-                }).validate(f -> !f.exists());
+        // Remove previous installation
+        File targetFolder = FOLDER.betterThanWolves();
+        if (targetFolder.exists()) {
+            recursiveDelete(targetFolder);
+        }
+        validate("remove previous installation", targetFolder, File::exists);
 
-        new ActionBuilder<File, File>()
-                .description("create new version")
-                .with(FOLDER.oneFiveTwo())
-                .action(folder -> {
-                    ioOperation(folder, source -> FileUtils.copyDirectory(source, FOLDER.betterThanWolves()));
-                    return FOLDER.betterThanWolves();
-                })
-                .validate(File::exists);
+        // Copy JSON from resources - we do not expect this to change
+        File targetJson = new File(FOLDER.betterThanWolves(), "BetterThanWolves.json");
+        FileUtils.copyStream(Main.class.getResourceAsStream("/4-A2/BetterThanWolves.json"),
+                write(targetJson),
+                true, true);
+        validate("copy BetterThanWolves.json", targetJson, File::exists);
 
 //        new ActionBuilder<URL, File>()
 //                .description(format("download {0} zip", VERSION))
@@ -86,72 +81,68 @@ public class Main {
 //                })
 //                .validate(File::exists);
 
-        // Open Mod Zip:
-        // - for each ZipFileEntry
-        // - filter those that are not in the "MINECRAFT-JAR" folder
-        // - Read byte[] of ZipFileEntry
-        // - Map "relative path" to Object[ ZipEntry, "ByteArrayInputStream" ]
-        //
-        // Open BetterThanWolves.jar for writing (BTW)
-        // Open 1.5.2.jar (152)
-        // - for each ZipFileEntry in 152
-        // - filter "META-INF/MANIFEST.MF" "META-INF/MOJANG_C.SF" "META-INF/MOJANG_C.DSA"
-        // - Check map for an overriding ZipFileEntry
-        // - Write selected ZipFileEntry to BTW
 
+        // stream the contents of the BTW Patch zip into a map
+        String folder = "MINECRAFT-JAR/";
+        Map<String, ZipFileSpliterator.ZipFileEntryAndData> mappedModData = new HashMap<>();
+        streamZip(new File("/Users/robert.wapshott/Dropbox/dev/bitbucket/btw-installer/static/BTWMod4-A2TimingRodentb.zip"))
+                .filter(entry -> entry.entry.getName().startsWith(folder))
+                .map(entry -> {
+                    ZipEntry current = entry.entry;
+                    String name = current.getName();
+                    ZipEntry updated = new ZipEntry(name.substring(folder.length(), name.length()));
+                    entry.entry = updated;
+                    return entry;
+                })
+                .forEach(entry -> mappedModData.put(entry.entry.getName(), entry));
 
-//        Map<String, Object[]> map = new HashMap<>();
-//        try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream("/Users/robert.wapshott/Dropbox/dev/bitbucket/btw-installer/static/BTWMod4-A2TimingRodentb.zip"))) {
-//            ZipEntry entry;
-//            while ((entry = inputStream.getNextEntry()) != null) {
-//                Object[] zipEntryAndByteStream = {entry, null};
-//                map.put(entry.getName(), zipEntryAndByteStream);
-//                System.out.println(entry.getName());
-//                if (!entry.isDirectory()) {
-//                    ByteArrayOutputStream zipContents = new ByteArrayOutputStream();
-//                    copyStream(inputStream, zipContents, false, true);
-//                    zipEntryAndByteStream[1] = new ByteArrayInputStream(zipContents.toByteArray());
-//                    System.out.println("Read " + zipContents.size());
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        // Open target Zip file
+        ZipOutputStream target = openZip(new File(FOLDER.betterThanWolves(), "BetterThanWolves.jar"));
 
-        streamZip(new File(FOLDER.betterThanWolves(), "1.5.2.jar"))
-                .forEach(entry -> System.out.println(entry.entry.getName()));
+        Consumer<ZipFileSpliterator.ZipFileEntryAndData> zipFileEntryAndDataConsumer = entry -> {
+            // Check for entry in 'map'
+            String name = entry.entry.getName();
+            ZipEntry targetEntry = entry.entry;
+            ByteArrayInputStream targetStream = entry.data;
+            // Write entry to 'target'
+            try {
+                System.out.println(name);
+                target.putNextEntry(targetEntry);
+                FileUtils.copyStream(targetStream, target, true, false);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        };
 
+        // stream the 1.5.2 jar into the target jar, excluding all files that are in the patch zip
+        List<String> filter = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
+        streamZip(new File(FOLDER.oneFiveTwo(), "1.5.2.jar"))
+                .filter(entry -> entry.data != null)
+                .filter(entry -> !filter.contains(entry.entry.getName()))
+                .filter(entry -> !mappedModData.containsKey(entry.entry.getName()))
+                .forEach(zipFileEntryAndDataConsumer);
 
-//        // Download latest BTW installation
-//        // - Download file from Website or GIT
-//        // -- Validate file present
-//
-//        // Unpack zip and update Jar
-//        // - Stream zip contents, merging into Jar
-//        // -- Validate jar somehow (size increase, Jar test function)
-//
-//        // Update Jar META-INF
-//        // - Delete META-INF from jar
-//        // -- Validate jar
+        // Stream all files from the patch zip into the target jar.
+        mappedModData.values().stream()
+                .filter(entry -> entry.data != null)
+                .forEach(zipFileEntryAndDataConsumer);
+
+        try {
+            target.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 //
 //        // Signal User
     }
 
-    public static void copyStream(InputStream input, OutputStream output, boolean closeInput, boolean closeOutput) {
-        try {
-            byte[] buf = new byte[8000];
-            int read = 0;
-            while (read != -1) {
-                read = input.read(buf);
-                if (read == -1) continue;
-                output.write(buf, 0, read);
-            }
-        } catch (IOException ex) {
-            throw new IllegalStateException(ex);
-        } finally {
-            if (closeInput) ioOperation(input, InputStream::close);
-            if (closeOutput) ioOperation(output, OutputStream::close);
+    private static <T> void validate(String item, T t, Predicate<T> validate) {
+        if (!validate.test(t)) {
+            System.err.println(format("✗ {0} failed", item));
+            System.exit(-1);
         }
+        System.out.println(format("✓ {0}", item));
     }
 
     /**
@@ -174,36 +165,5 @@ public class Main {
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete));
-    }
-
-    private static void copyStream(URL url, File target) {
-        try {
-            Files.copy(url.openStream(), target.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void unzip(File file, File outputDir) throws IOException {
-        ZipFile zipFile = new ZipFile(file);
-        try {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                File entryDestination = new File(outputDir, entry.getName());
-                if (entry.isDirectory()) {
-                    entryDestination.mkdirs();
-                } else {
-                    entryDestination.getParentFile().mkdirs();
-                    InputStream in = zipFile.getInputStream(entry);
-                    OutputStream out = new FileOutputStream(entryDestination);
-                    IOUtils.copy(in, out);
-                    IOUtils.closeQuietly(in);
-                    out.close();
-                }
-            }
-        } finally {
-            zipFile.close();
-        }
     }
 }

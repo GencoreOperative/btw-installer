@@ -1,4 +1,6 @@
-package uk.co.gencoreoperative.btw;
+package uk.co.gencoreoperative.btw.zip;
+
+import uk.co.gencoreoperative.btw.Main;
 
 import java.io.*;
 import java.util.Spliterator;
@@ -12,7 +14,7 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
 
     private final ZipInputStream inputStream;
 
-    public ZipFileSpliterator(final ZipInputStream stream) {
+    public ZipFileSpliterator(final InputStream stream) {
         inputStream = new ZipInputStream(stream);
     }
 
@@ -49,7 +51,7 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
 
     @Override
     public long estimateSize() {
-        return Long.MAX_VALUE;
+        return Long.MAX_VALUE; // Size cannot be known without reading the entire stream first.
     }
 
     @Override
@@ -57,20 +59,8 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
         return DISTINCT | NONNULL;
     }
 
-    public static Stream<ZipFileEntryAndData> streamZip(File file) {
-        try {
-            return StreamSupport.stream(new ZipFileSpliterator(new ZipInputStream(new FileInputStream(file))), false);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static Stream<ZipFileEntryAndData> streamZip(InputStream stream) {
-        return StreamSupport.stream(new ZipFileSpliterator(new ZipInputStream(stream)), false);
-    }
-
-    public class ZipFileEntryAndData {
-        ZipEntry entry;
-        ByteArrayInputStream data;
+    public static class ZipFileEntryAndData {
+        public ZipEntry entry;
+        public ByteArrayInputStream data;
     }
 }
