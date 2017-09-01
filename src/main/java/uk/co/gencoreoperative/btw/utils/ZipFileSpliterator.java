@@ -1,12 +1,10 @@
-package uk.co.gencoreoperative.btw.zip;
+package uk.co.gencoreoperative.btw.utils;
 
 import uk.co.gencoreoperative.btw.Main;
 
 import java.io.*;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 

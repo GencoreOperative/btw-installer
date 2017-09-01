@@ -1,6 +1,9 @@
-package uk.co.gencoreoperative.btw.zip;
+package uk.co.gencoreoperative.btw.utils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipOutputStream;
@@ -50,6 +53,17 @@ public class FileUtils {
         try {
             return new ZipOutputStream(new FileOutputStream(file));
         } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static void recursiveDelete(File f) {
+        try {
+            Files.walk(f.toPath())
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
