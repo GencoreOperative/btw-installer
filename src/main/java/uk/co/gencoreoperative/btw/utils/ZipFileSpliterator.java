@@ -11,7 +11,7 @@ import java.util.zip.ZipInputStream;
 
 import static uk.co.gencoreoperative.btw.utils.FileUtils.copyStream;
 
-public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFileEntryAndData> {
+public class ZipFileSpliterator implements Spliterator<EntryAndData> {
 
     private final ZipInputStream inputStream;
 
@@ -20,7 +20,7 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super ZipFileEntryAndData> action) {
+    public boolean tryAdvance(Consumer<? super EntryAndData> action) {
         try {
             ZipEntry entry = inputStream.getNextEntry();
             if (entry == null) {
@@ -28,25 +28,25 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
                 return false;
             }
 
-            ZipFileEntryAndData result = new ZipFileEntryAndData();
-            result.entry = entry;
-            if (!entry.isDirectory()) {
+            final EntryAndData result;
+            if (entry.isDirectory()) {
+                result = EntryAndData.folder(entry);
+            } else {
                 ByteArrayOutputStream zipContents = new ByteArrayOutputStream();
                 copyStream(inputStream, zipContents, false, true);
-                result.data = new ByteArrayInputStream(zipContents.toByteArray());
+                result = EntryAndData.file(entry, new ByteArrayInputStream(zipContents.toByteArray()));
             }
 
             action.accept(result);
 
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
-        return false;
     }
 
     @Override
-    public Spliterator<ZipFileEntryAndData> trySplit() {
+    public Spliterator<EntryAndData> trySplit() {
         return null; // ZipFile cannot be accessed in parallel
     }
 
@@ -58,10 +58,5 @@ public class ZipFileSpliterator implements Spliterator<ZipFileSpliterator.ZipFil
     @Override
     public int characteristics() {
         return DISTINCT | NONNULL;
-    }
-
-    public static class ZipFileEntryAndData {
-        public ZipEntry entry;
-        public ByteArrayInputStream data;
     }
 }

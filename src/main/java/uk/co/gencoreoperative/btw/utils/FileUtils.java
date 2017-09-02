@@ -43,7 +43,7 @@ public class FileUtils {
 
     public static OutputStream write(final File file) {
         try {
-            return new FileOutputStream(file);
+            return new FileOutputStream(file, false);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
@@ -68,7 +68,7 @@ public class FileUtils {
         }
     }
 
-    public static Stream<ZipFileSpliterator.ZipFileEntryAndData> streamZip(File file) {
+    public static Stream<EntryAndData> streamZip(File file) {
         try {
             return streamZip(new FileInputStream(file));
         } catch (FileNotFoundException e) {
@@ -76,7 +76,7 @@ public class FileUtils {
         }
     }
 
-    public static Stream<ZipFileSpliterator.ZipFileEntryAndData> streamZip(InputStream stream) {
+    public static Stream<EntryAndData> streamZip(InputStream stream) {
         return StreamSupport.stream(new ZipFileSpliterator(stream), false);
     }
 }
