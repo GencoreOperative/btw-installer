@@ -1,7 +1,7 @@
 package uk.co.gencoreoperative.btw;
 
 import uk.co.gencoreoperative.btw.utils.EntryAndData;
-import uk.co.gencoreoperative.btw.utils.FileChooser;
+import uk.co.gencoreoperative.btw.ui.FileChooser;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 import java.io.File;

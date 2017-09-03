@@ -1,4 +1,4 @@
-package uk.co.gencoreoperative.btw.utils;
+package uk.co.gencoreoperative.btw.ui;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
