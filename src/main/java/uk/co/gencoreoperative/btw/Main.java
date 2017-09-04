@@ -1,7 +1,8 @@
 package uk.co.gencoreoperative.btw;
 
-import uk.co.gencoreoperative.btw.utils.EntryAndData;
 import uk.co.gencoreoperative.btw.ui.FileChooser;
+import uk.co.gencoreoperative.btw.ui.Progress;
+import uk.co.gencoreoperative.btw.utils.EntryAndData;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 import java.io.File;
@@ -16,40 +17,41 @@ import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static java.text.MessageFormat.format;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.*;
 
 // Based on  http://www.sargunster.com/btwforum/viewtopic.php?f=9&t=8925
 public class Main {
     private static final MineCraftPathResolver FOLDER = new MineCraftPathResolver("/tmp/badger");
-    public static final String PATCH_FOLDER = "MINECRAFT-JAR/";
+    private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 
     public static void main(String... args) throws MalformedURLException {
+        Progress progress = new Progress();
+        Arrays.stream(Tasks.values()).forEach(tasks -> progress.addItem(tasks.getTask()));
+
         // Verify that 1.5.2 version is present.
-        validate("version 1.5.2 exists", FOLDER.oneFiveTwo(),
+        validate(Tasks.ONE_FIVE_TWO_EXISTS, FOLDER.oneFiveTwo(),
                 folder -> folder.exists() && new File(folder, "1.5.2.jar").exists());
 
-        File targetFolder = FOLDER.betterThanWolves();
-        File targetJson = new File(targetFolder, "BetterThanWolves.json");
+        File patchFile = FileChooser.requestLocation("patch.location", new File(System.getProperty("user.home")));
+        validate(Tasks.PATCH_WAS_SELECTED, patchFile, file -> file != null && file.exists());
 
         // Remove previous installation
+        File targetFolder = FOLDER.betterThanWolves();
         if (targetFolder.exists()) {
             FileUtils.recursiveDelete(targetFolder);
-            validate("previous installation removed", targetFolder, file -> !file.exists());
+            validate(Tasks.PREVIOUS_REMOVED, targetFolder, file -> !file.exists());
         }
 
         // Create target folder
         targetFolder.mkdirs();
-        validate("created installation folder", targetFolder, File::exists);
+        validate(Tasks.CREATED_FOLDER, targetFolder, File::exists);
 
         // Copy JSON from resources - we do not expect this to change
+        File targetJson = new File(targetFolder, "BetterThanWolves.json");
         FileUtils.copyStream(Main.class.getResourceAsStream("/4-A2/BetterThanWolves.json"),
                 write(targetJson),
                 true, true);
-        validate("copy BetterThanWolves.json", targetJson, File::exists);
-
-        File patchFile = FileChooser.requestLocation();
-        validate("patch file was selected", patchFile, file -> file != null && file.exists());
+        validate(Tasks.COPIED_JSON, targetJson, File::exists);
 
         // stream the contents of the BTW Patch utils into a map
         Map<String, EntryAndData> modFiles = new HashMap<>();
@@ -86,7 +88,7 @@ public class Main {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        validate("created BetterThanWolves.jar", targetJarFile, File::exists);
+        validate(Tasks.COPIED_JAR, targetJarFile, File::exists);
 
 
 //        // Signal User
@@ -97,11 +99,12 @@ public class Main {
         return new ZipEntry(name.substring(PATCH_FOLDER.length(), name.length()));
     }
 
-    private static <T> void validate(String item, T t, Predicate<T> validate) {
+    private static <T> void validate(Tasks item, T t, Predicate<T> validate) {
         if (!validate.test(t)) {
-            System.err.println(format("✗ {0} failed", item));
+            item.getTask().failed();
             System.exit(-1);
+        } else {
+            item.getTask().success();
         }
-        System.out.println(format("✓ {0}", item));
     }
 }

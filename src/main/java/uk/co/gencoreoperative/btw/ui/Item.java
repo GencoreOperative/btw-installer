@@ -2,8 +2,6 @@ package uk.co.gencoreoperative.btw.ui;
 
 import java.util.Observable;
 
-import static java.text.MessageFormat.format;
-
 /**
  * Indicates a task to be processed and associates the success/failure status
  * of the item.
@@ -54,8 +52,7 @@ public class Item extends Observable {
      */
     public void failed(String reason, Exception error) {
         this.reason = error;
-        success = false;
-        notifyObservers();
+        failed();
     }
 
     /**
@@ -63,6 +60,13 @@ public class Item extends Observable {
      */
     public void success() {
         success = true;
-        notifyObservers();
+        setChanged();
+        notifyObservers(this);
+    }
+
+    public void failed() {
+        success = false;
+        setChanged();
+        notifyObservers(this);
     }
 }

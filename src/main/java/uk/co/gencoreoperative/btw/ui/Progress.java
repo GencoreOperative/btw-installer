@@ -7,15 +7,17 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-import static java.text.MessageFormat.format;
-
 public class Progress extends JDialog implements Observer {
     private final DefaultListModel<Item> model;
-    private final Image question;
+    private final ImageIcon question;
+    private final ImageIcon tick;
+    private final ImageIcon cross;
 
     public Progress() {
         try {
-            question = ImageIO.read(Process.class.getResource("/black-question-mark-ornament_2753.png"));
+            question = new ImageIcon(ImageIO.read(Process.class.getResource("/black-question-mark-ornament_2753.png")));
+            tick = new ImageIcon(ImageIO.read(Process.class.getResource("/white-heavy-check-mark_2705.png")));
+            cross = new ImageIcon(ImageIO.read(Process.class.getResource("/cross-mark_274c.png")));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -48,27 +50,22 @@ public class Progress extends JDialog implements Observer {
         model.addElement(item);
     }
 
-    public static void main(String... args) {
-        Progress progress = new Progress();
-        progress.addItem(new Item("badgers"));
-    }
-
     @Override
     public void update(Observable o, Object arg) {
+        validate();
         repaint();
     }
 
     private void render(JLabel label, Item item) {
-        final String emoji;
+        label.setText(item.getDescription());
+        ImageIcon icon;
         if (!item.isProcessed()) {
-            emoji = "-";
+            icon = question;
         } else if (item.isSuccessful()) {
-            emoji = "OK";
+            icon = tick;
         } else {
-            emoji = "FAIL";
+            icon = cross;
         }
-        label.setText(format("{0} {1}", emoji, item.getDescription()));
-        ImageIcon icon = new ImageIcon(question);
         label.setIcon(icon);
     }
 

@@ -1,0 +1,5 @@
+Failure of a task item should halt processing
+Reason for failure should be captured in UI
+Cross platform executable should be generated
+Pictures for README
+Move project to Github
