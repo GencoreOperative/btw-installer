@@ -1,3 +1,4 @@
+TODO: Handle cancel from file selector
 TODO: Pictures for README
 TODO: Completion should be signalled to user
 TODO: Failure of a task item should halt processing

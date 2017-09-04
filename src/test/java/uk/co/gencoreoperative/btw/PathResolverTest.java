@@ -7,10 +7,10 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class MineCraftPathResolverTest {
+public class PathResolverTest {
     @Test
     public void shouldResolveInstallationFolder() {
-        File path = MineCraftPathResolver.getDefaultMinecraftPath();
+        File path = PathResolver.getDefaultMinecraftPath();
         assertThat(path.getAbsolutePath()).isNotEmpty();
     }
 }

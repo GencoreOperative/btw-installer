@@ -24,112 +24,140 @@ import static uk.co.gencoreoperative.btw.utils.FileUtils.*;
 public class Main {
     private static final Predicate<File> EXISTS = File::exists;
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
+    private static Progress progress;
 
     public static void main(String... args) throws MalformedURLException {
-        Progress progress = new Progress();
+        progress = new Progress();
         Arrays.stream(Tasks.values()).forEach(tasks -> progress.addItem(tasks.getTask()));
 
         // Request the location of the Minecraft installation
-        File installationFolder = FileChooser.requestLocation(
-                progress,
-                Strings.SELECT_MC_HOME,
-                "minecraft.location",
-                MineCraftPathResolver.getDefaultMinecraftPath(),
-                File::isDirectory);
-        // TODO: Handle null response
-        validate(Tasks.INSTALLATION_FOLDER, installationFolder, EXISTS);
-
-        MineCraftPathResolver FOLDER = new MineCraftPathResolver(installationFolder);
+        File installationFolder = selectMinecraftHome()
+                .thenValidate(Tasks.INSTALLATION_FOLDER, EXISTS);
 
         // Verify that 1.5.2 version is present.
-        // TODO: No action, validate folder and sub file exist
-        validate(Tasks.ONE_FIVE_TWO_EXISTS, new File(FOLDER.oneFiveTwo(), "1.5.2.jar"), EXISTS);
-
-        // TODO: Request from user patch location, validate file exists
-        File patchFile = FileChooser.requestLocation(
-                progress,
-                Strings.SELECT_ZIP_TITLE,
-                "patch.location",
-                new File(System.getProperty("user.home")),
-                file -> file.getName().toLowerCase().endsWith("zip"));
-        // TODO: Handle null response
-        validate(Tasks.PATCH_WAS_SELECTED, patchFile, EXISTS);
+        PathResolver pathResolver = getPathResolver(installationFolder)
+                .thenValidate(Tasks.ONE_FIVE_TWO_EXISTS,
+                        resolver -> new File(resolver.oneFiveTwo(), "1.5.2.jar").exists());
 
         // Remove previous installation
-        // TODO: If folder exists delete it - validate folder does not exist
-        File targetFolder = FOLDER.betterThanWolves();
-        if (targetFolder.exists()) {
-            FileUtils.recursiveDelete(targetFolder);
-            validate(Tasks.PREVIOUS_REMOVED, targetFolder, EXISTS.negate());
-        }
+        File targetFolder = pathResolver.betterThanWolves();
+        removePreviousInstallation(pathResolver).thenValidate(Tasks.PREVIOUS_REMOVED, EXISTS.negate());
 
         // Create target folder
-        // TODO: If folder did not exist create it - validate folder exists
-        targetFolder.mkdirs();
-        validate(Tasks.CREATED_FOLDER, targetFolder, File::exists);
+        createInstallationFolder(targetFolder).thenValidate(Tasks.CREATED_FOLDER, EXISTS);
 
         // Copy JSON from resources - we do not expect this to change
-        // TODO: Read static resource and write to file - validate file exists
-        File targetJson = new File(targetFolder, "BetterThanWolves.json");
-        FileUtils.copyStream(Main.class.getResourceAsStream("/4-A2/BetterThanWolves.json"),
-                write(targetJson),
-                true, true);
-        validate(Tasks.COPIED_JSON, targetJson, EXISTS);
+        copyJsonToInstallation(targetFolder).thenValidate(Tasks.COPIED_JSON, EXISTS);
 
-        // Open target jar
-        // TODO: Create target jar and apply patch - validate file exists
-        File targetJarFile = new File(targetFolder, "BetterThanWolves.jar");
+        // Request Patch Zip from user.
+        File patchFile = selectPatchZip().thenValidate(Tasks.PATCH_WAS_SELECTED, EXISTS);
 
         // stream the contents of the BTW Patch utils into a map
-        Map<String, EntryAndData> modFiles = new HashMap<>();
-        streamZip(patchFile)
-                .filter(entry -> entry.getName().startsWith(PATCH_FOLDER))
-                .map(entry -> EntryAndData.file(trimModPath(entry.getEntry()), entry.getData()))
-                .forEach(entry -> modFiles.put(entry.getName(), entry));
-
-        try (ZipOutputStream targetStream = openZip(targetJarFile)) {
-            // Define function for streaming contents to target jar.
-            Consumer<EntryAndData> copyToTargetJar = entry -> {
-                try {
-                    targetStream.putNextEntry(entry.getEntry());
-                    FileUtils.copyStream(entry.getData(), targetStream, true, false);
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            };
-
-            // stream the 1.5.2 jar into the target jar, excluding all files that are in the modFiles map
-            List<String> metaFilter = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
-            streamZip(new File(FOLDER.oneFiveTwo(), "1.5.2.jar"))
-                    .filter(EntryAndData::isFile)
-                    .filter(entry -> !metaFilter.contains(entry.getName()))
-                    .filter(entry -> !modFiles.containsKey(entry.getName()))
-                    .forEach(copyToTargetJar);
-
-            // Stream all files from the modFiles map into the target jar.
-            modFiles.values().stream()
-                    .filter(EntryAndData::isFile)
-                    .forEach(copyToTargetJar);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        validate(Tasks.COPIED_JAR, targetJarFile, EXISTS);
+        mergePatchAndRelease(targetFolder, patchFile, pathResolver).thenValidate(Tasks.COPIED_JAR, EXISTS);
 
 
 //        // Signal User
     }
 
+    /**
+     * Request the location of the Minecraft installation
+     * @return
+     */
+    private static Task<File> selectMinecraftHome() {
+        return () -> FileChooser.requestLocation(
+                progress,
+                Strings.SELECT_MC_HOME,
+                "minecraft.location",
+                PathResolver.getDefaultMinecraftPath(),
+                File::isDirectory);
+    }
+
+    private static Task<PathResolver> getPathResolver(File path) {
+        return () -> new PathResolver(path);
+    }
+
+    private static Task<File> removePreviousInstallation(PathResolver resolver) {
+        return () -> {
+            File targetFolder = resolver.betterThanWolves();
+            if (targetFolder.exists()) {
+                FileUtils.recursiveDelete(targetFolder);
+            }
+            return resolver.betterThanWolves();
+        };
+    }
+
+    private static Task<File> createInstallationFolder(File path) {
+        return () -> {
+            path.mkdirs();
+            return path;
+        };
+    }
+
+    private static Task<File> selectPatchZip() {
+        return () -> {
+            File patchFile = FileChooser.requestLocation(
+                    progress,
+                    Strings.SELECT_ZIP_TITLE,
+                    "patch.location",
+                    new File(System.getProperty("user.home")),
+                    file -> file.getName().toLowerCase().endsWith("zip"));
+            return patchFile;
+        };
+    }
+
+    private static Task<File> copyJsonToInstallation(File folder) {
+        return () -> {
+            File targetJson = new File(folder, "BetterThanWolves.json");
+            FileUtils.copyStream(Main.class.getResourceAsStream("/4-A2/BetterThanWolves.json"),
+                    write(targetJson),
+                    true, true);
+            return targetJson;
+        };
+    }
+
+    private static Task<File> mergePatchAndRelease(File targetFolder, File patchFile, PathResolver pathResolver) {
+        return () -> {
+            File targetJarFile = new File(targetFolder, "BetterThanWolves.jar");
+
+            // stream the contents of the BTW Patch utils into a map
+            Map<String, EntryAndData> modFiles = new HashMap<>();
+            streamZip(patchFile)
+                    .filter(entry -> entry.getName().startsWith(PATCH_FOLDER))
+                    .map(entry -> EntryAndData.file(trimModPath(entry.getEntry()), entry.getData()))
+                    .forEach(entry -> modFiles.put(entry.getName(), entry));
+
+            try (ZipOutputStream targetStream = openZip(targetJarFile)) {
+                // Define function for streaming contents to target jar.
+                Consumer<EntryAndData> copyToTargetJar = entry -> {
+                    try {
+                        targetStream.putNextEntry(entry.getEntry());
+                        FileUtils.copyStream(entry.getData(), targetStream, true, false);
+                    } catch (IOException e) {
+                        throw new IllegalStateException(e);
+                    }
+                };
+
+                // stream the 1.5.2 jar into the target jar, excluding all files that are in the modFiles map
+                List<String> metaFilter = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
+                streamZip(new File(pathResolver.oneFiveTwo(), "1.5.2.jar"))
+                        .filter(EntryAndData::isFile)
+                        .filter(entry -> !metaFilter.contains(entry.getName()))
+                        .filter(entry -> !modFiles.containsKey(entry.getName()))
+                        .forEach(copyToTargetJar);
+
+                // Stream all files from the modFiles map into the target jar.
+                modFiles.values().stream()
+                        .filter(EntryAndData::isFile)
+                        .forEach(copyToTargetJar);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+            return targetJarFile;
+        };
+    }
+
     private static ZipEntry trimModPath(ZipEntry entry) {
         String name = entry.getName();
         return new ZipEntry(name.substring(PATCH_FOLDER.length(), name.length()));
-    }
-
-    private static <T> void validate(Tasks item, T t, Predicate<T> validate) {
-        if (!validate.test(t)) {
-            item.getTask().failed();
-            System.exit(-1);
-        } else {
-            item.getTask().success();
-        }
     }
 }

@@ -6,18 +6,18 @@ import java.util.function.Supplier;
 /**
  * Responsible for providing the platform dependent location of Minecraft
  */
-public class MineCraftPathResolver implements Supplier<File> {
+public class PathResolver implements Supplier<File> {
     private String path;
 
-    public MineCraftPathResolver(File path) {
+    public PathResolver(File path) {
         this(path.getAbsolutePath());
     }
 
-    public MineCraftPathResolver(String path) {
+    public PathResolver(String path) {
         this.path = path;
     }
 
-    public MineCraftPathResolver() {
+    public PathResolver() {
         this("/Users/robert.wapshott/Library/Application Support/minecraft");
     }
 
