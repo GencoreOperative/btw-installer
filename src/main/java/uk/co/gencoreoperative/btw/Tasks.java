@@ -8,7 +8,8 @@ public enum Tasks {
     CREATED_FOLDER("created installation folder"),
     COPIED_JSON("copy BetterThanWolves.json"),
     PATCH_WAS_SELECTED("patch file was selected"),
-    COPIED_JAR("created BetterThanWolves.jar");
+    COPIED_JAR("created BetterThanWolves.jar"),
+    INSTALLATION_FOLDER("minecraft installation was selected");
 
     private Item item;
 

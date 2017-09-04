@@ -9,6 +9,10 @@ import java.util.function.Supplier;
 public class MineCraftPathResolver implements Supplier<File> {
     private String path;
 
+    public MineCraftPathResolver(File path) {
+        this(path.getAbsolutePath());
+    }
+
     public MineCraftPathResolver(String path) {
         this.path = path;
     }
@@ -32,5 +36,17 @@ public class MineCraftPathResolver implements Supplier<File> {
 
     public File betterThanWolves() {
         return new File(versions(), "BetterThanWolves");
+    }
+
+    public static File getDefaultMinecraftPath() {
+        String operatingSystem = System.getProperty("os.name");
+        File folder;
+        if ("Mac OS X".equalsIgnoreCase(operatingSystem)) {
+            folder = new File(System.getProperty("user.home") + "/Library/Application Support/minecraft");
+
+        } else {
+            folder = new File("%appdata%\\.minecraft");
+        }
+        return folder;
     }
 }

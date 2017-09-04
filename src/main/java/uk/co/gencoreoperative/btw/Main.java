@@ -2,6 +2,7 @@ package uk.co.gencoreoperative.btw;
 
 import uk.co.gencoreoperative.btw.ui.FileChooser;
 import uk.co.gencoreoperative.btw.ui.Progress;
+import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.utils.EntryAndData;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
@@ -22,20 +23,35 @@ import static uk.co.gencoreoperative.btw.utils.FileUtils.*;
 // Based on  http://www.sargunster.com/btwforum/viewtopic.php?f=9&t=8925
 public class Main {
     private static final Predicate<File> EXISTS = File::exists;
-
-    private static final MineCraftPathResolver FOLDER = new MineCraftPathResolver("/tmp/badger");
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 
     public static void main(String... args) throws MalformedURLException {
         Progress progress = new Progress();
         Arrays.stream(Tasks.values()).forEach(tasks -> progress.addItem(tasks.getTask()));
 
+        // Request the location of the Minecraft installation
+        File installationFolder = FileChooser.requestLocation(
+                progress,
+                Strings.SELECT_MC_HOME,
+                "minecraft.location",
+                MineCraftPathResolver.getDefaultMinecraftPath(),
+                File::isDirectory);
+        // TODO: Handle null response
+        validate(Tasks.INSTALLATION_FOLDER, installationFolder, EXISTS);
+
+        MineCraftPathResolver FOLDER = new MineCraftPathResolver(installationFolder);
+
         // Verify that 1.5.2 version is present.
         // TODO: No action, validate folder and sub file exist
         validate(Tasks.ONE_FIVE_TWO_EXISTS, new File(FOLDER.oneFiveTwo(), "1.5.2.jar"), EXISTS);
 
         // TODO: Request from user patch location, validate file exists
-        File patchFile = FileChooser.requestLocation("patch.location", new File(System.getProperty("user.home")));
+        File patchFile = FileChooser.requestLocation(
+                progress,
+                Strings.SELECT_ZIP_TITLE,
+                "patch.location",
+                new File(System.getProperty("user.home")),
+                file -> file.getName().toLowerCase().endsWith("zip"));
         // TODO: Handle null response
         validate(Tasks.PATCH_WAS_SELECTED, patchFile, EXISTS);
 

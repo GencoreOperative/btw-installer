@@ -12,15 +12,25 @@ import static java.text.MessageFormat.format;
 
 public class Progress extends JDialog implements Observer {
     private final DefaultListModel<Item> model = new DefaultListModel<>();
+
     private final Action closeAction = new AbstractAction() {
         {
-            putValue(Action.NAME, Strings.CLOSE.getText());
+            putValue(Action.NAME, Strings.BUTTON_CLOSE.getText());
         }
         @Override
         public void actionPerformed(ActionEvent e) {
             Progress.this.setVisible(false);
             Progress.this.dispose();
             System.exit(0);
+        }
+    };
+    private final Action patchAction = new AbstractAction() {
+        {
+            putValue(Action.NAME, Strings.BUTTON_PATCH.getText());
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // TODO: Start the installation
         }
     };
 
@@ -54,6 +64,7 @@ public class Progress extends JDialog implements Observer {
 
     private JComponent getBottomLayout() {
         JPanel panel = new JPanel(new FlowLayout());
+        panel.add(new JButton(patchAction));
         panel.add(new JButton(closeAction));
         return panel;
     }

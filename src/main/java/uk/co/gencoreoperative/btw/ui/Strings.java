@@ -11,7 +11,11 @@ import java.io.InputStreamReader;
 public enum Strings {
     TITLE("Patch Installer"),
     VERSION(readProperty("/app.version")),
-    CLOSE("Close");
+    BUTTON_CLOSE("Close"),
+    BUTTON_SELECT("Select"),
+    BUTTON_PATCH("Patch"),
+    SELECT_ZIP_TITLE("Select BetterThanWolves Zip"),
+    SELECT_MC_HOME("Select Minecraft Installation");
 
     private final String text;
 

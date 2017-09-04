@@ -6,20 +6,26 @@ Minecraft launcher has been tested on Windows and MacOS.
 
 ## Before You Start
 
-Better Than Wolves is based on Minecraft 1.5.2. This utility will look for this 
-release as part of installation.
+Before you can use this utility you need to have the following things setup:
 
-If you have not already created this release please do so as follows:
+* **[Java](https://java.com/en/download/)** - the utility requires a Java 8 
+JRE or JDK to work
 
-[picture - launch profile tab]
-[picture - new profile]
+* **A Minecraft 1.5.2 configuration** -  Better Than Wolves is based on Minecraft 
+1.5.2. This utility will look for this release as part of installation. If you 
+have not already created this release please see the section on 
+[creating a new profile](New-Profile.MD).
 
-## Download
+## Download and Run
 
-Run the utility by downloading the latest release for your platform from Github:
+Run the utility by downloading the [latest release](http://github.com) from the
+Github release page. The utility can be run with the following commands in a 
+terminal or command prompt window:
 
-- [Windows]()
-- [MacOS]()
+```bash
+$ cd <your download folder>
+$ java -jar patcher.jar
+```
 
 ## Installation
 
