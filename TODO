@@ -1,7 +1,12 @@
-Failure of a task item should halt processing
-Reason for failure should be captured in UI
-Pictures for README
-Move project to Github
-Completion should be signalled to user
+TODO: Version information in UI
+TODO: Completion should be signalled to user
+TODO: Failure of a task item should halt processing
+TODO: Reason for failure should be captured in UI
+TODO: Pictures for README
+TODO: Add option to remove the mod
+TODO: Move project to Github
+
+DONE
+----
+
 Easy and obvious way to close the application
-Add option to remove the mod

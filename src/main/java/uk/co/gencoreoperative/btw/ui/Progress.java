@@ -1,48 +1,61 @@
 package uk.co.gencoreoperative.btw.ui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
 
+import static java.text.MessageFormat.format;
+
 public class Progress extends JDialog implements Observer {
-    private final DefaultListModel<Item> model;
-    private final ImageIcon question;
-    private final ImageIcon tick;
-    private final ImageIcon cross;
+    private final DefaultListModel<Item> model = new DefaultListModel<>();
+    private final Action closeAction = new AbstractAction() {
+        {
+            putValue(Action.NAME, Strings.CLOSE.getText());
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Progress.this.setVisible(false);
+            Progress.this.dispose();
+            System.exit(0);
+        }
+    };
 
     public Progress() {
-        try {
-            question = new ImageIcon(ImageIO.read(Process.class.getResource("/black-question-mark-ornament_2753.png")));
-            tick = new ImageIcon(ImageIO.read(Process.class.getResource("/white-heavy-check-mark_2705.png")));
-            cross = new ImageIcon(ImageIO.read(Process.class.getResource("/cross-mark_274c.png")));
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeAction.actionPerformed(null);
+            }
+        });
+
+        setTitle(format("{0} - {1}", Strings.TITLE.getText(), Strings.VERSION.getText()));
 
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        add(centerLayout(), BorderLayout.CENTER);
+        add(getBottomLayout(), BorderLayout.SOUTH);
 
-        JList<Item> list = new JList<>();
-        model = new DefaultListModel<>();
-        list.setModel(model);
-        list.setCellRenderer((list1, value, index, isSelected, cellHasFocus) -> {
-            JLabel label = new JLabel();
-            render(label, value);
-            return label;
-        });
-        list.setVisibleRowCount(-1);
-
-        JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setPreferredSize((new Dimension(300, 300)));
-
-        add(scrollPane, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
 
+    private JComponent centerLayout() {
+        JList<Item> list = new JList<>(model);
+        list.setCellRenderer((list1, value, index, isSelected, cellHasFocus) -> render(value));
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setPreferredSize((new Dimension(300, 150)));
+        return scrollPane;
+    }
+
+    private JComponent getBottomLayout() {
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.add(new JButton(closeAction));
+        return panel;
     }
 
     public void addItem(Item item) {
@@ -56,17 +69,23 @@ public class Progress extends JDialog implements Observer {
         repaint();
     }
 
-    private void render(JLabel label, Item item) {
-        label.setText(item.getDescription());
-        ImageIcon icon;
-        if (!item.isProcessed()) {
-            icon = question;
-        } else if (item.isSuccessful()) {
-            icon = tick;
+    /**
+     * Given an {@link Item}, render this to a JLabel suitable for display to the user.
+     *
+     * @param item Non null Item to render.
+     */
+    private JLabel render(Item item) {
+        final Icons icon;
+        if (item.isProcessed()) {
+            if (item.isSuccessful()) {
+                icon = Icons.TICK;
+            } else {
+                icon = Icons.ERROR;
+            }
         } else {
-            icon = cross;
+            icon = Icons.QUESTION;
         }
-        label.setIcon(icon);
+        return new JLabel(item.getDescription(), icon.getIcon(), SwingConstants.LEADING);
     }
 
 }
