@@ -1,5 +1,7 @@
 package uk.co.gencoreoperative.btw.ui;
 
+import uk.co.gencoreoperative.btw.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -30,11 +32,13 @@ public class Progress extends JDialog implements Observer {
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            // TODO: Start the installation
+            main.start();
         }
     };
+    private Main main;
 
-    public Progress() {
+    public Progress(Main main) {
+        this.main = main;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override

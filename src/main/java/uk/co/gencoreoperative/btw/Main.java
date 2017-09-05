@@ -10,12 +10,15 @@ import java.util.function.Predicate;
 public class Main {
     private static final Predicate<File> EXISTS = File::exists;
 
-    private Progress progress = new Progress();
+    private Progress progress;
     private TaskFactory factory = new TaskFactory(progress);
 
     public Main() {
+        progress = new Progress(this);
         Arrays.stream(Tasks.values()).forEach(tasks -> progress.addItem(tasks.getTask()));
+    }
 
+    public void start() {
         // Request the location of the Minecraft installation
         File installationFolder = factory.selectMinecraftHome()
                 .thenValidate(Tasks.INSTALLATION_FOLDER, EXISTS);
@@ -40,7 +43,6 @@ public class Main {
 
         // stream the contents of the BTW Patch utils into a map
         factory.mergePatchAndRelease(targetFolder, patchFile, pathResolver).thenValidate(Tasks.COPIED_JAR, EXISTS);
-
     }
 
     public static void main(String... args) {

@@ -19,11 +19,14 @@ public interface Task<T> {
 
     default T thenValidate(Tasks item, Predicate<T> predicate) {
         T result = action();
+        if (result == null) {
+            return null;
+        }
         if (predicate.test(result)) {
             item.getTask().success();
         } else {
             item.getTask().failed();
-            System.exit(-1); // TODO: Not this...
+            return null;
         }
         return result;
     }
