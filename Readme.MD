@@ -19,30 +19,32 @@ have not already created this release please see the section on
 ## Download and Run
 
 Run the utility by downloading the [latest release](http://github.com) from the
-Github release page. The utility can be run with the following commands in a 
-terminal or command prompt window:
+Github release page. Start by opening a command prompt or terminal and 
+selecting the folder where the utility was downloaded to. In this case we
+have downloaded it to `Downloads`:
 
 ```bash
-$ cd <your download folder>
+$ cd Downloads
 $ java -jar patcher.jar
 ```
 
-## Installation
+## Patch Installation
 
-The utility will guide you through the installation process. First you will need
-to select your Minecraft installation folder.
+The utility will guide you through the installation process. To start this 
+process, press the "Patch" button. First you will need to select your 
+Minecraft installation folder:
 
-[picture - select Minecraft folder]
+![File selection dialog for Minecraft Home](images/select-mc-home.png)
 
 Then you will need to select the downloaded BetterThanWolves zip file which you 
 can download from [here](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272992-better-than-wolves-now-with-bloody-stumps-total).
 
-[picture - select zip]
+![File selection dialog for BTW Patch](images/select-patch.png)
 
 Then the utility will create a new release called "BetterThanWolves" which will
 be a copy of the 1.5.2 release with the BetterThanWolves patch merged in.
 
-[picture - progress]
+![Patch process complete](images/patch-complete.png)
 
 Installation is now complete.
 
@@ -51,15 +53,31 @@ Installation is now complete.
 Now we can create a new Configuration in the Minecraft launcher. Select the
 "Launch Options" tab from the launcher.
 
-[picture - launch profile tab]
+![Select launch options](images/mc-launch-options.png)
 
-Then set the version to be "BetterThanWolves".
+Add a new configuration with the "Add New" button.
 
-- Set name
-- Set game data folder
+![Add new configuration](images/mc-add-new.png)
+
+Fill in the configuration as follows:
+
+- Name: "BetterThanWolves"
+- Version: release BetterThanWolves
+- Game Directory: Choose a location other than the default Mincraft location
+
+**Note:** The Game Directory seems important, as we noticed that if 
+BetterThanWolves is started in a Game Directory that has been used for
+a later version of the game, it will fail. 
+
+![Configuration complete](images/mc-configuration-complete.png)
+
+Once you have made these changes, click "Save".
 
 ## Launch
 
-You are now ready to launch the game, with the BetterThanWolves mod installed.
+You are now ready to launch the game, with the BetterThanWolves mod 
+installed.
+
+![Launch Minecraft](images/mc-select-btw.png)
 
 Now go punch a tree!
