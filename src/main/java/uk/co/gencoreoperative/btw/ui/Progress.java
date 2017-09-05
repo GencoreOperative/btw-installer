@@ -82,6 +82,17 @@ public class Progress extends JDialog implements Observer {
     public void update(Observable o, Object arg) {
         validate();
         repaint();
+
+        boolean complete = true;
+        boolean failed = false;
+        for (int ii = 0; ii < model.getSize(); ii++) {
+            Item item = model.getElementAt(ii);
+            complete = complete && item.isProcessed() && item.isSuccessful();
+            failed = failed || item.isProcessed() && !item.isSuccessful();
+        }
+        if (complete || failed) {
+            patchAction.setEnabled(false);
+        }
     }
 
     /**

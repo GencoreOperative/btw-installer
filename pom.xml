@@ -56,7 +56,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.png</include> <!-- Probably need this because of the above filtering -->
+                    <include>**/*</include> <!-- Probably need this because of the above filtering -->
                 </includes>
             </resource>
         </resources>

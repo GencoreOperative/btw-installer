@@ -1,6 +1,7 @@
 package uk.co.gencoreoperative.btw.ui;
 
 import java.util.Observable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Indicates a task to be processed and associates the success/failure status
@@ -8,12 +9,12 @@ import java.util.Observable;
  */
 public class Item extends Observable {
     private String description;
-    private Boolean success;
+    private AtomicBoolean processed = new AtomicBoolean(false);
+    private AtomicBoolean success = new AtomicBoolean(false);
     private Exception reason;
 
     public Item(String description) {
         this.description = description;
-        success = null;
         reason = null;
     }
 
@@ -21,15 +22,15 @@ public class Item extends Observable {
      * @return True if the item has been processed, otherwise false.
      */
     public boolean isProcessed() {
-        return success != null;
+        return processed.get();
     }
 
     /**
      * @return True if the item was processed successfully.
      */
     public boolean isSuccessful() {
-        if (success == null) throw new IllegalStateException("Item not processed yet");
-        return success;
+        if (!processed.get()) throw new IllegalStateException("Item not processed yet");
+        return success.get();
     }
 
     /**
@@ -59,13 +60,15 @@ public class Item extends Observable {
      * Mark the item as successfully processed.
      */
     public void success() {
-        success = true;
+        processed.set(true);
+        success.set(true);
         setChanged();
         notifyObservers(this);
     }
 
     public void failed() {
-        success = false;
+        processed.set(true);
+        success.set(false);
         setChanged();
         notifyObservers(this);
     }
