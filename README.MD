@@ -11,17 +11,20 @@ Before you can use this utility you need to have the following things setup:
 * **[Java](https://java.com/en/download/)** - the utility requires a Java 8 
 JRE or JDK to work
 
-* **A Minecraft 1.5.2 configuration** -  Better Than Wolves is based on Minecraft 
-1.5.2. This utility will look for this release as part of installation. If you 
-have not already created this release please see the section on 
-[creating a new profile](New-Profile.MD).
+* **[Latest Patch](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272992-better-than-wolves-now-with-bloody-stumps-total)** - Download the latest version of the Better Than Wolves
+patch from the Minecraft Forum post.
+
+* **A Minecraft 1.5.2 configuration** -  Better Than Wolves requires a 
+Minecraft 1.5.2 configuration which this utility will look for as part of 
+installation. If you have not already created this release please see 
+the section on [creating a new profile](New-Profile.MD).
 
 ## Download and Run
 
 Run the utility by downloading the [latest release](http://github.com) from the
 Github release page. Start by opening a command prompt or terminal and 
 selecting the folder where the utility was downloaded to. In this case we
-have downloaded it to `Downloads`:
+have downloaded it to "Downloads":
 
 ```bash
 $ cd Downloads
@@ -31,8 +34,11 @@ $ java -jar patcher.jar
 ## Patch Installation
 
 The utility will guide you through the installation process. To start this 
-process, press the "Patch" button. First you will need to select your 
-Minecraft installation folder:
+process, press the "Patch" button.
+
+![Click Patch to start](images/patch-start.png)
+
+First you will need to select your Minecraft installation folder:
 
 ![File selection dialog for Minecraft Home](images/select-mc-home.png)
 
