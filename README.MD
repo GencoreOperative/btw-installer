@@ -1,15 +1,19 @@
 # Introduction
 
 This utility has been made for those who are new to Minecraft, or new to 
-installing the Better Than Wolves mod. It has been developed with the latest
-Minecraft launcher has been tested on Windows and MacOS.
+installing the Better Than Wolves mod. It has been developed to work with
+the latest Minecraft launcher has been tested on both Windows and MacOS.
+
+Minecraft supports multiple "Configurations", which can be set to use
+a specific version of the Minecraft binary files. This patcher will copy
+an existing configuration and apply the Better Than Wolves patch to it.
 
 ## Before You Start
 
-Before you can use this utility you need to have the following things setup:
+Before you can use this utility you need to have the following set up:
 
-* **[Java](https://java.com/en/download/)** - the utility requires a Java 8 
-JRE or JDK to work
+* **[Java](https://java.com/en/download/)** - the utility requires a 
+Java 8 JRE or JDK to work
 
 * **[Latest Patch](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272992-better-than-wolves-now-with-bloody-stumps-total)** - Download the latest version of the Better Than Wolves
 patch from the Minecraft Forum post.
@@ -21,10 +25,12 @@ the section on [creating a new profile](New-Profile.MD).
 
 ## Download and Run
 
-Run the utility by downloading the [latest release](http://github.com) from the
-Github release page. Start by opening a command prompt or terminal and 
-selecting the folder where the utility was downloaded to. In this case we
-have downloaded it to "Downloads":
+To use the patching utility, download the [patcher.jar](https://bitbucket.org/rwapshott/btw-installer/downloads/patcher.jar) 
+from the BitBucket release page.
+
+Start by opening a command prompt or terminal and selecting the folder 
+where the utility was downloaded to. In this case we have downloaded 
+it to "Downloads":
 
 ```bash
 $ cd Downloads
@@ -56,16 +62,18 @@ Installation is now complete.
 
 ## Create BetterThanWolves Configuration
 
-Now we can create a new Configuration in the Minecraft launcher. Select the
-"Launch Options" tab from the launcher.
+Now we can create a new Configuration which uses the Better Than Wolves
+version.
+
+1) From the Minecraft Launcher, select the "Launch Options" tab:
 
 ![Select launch options](images/mc-launch-options.png)
 
-Add a new configuration with the "Add New" button.
+2) Add a new configuration with the "Add New" button.
 
 ![Add new configuration](images/mc-add-new.png)
 
-Fill in the configuration as follows:
+3) Fill in the configuration as follows:
 
 - Name: "BetterThanWolves"
 - Version: release BetterThanWolves
@@ -77,7 +85,7 @@ a later version of the game, it will fail.
 
 ![Configuration complete](images/mc-configuration-complete.png)
 
-Once you have made these changes, click "Save".
+4) Once you have made these changes, click "Save".
 
 ## Launch
 
