@@ -11,6 +11,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import static java.text.MessageFormat.format;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE;
 
 public class Progress extends JDialog implements Observer {
     private final DefaultListModel<Item> model = new DefaultListModel<>();
@@ -47,7 +48,7 @@ public class Progress extends JDialog implements Observer {
             }
         });
 
-        setTitle(format("{0} - {1}", Strings.TITLE.getText(), Strings.VERSION.getText()));
+        setTitle(TITLE.getText());
 
         setLayout(new BorderLayout());
         add(centerLayout(), BorderLayout.CENTER);

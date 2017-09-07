@@ -1,6 +1,6 @@
+TODO: Feedback on completion
 TODO: Handle cancel from file selector
 TODO: Pictures for README
-TODO: Completion should be signalled to user
 TODO: Failure of a task item should halt processing
 TODO: Reason for failure should be captured in UI
 TODO: Move project to Github

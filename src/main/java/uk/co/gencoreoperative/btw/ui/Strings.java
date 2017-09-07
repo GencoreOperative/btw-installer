@@ -4,13 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 
 /**
  * Defines the strings that are used for display purposes in the application.
  */
 public enum Strings {
-    TITLE("Patch Installer"),
+    APP_NAME("Patch Installer"),
     VERSION(readProperty("/app.version")),
+    TITLE(MessageFormat.format("{0} - {1}", APP_NAME, VERSION)),
     BUTTON_CLOSE("Close"),
     BUTTON_SELECT("Select"),
     BUTTON_PATCH("Patch"),
