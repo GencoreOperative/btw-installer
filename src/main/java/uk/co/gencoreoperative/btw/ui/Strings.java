@@ -12,12 +12,14 @@ import java.text.MessageFormat;
 public enum Strings {
     APP_NAME("Patch Installer"),
     VERSION(readProperty("/app.version")),
-    TITLE(MessageFormat.format("{0} - {1}", APP_NAME, VERSION)),
+    TITLE(MessageFormat.format("{0} - {1}", APP_NAME.getText(), VERSION.getText())),
     BUTTON_CLOSE("Close"),
     BUTTON_SELECT("Select"),
     BUTTON_PATCH("Patch"),
     SELECT_ZIP_TITLE("Select BetterThanWolves Zip"),
-    SELECT_MC_HOME("Select Minecraft Installation");
+    SELECT_MC_HOME("Select Minecraft Installation"),
+    SUCCESS_TITLE("Patch complete"),
+    SUCCESS_MSG("Patch was successfully applied");
 
     private final String text;
 

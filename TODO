@@ -5,6 +5,7 @@ TODO: Failure of a task item should halt processing
 TODO: Reason for failure should be captured in UI
 TODO: Move project to Github
 TODO: Add option to remove the mod
+TODO: JitWatch - Stream Copy is called many times.
 
 DONE
 ----

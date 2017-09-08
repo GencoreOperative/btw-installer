@@ -1,6 +1,9 @@
 package uk.co.gencoreoperative.btw;
 
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
+import uk.co.gencoreoperative.btw.ui.Item;
 import uk.co.gencoreoperative.btw.ui.Progress;
+import uk.co.gencoreoperative.btw.ui.Strings;
 
 import java.io.File;
 import java.util.Arrays;
@@ -11,7 +14,8 @@ public class Main {
     private static final Predicate<File> EXISTS = File::exists;
 
     private Progress progress;
-    private TaskFactory factory = new TaskFactory(progress);
+    private DialogFactory dialogFactory = new DialogFactory(progress);
+    private TaskFactory factory = new TaskFactory(dialogFactory);
 
     public Main() {
         progress = new Progress(this);
@@ -43,6 +47,19 @@ public class Main {
 
         // stream the contents of the BTW Patch utils into a map
         factory.mergePatchAndRelease(targetFolder, patchFile, pathResolver).thenValidate(Tasks.COPIED_JAR, EXISTS);
+
+        boolean complete = true;
+        for (Tasks tasks : Tasks.values()) {
+            Item task = tasks.getTask();
+            complete &= (task.isProcessed() && task.isSuccessful());
+        }
+
+        // Signal the user that all tasks are complete.
+        if (complete) {
+            dialogFactory.getSuccessDialog(Strings.SUCCESS_TITLE.getText(), Strings.SUCCESS_MSG.getText());
+        } else {
+            // TODO signal error and reason.
+        }
     }
 
     public static void main(String... args) {

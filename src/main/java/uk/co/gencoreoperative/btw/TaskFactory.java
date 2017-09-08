@@ -1,5 +1,6 @@
 package uk.co.gencoreoperative.btw;
 
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.FileChooser;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.utils.EntryAndData;
@@ -23,19 +24,28 @@ import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
 public class TaskFactory {
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 
-    private Component parent;
+    private static final String MINECRAFT_LOCATION = "minecraft.location";
+    private static final String PATCH_LOCATION = "patch.location";
 
-    public TaskFactory(Component parent) {
-        this.parent = parent;
+    private final DialogFactory dialogFactory;
+
+    public TaskFactory(DialogFactory dialogFactory) {
+        this.dialogFactory = dialogFactory;
     }
 
     public Task<File> selectMinecraftHome() {
-        return () -> FileChooser.requestLocation(
-                parent,
-                Strings.SELECT_MC_HOME,
-                "minecraft.location",
-                PathResolver.getDefaultMinecraftPath(),
-                File::isDirectory);
+        return () -> {
+            File previous = FileChooser.getLastOpenedPath(MINECRAFT_LOCATION);
+            File selected = dialogFactory.requestFolderLocation(
+                    Strings.SELECT_MC_HOME,
+                    previous,
+                    PathResolver.getDefaultMinecraftPath(),
+                    File::isDirectory);
+            if (selected != null) {
+                FileChooser.setLastOpenedPath(MINECRAFT_LOCATION, selected);
+            }
+            return selected;
+        };
     }
 
     public Task<PathResolver> getPathResolver(File path) {
@@ -61,13 +71,16 @@ public class TaskFactory {
 
     public Task<File> selectPatchZip() {
         return () -> {
-            File patchFile = FileChooser.requestLocation(
-                    parent,
+            File previous = FileChooser.getLastOpenedPath(PATCH_LOCATION);
+            File selected = dialogFactory.requestFileLocation(
                     Strings.SELECT_ZIP_TITLE,
-                    "patch.location",
+                    previous,
                     new File(System.getProperty("user.home")),
                     file -> file.getName().toLowerCase().endsWith("zip"));
-            return patchFile;
+            if (selected != null) {
+                FileChooser.setLastOpenedPath(PATCH_LOCATION, selected);
+            }
+            return selected;
         };
     }
 
