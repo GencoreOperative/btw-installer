@@ -1,6 +1,6 @@
 package uk.co.gencoreoperative.btw.ui;
 
-import uk.co.gencoreoperative.btw.Main;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +10,11 @@ import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
 
-import static java.text.MessageFormat.format;
-import static uk.co.gencoreoperative.btw.ui.Strings.TITLE;
+import uk.co.gencoreoperative.btw.Command;
+import uk.co.gencoreoperative.btw.Main;
 
 public class Progress extends JDialog implements Observer {
-    private final DefaultListModel<Item> model = new DefaultListModel<>();
+    private final DefaultListModel<Command> model = new DefaultListModel<>();
 
     private final Action closeAction = new AbstractAction() {
         {
@@ -60,7 +60,7 @@ public class Progress extends JDialog implements Observer {
     }
 
     private JComponent centerLayout() {
-        JList<Item> list = new JList<>(model);
+        JList<Command> list = new JList<>(model);
         list.setCellRenderer((list1, value, index, isSelected, cellHasFocus) -> render(value));
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize((new Dimension(300, 150)));
@@ -74,9 +74,9 @@ public class Progress extends JDialog implements Observer {
         return panel;
     }
 
-    public void addItem(Item item) {
-        item.addObserver(this);
-        model.addElement(item);
+    public void addItem(Command command) {
+        command.addObserver(this);
+        model.addElement(command);
     }
 
     @Override
@@ -87,9 +87,9 @@ public class Progress extends JDialog implements Observer {
         boolean complete = true;
         boolean failed = false;
         for (int ii = 0; ii < model.getSize(); ii++) {
-            Item item = model.getElementAt(ii);
-            complete = complete && item.isProcessed() && item.isSuccessful();
-            failed = failed || item.isProcessed() && !item.isSuccessful();
+            Command command = model.getElementAt(ii);
+            complete = complete && command.isProcessed() && command.isSuccessful();
+            failed = failed || command.isProcessed() && !command.isSuccessful();
         }
         if (complete || failed) {
             patchAction.setEnabled(false);
@@ -97,14 +97,14 @@ public class Progress extends JDialog implements Observer {
     }
 
     /**
-     * Given an {@link Item}, render this to a JLabel suitable for display to the user.
+     * Given an {@link Command}, render this to a JLabel suitable for display to the user.
      *
-     * @param item Non null Item to render.
+     * @param command Non null Command to render.
      */
-    private JLabel render(Item item) {
+    private JLabel render(Command command) {
         final Icons icon;
-        if (item.isProcessed()) {
-            if (item.isSuccessful()) {
+        if (command.isProcessed()) {
+            if (command.isSuccessful()) {
                 icon = Icons.TICK;
             } else {
                 icon = Icons.ERROR;
@@ -112,7 +112,7 @@ public class Progress extends JDialog implements Observer {
         } else {
             icon = Icons.QUESTION;
         }
-        return new JLabel(item.getDescription(), icon.getIcon(), SwingConstants.LEADING);
+        return new JLabel(command.getDescription(), icon.getIcon(), SwingConstants.LEADING);
     }
 
 }

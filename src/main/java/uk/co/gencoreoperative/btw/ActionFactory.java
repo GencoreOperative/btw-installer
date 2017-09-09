@@ -13,7 +13,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -21,7 +23,7 @@ import static uk.co.gencoreoperative.btw.utils.FileUtils.openZip;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
 
-public class TaskFactory {
+public class ActionFactory {
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 
     private static final String MINECRAFT_LOCATION = "minecraft.location";
@@ -29,11 +31,11 @@ public class TaskFactory {
 
     private final DialogFactory dialogFactory;
 
-    public TaskFactory(DialogFactory dialogFactory) {
+    public ActionFactory(DialogFactory dialogFactory) {
         this.dialogFactory = dialogFactory;
     }
 
-    public Task<File> selectMinecraftHome() {
+    public Supplier<File> selectMinecraftHome() {
         return () -> {
             File previous = FileChooser.getLastOpenedPath(MINECRAFT_LOCATION);
             File selected = dialogFactory.requestFolderLocation(
@@ -48,28 +50,29 @@ public class TaskFactory {
         };
     }
 
-    public Task<PathResolver> getPathResolver(File path) {
-        return () -> new PathResolver(path);
+    public Supplier<PathResolver> getPathResolver(Supplier<File> path) {
+        return () -> new PathResolver(path.get());
     }
 
-    public Task<File> removePreviousInstallation(PathResolver resolver) {
+    public Supplier<File> removePreviousInstallation(Supplier<PathResolver> resolver) {
         return () -> {
-            File targetFolder = resolver.betterThanWolves();
+            File targetFolder = resolver.get().betterThanWolves();
             if (targetFolder.exists()) {
                 FileUtils.recursiveDelete(targetFolder);
             }
-            return resolver.betterThanWolves();
+            return resolver.get().betterThanWolves();
         };
     }
 
-    public Task<File> createInstallationFolder(File path) {
+    public Supplier<File> createInstallationFolder(Supplier<PathResolver> resolver) {
         return () -> {
-            path.mkdirs();
-            return path;
+            File targetFolder = resolver.get().betterThanWolves();
+            targetFolder.mkdirs();
+            return targetFolder;
         };
     }
 
-    public Task<File> selectPatchZip() {
+    public Supplier<File> selectPatchZip() {
         return () -> {
             File previous = FileChooser.getLastOpenedPath(PATCH_LOCATION);
             File selected = dialogFactory.requestFileLocation(
@@ -84,9 +87,9 @@ public class TaskFactory {
         };
     }
 
-    public Task<File> copyJsonToInstallation(File folder) {
+    public Supplier<File> copyJsonToInstallation(Supplier<File> folder) {
         return () -> {
-            File targetJson = new File(folder, "BetterThanWolves.json");
+            File targetJson = new File(folder.get(), "BetterThanWolves.json");
             FileUtils.copyStream(Main.class.getResourceAsStream("/4-A2/BetterThanWolves.json"),
                     write(targetJson),
                     true, true);
@@ -94,13 +97,13 @@ public class TaskFactory {
         };
     }
 
-    public Task<File> mergePatchAndRelease(File targetFolder, File patchFile, PathResolver pathResolver) {
+    public Supplier<File> mergePatchAndRelease(Supplier<File> targetFolder, Supplier<File> patchFile, Supplier<PathResolver> pathResolver) {
         return () -> {
-            File targetJarFile = new File(targetFolder, "BetterThanWolves.jar");
+            File targetJarFile = new File(targetFolder.get(), "BetterThanWolves.jar");
 
             // stream the contents of the BTW Patch utils into a map
             Map<String, EntryAndData> modFiles = new HashMap<>();
-            streamZip(patchFile)
+            streamZip(patchFile.get())
                     .filter(entry -> entry.getName().startsWith(PATCH_FOLDER))
                     .map(entry -> EntryAndData.file(trimModPath(entry.getEntry()), entry.getData()))
                     .forEach(entry -> modFiles.put(entry.getName(), entry));
@@ -118,7 +121,7 @@ public class TaskFactory {
 
                 // stream the 1.5.2 jar into the target jar, excluding all files that are in the modFiles map
                 List<String> metaFilter = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
-                streamZip(new File(pathResolver.oneFiveTwo(), "1.5.2.jar"))
+                streamZip(new File(pathResolver.get().oneFiveTwo(), "1.5.2.jar"))
                         .filter(EntryAndData::isFile)
                         .filter(entry -> !metaFilter.contains(entry.getName()))
                         .filter(entry -> !modFiles.containsKey(entry.getName()))
