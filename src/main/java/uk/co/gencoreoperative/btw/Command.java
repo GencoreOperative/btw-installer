@@ -29,6 +29,7 @@ public class Command<T> extends Observable {
     private final String description;
 
     private final AtomicBoolean success = new AtomicBoolean();
+    private final AtomicBoolean processed  = new AtomicBoolean(false);
     private final AtomicReference<T> result = new AtomicReference<>();
 
     public Command(Supplier<T> action, Predicate<T> validator, String description) {
@@ -42,6 +43,8 @@ public class Command<T> extends Observable {
      */
     public void process() {
         result.set(action.get());
+        processed.set(true);
+        if (result.get() == null) return; // Null after #action signals cancelled or failed.
         success.set(validator.test(result.get()));
         setChanged();
         notifyObservers(this);
@@ -63,7 +66,7 @@ public class Command<T> extends Observable {
      * @return True if the Command has been processed.
      */
     public boolean isProcessed() {
-        return result.get() != null;
+        return processed.get();
     }
 
     /**

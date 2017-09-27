@@ -11,3 +11,9 @@ Researching the options we find:
 
 Launch4J - http://launch4j.sourceforge.net/
 JDK based javapackager - http://docs.oracle.com/javase/8/docs/technotes/guides/deploy/self-contained-packaging.html
+
+# Versions
+
+*0.1*: First working version with enough features to be dangerous
+
+*0.2*: Fix bug where utility would keep processing tasks after one had failed.

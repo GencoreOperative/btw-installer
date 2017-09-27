@@ -27,6 +27,7 @@ public class Main {
         for (Command command : commands.getCommands()) {
             command.process();
             complete &= command.isSuccessful();
+            if (!command.isSuccessful()) break;
         }
 
         // Signal the user that all tasks are complete.
