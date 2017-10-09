@@ -7,6 +7,7 @@ import uk.co.gencoreoperative.btw.ui.Strings;
 import java.util.Arrays;
 
 // Based on  http://www.sargunster.com/btwforum/viewtopic.php?f=9&t=8925
+
 public class Main {
 
     private Progress progress;

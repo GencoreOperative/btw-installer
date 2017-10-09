@@ -14,8 +14,14 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Assembles all commands that can be performed by the utility and wires them
- * together for use in the utility.
+ * Defines and wires together all commands that are performed by the installer.
+ *
+ * The commands created have an implicit dependency on prior commands, and as
+ * such their order is fixed by the {@link #getCommands()} method.
+ *
+ * // TODO: Two types of failure - user error, and operating system error.
+ * // User error is a genuine case that needs validation
+ * // OS error is generally caught by exceptions - the failure can be tracked
  */
 public class Commands {
     private static final Predicate<File> EXISTS = File::exists;
@@ -24,7 +30,7 @@ public class Commands {
     public Commands(ActionFactory actionFactory) {
         Command<File> installationFolder = new Command<>(
                 actionFactory.selectMinecraftHome(),
-                EXISTS,
+                EXISTS, // TODO AND is a Directory
                 "minecraft installation was selected");
 
         Command<PathResolver> oneFiveTwo = new Command<>(
@@ -49,12 +55,12 @@ public class Commands {
 
         Command<File> requestPatch = new Command<>(
                 actionFactory.selectPatchZip(),
-                EXISTS,
+                EXISTS, // TODO: AND is a File
                 "patch file was selected");
 
         Command<File> assembleMergedJar = new Command<>(
                 actionFactory.mergePatchAndRelease(createTargetFolder.promise(), requestPatch.promise(), oneFiveTwo.promise()),
-                EXISTS,
+                EXISTS, // TODO Validate contents? Validate known CRC?
                 "created BetterThanWolves.jar");
 
         commands = Arrays.asList(
