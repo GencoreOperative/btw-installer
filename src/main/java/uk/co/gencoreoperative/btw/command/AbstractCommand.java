@@ -7,6 +7,7 @@
  */
 package uk.co.gencoreoperative.btw.command;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -38,10 +39,6 @@ public abstract class AbstractCommand<T> {
     }
 
     /**
-     * Transition the Command from its initial state to determine if the Command was successful.
-     */
-
-    /**
      * Process the action.
      *
      * If the action fails due to {@link Exception} being thrown, then extract the message from the error and
@@ -49,25 +46,12 @@ public abstract class AbstractCommand<T> {
      *
      * If the action was cancelled, then we will indicate cancelled and unsuccessful.
      *
-     * TODO AM HERE
-     * This thought was about task linking.
-     *
-     * We want commands to issue promises so we can link them together. When the promise is
-     * called, this invokes the associated command and generates a result. The user of the result
-     * of the promise needs to check if this was successful or not before attempting to use the
-     * result.
-     *
-     * So - the question to think about is - is this sort of chaining suitable?
-     *
-     * - Define tasks - what does the task do? What does it need to do it?
-     * - Link tasks to the promised output of a previous task
-     * - The last task - invoke its promise to trigger the chain of commands above it.
+     * Otherwise the action was successful.
      */
 
     private void process() {
         try {
             result.set(processAction());
-            processed.set(true);
             if (result.get() == null) {
                 cancelled.set(true);
             } else {
@@ -76,23 +60,27 @@ public abstract class AbstractCommand<T> {
         } catch (Exception e) {
             success.set(false);
             error = e.getMessage();
+        } finally {
+            processed.set(true);
         }
     }
 
     /**
      * Create a promise that a caller can be issued with. The result of the command will
-     * be yielded on request. This assumes that the command has been processed by calling
-     * the {@link #process()} method.
+     * be yielded on request. By invoking the {@link Supplier} of this method, the
+     * associated command will be processed.
      *
-     * @return A supplier which will yield the processed value only if this Command
-     * has been processed. That is this will only return a value when
-     * {@link AbstractCommand#process()} has been called.
+     * @return A supplier which will yield an {@link Optional} of the processed value only
+     * if the processing was successful. If there was any error (exception or cancelled) then
+     * the optional will be empty.
      */
-    public Supplier<T> promise() {
+    public Supplier<Optional<T>> promise() {
         return () -> {
             process();
-            if (isSuccess()) return result.get();
-            return null;
+            if (isSuccess()) {
+                return Optional.of(result.get());
+            }
+            return Optional.empty();
         };
     }
 

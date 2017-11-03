@@ -2,6 +2,7 @@ package uk.co.gencoreoperative.btw.command;
 
 import static org.junit.Assert.*;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.junit.Test;
@@ -16,8 +17,9 @@ public class AbstractCommandTest {
                 return "badger";
             }
         };
-        Supplier<String> promise = command.promise();
-        assertEquals(promise.get(), "badger");
+        Supplier<Optional<String>> promise = command.promise();
+        String result = promise.get().get();
+        assertEquals(result, "badger");
         assertTrue(command.isSuccess());
     }
 
@@ -29,8 +31,9 @@ public class AbstractCommandTest {
                 return null;
             }
         };
-        Supplier<String> promise = command.promise();
-        assertNull(promise.get());
+        Supplier<Optional<String>> promise = command.promise();
+        Optional<String> result = promise.get();
+        assertFalse(result.isPresent());
         assertTrue(command.isCancelled());
     }
 
@@ -39,11 +42,13 @@ public class AbstractCommandTest {
         AbstractCommand<String> command = new AbstractCommand<String>("test") {
             @Override
             protected String processAction() throws Exception {
-                throw new Exception();
+                throw new Exception("Badgers!");
             }
         };
-        Supplier<String> promise = command.promise();
-        assertNull(promise.get());
-        assertTrue(command.isCancelled());
+        Supplier<Optional<String>> promise = command.promise();
+        Optional<String> result = promise.get();
+        assertFalse(result.isPresent());
+        assertFalse(command.isSuccess());
+        assertTrue(command.getFailedReason() != null);
     }
 }
