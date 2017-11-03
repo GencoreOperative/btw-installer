@@ -10,24 +10,32 @@ package uk.co.gencoreoperative.btw.command;
 import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
 
 /**
- * Describes a command which is performed by the system and might typically
- * involve file system operations. This command can fail for a known reason
- * and if this is the case an exception will capture the detail.
+ * Describes a command which is performed by the system, for example a
+ * file system operation.
+ *
+ * This command can fail for a known reason and if this is the case
+ * an exception will capture the detail.
  */
 public class SystemCommand<T> extends AbstractCommand<T> {
     private ThrowingSupplier<T, ? extends Exception> action;
+
     public <E extends Exception> SystemCommand(ThrowingSupplier<T, E> action, String description) {
         super(description);
         this.action = action;
     }
 
+    /**
+     * Process the system action by getting the result of the provided supplier.
+     *
+     * @return The result T of the supplier if it was successful.
+     * @throws Exception If the operation failed.
+     */
     @Override
-    public T process() {
+    protected T processAction() throws Exception {
         try {
-            action.getOrThrow();
+            return action.getOrThrow();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
-        return null;
     }
 }

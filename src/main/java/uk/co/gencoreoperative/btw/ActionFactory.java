@@ -23,6 +23,12 @@ import static uk.co.gencoreoperative.btw.utils.FileUtils.openZip;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
 
+/**
+ * Captures the ability to describe actions that can be performed.
+ *
+ * This factory makes extensive use of {@link Supplier} to remove the
+ * need to calcualte the value being provided to the factory.
+ */
 public class ActionFactory {
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 

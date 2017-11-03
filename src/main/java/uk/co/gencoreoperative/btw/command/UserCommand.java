@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * Describes a command which is completed by user action. This action needs
  * a validation step to verify that the user has performed the action
- * correctly.
+ * correctly. It also needs to support the concept of being cancelled.
  */
 public class UserCommand<T> extends AbstractCommand<T> {
     private final Supplier<T> action;
@@ -25,8 +25,22 @@ public class UserCommand<T> extends AbstractCommand<T> {
         this.validator = validator;
     }
 
-    public Result<T> processAction() {
-        action.get();
-        return null;
+    /**
+     * Process the user action.
+     *
+     * @return T if the action was successfully completed, {@code null} if the user cancelled the action.
+     * @throws Exception If the validation failed to validate T.
+     */
+    public T processAction() throws Exception {
+        T result = action.get();
+        if (result == null) {
+            // Cancelled
+            return null;
+        }
+        if (validator.test(result)) {
+            return result;
+        } else {
+            throw new Exception(getDescription());
+        }
     }
 }

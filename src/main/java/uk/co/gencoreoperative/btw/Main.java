@@ -23,20 +23,20 @@ public class Main {
     }
 
     public void start() {
-        boolean complete = true;
-
-        for (Command command : commands.getCommands()) {
-            command.process();
-            complete &= command.isSuccessful();
-            if (!command.isSuccessful()) break;
-        }
-
-        // Signal the user that all tasks are complete.
-        if (complete) {
-            dialogFactory.getSuccessDialog(Strings.SUCCESS_TITLE.getText(), Strings.SUCCESS_MSG.getText());
-        } else {
-            // TODO signal error and reason.
-        }
+//        boolean complete = true;
+//
+//        for (Command command : commands.getCommands()) {
+//            command.process();
+//            complete &= command.isSuccessful();
+//            if (!command.isSuccessful()) break;
+//        }
+//
+//        // Signal the user that all tasks are complete.
+//        if (complete) {
+//            dialogFactory.getSuccessDialog(Strings.SUCCESS_TITLE.getText(), Strings.SUCCESS_MSG.getText());
+//        } else {
+//            // TODO signal error and reason.
+//        }
     }
 
     public static void main(String... args) {

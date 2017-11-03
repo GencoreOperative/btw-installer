@@ -1,4 +1,13 @@
+Move unit tests from CommandTest to AbstractCommandTest
+Verify that AbstractCommand is valid as an API.
+Ensure that implementations of User and System Command are API consistent and make sense with usage patterns
+Update ActionFactory/Commands based on this new learning.
+
+
+NPE if the user selects the Patch for the Minecraft Home location.
+
 TODO: Reason for failure should be captured in UI, error in a dialog, cancelled not.
+TODO: Prompt the user to use their default Minecraft installation or another.
 TODO: Move project to Github
 TODO: Add option to remove the mod
 TODO: JitWatch - Stream Copy is called many times.
