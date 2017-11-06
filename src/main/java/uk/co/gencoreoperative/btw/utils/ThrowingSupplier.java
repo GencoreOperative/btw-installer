@@ -10,14 +10,16 @@ package uk.co.gencoreoperative.btw.utils;
 import java.util.function.Supplier;
 
 /**
- * A {@link Supplier} like interface that describes the ability to supply an
- * instance of type T, or if there was an error in this process to throw an
- * exception to type E.
+ * A {@link Supplier} like interface that describes the ability to supply an instance
+ * of type {@code T}, or if there was an error in this process to throw an {@link Exception}.
+ *
+ * The decision here is to keep exception handling in functions that use this interface
+ * simple. There is a lot of complexity around handling exceptions or describing them
+ * with generics which are avoided by not opening the box in the first place.
  *
  * @param <T> The type yielded by this supplier.
- * @param <E> The type thrown in the event of a failure.
  */
 @FunctionalInterface
-public interface ThrowingSupplier<T, E extends Throwable> {
-    T getOrThrow() throws E;
+public interface ThrowingSupplier<T> {
+    T getOrThrow() throws Exception;
 }

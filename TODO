@@ -1,8 +1,4 @@
-Move unit tests from CommandTest to AbstractCommandTest
-Verify that AbstractCommand is valid as an API.
-Ensure that implementations of User and System Command are API consistent and make sense with usage patterns
-Update ActionFactory/Commands based on this new learning.
-
+TODO: Can we de-duplicate the null check in Commands?
 
 NPE if the user selects the Patch for the Minecraft Home location.
 

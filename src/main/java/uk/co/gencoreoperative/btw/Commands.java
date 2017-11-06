@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -31,60 +32,88 @@ import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
  */
 public class Commands {
     private static final Predicate<File> EXISTS = File::exists;
-//    private final List<Command> commands;
+    private final List<AbstractCommand> commands;
+    private final SystemCommand<File> assembleMergedJar;
 
     public Commands(ActionFactory actionFactory) {
-//        AbstractCommand<File> minecraftHome = new UserCommand<>(
-//                actionFactory.selectMinecraftHome(),
-//                EXISTS.and(File::isDirectory),
-//                "minecraft installation was selected");
-//
-//        // actionFactory.getPathResolver(installationFolder.promise()),
-//        // resolver -> new File(resolver.oneFiveTwo(), "1.5.2.jar").exists(),
-//        SystemCommand<PathResolver> oneFiveTwo = new SystemCommand<PathResolver>(
-//                () -> {
-//                    return actionFactory.getPathResolver(minecraftHome.promise());
-//                }, "version 1.5.2 exists");
-//
-//        Command<File> removePrevious = new Command<>(
-//                actionFactory.removePreviousInstallation(oneFiveTwo.promise()),
-//                EXISTS.negate(),
-//                "previous installation removed");
-//
-//        Command<File> createTargetFolder = new Command<>(
-//                actionFactory.createInstallationFolder(oneFiveTwo.promise()),
-//                EXISTS,
-//                "created installation folder");
-//
-//        Command<File> copyJsonFromResources = new Command<>(
-//                actionFactory.copyJsonToInstallation(createTargetFolder.promise()),
-//                EXISTS,
-//                "copy BetterThanWolves.json");
-//
-//        AbstractCommand<File> requestPatch = new UserCommand<>(
-//                actionFactory.selectPatchZip(),
-//                EXISTS, // TODO: AND is a File
-//                "patch file was selected");
-//
-//        Command<File> assembleMergedJar = new Command<>(
-//                actionFactory.mergePatchAndRelease(createTargetFolder.promise(), requestPatch.promise(), oneFiveTwo.promise()),
-//                EXISTS, // TODO Validate contents? Validate known CRC?
-//                "created BetterThanWolves.jar");
-//
-//        commands = Arrays.asList(
-//                minecraftHome,
-//                oneFiveTwo,
-//                removePrevious,
-//                createTargetFolder,
-//                copyJsonFromResources,
-//                requestPatch,
-//                assembleMergedJar);
+        AbstractCommand<File> minecraftHome = new UserCommand<>(
+                actionFactory::selectMinecraftHome,
+                EXISTS.and(File::isDirectory),
+                "minecraft installation was selected");
+
+        // actionFactory.getPathResolver(installationFolder.promise()),
+        // resolver -> new File(resolver.oneFiveTwo(), "1.5.2.jar").exists(),
+        SystemCommand<PathResolver> oneFiveTwo = new SystemCommand<>(
+                () -> {
+                    Optional<File> result = minecraftHome.promise().get();
+                    if (!result.isPresent()) {
+                        throw new Exception();
+                    }
+                    return actionFactory.getPathResolver(result.get());
+                }, "version 1.5.2 exists");
+
+        SystemCommand<File> removePrevious = new SystemCommand<>(
+                () -> {
+                    Optional<PathResolver> result = oneFiveTwo.promise().get();
+                    if (!result.isPresent()) {
+                        throw new Exception();
+                    }
+                    return actionFactory.removePreviousInstallation(result.get());
+                }, "previous installation removed");
+
+        SystemCommand<File> createTargetFolder = new SystemCommand<>(
+                () -> {
+                    Optional<PathResolver> pathResolver = oneFiveTwo.promise().get();
+                    if (!pathResolver.isPresent()) {
+                        throw new Exception();
+                    }
+
+                    return actionFactory.createInstallationFolder(pathResolver.get());
+                }, "created installation folder");
+
+        SystemCommand<File> copyJsonFromResources = new SystemCommand<>(
+                () -> {
+                    Optional<File> file = createTargetFolder.promise().get();
+                    if (!file.isPresent()) {
+                        throw new Exception();
+                    }
+                    return actionFactory.copyJsonToInstallation(file.get());
+                }, "copy BetterThanWolves.json");
+
+
+        UserCommand<File> requestPatch = new UserCommand<>(
+                actionFactory::selectPatchZip, EXISTS, "patch file was selected");
+
+        assembleMergedJar = new SystemCommand<>(
+                () -> {
+                    Optional<File> targetFolder = createTargetFolder.promise().get();
+                    Optional<File> patchFile = requestPatch.promise().get();
+                    Optional<PathResolver> pathResolver = oneFiveTwo.promise().get();
+                    if (!targetFolder.isPresent() || !patchFile.isPresent() || !pathResolver.isPresent()) {
+                        throw new Exception();
+                    }
+
+                    return actionFactory.mergePatchAndRelease(targetFolder.get(), patchFile.get(), pathResolver.get());
+                }, "created BetterThanWolves.jar");
+
+        commands = Arrays.asList(
+                minecraftHome,
+                oneFiveTwo,
+                removePrevious,
+                createTargetFolder,
+                copyJsonFromResources,
+                requestPatch,
+                assembleMergedJar);
     }
 
     /**
      * @return An ordered list of commands to be executed.
      */
-    public List<Command> getCommands() {
-        return Collections.EMPTY_LIST;
+    public List<AbstractCommand> getCommands() {
+        return commands;
+    }
+
+    public AbstractCommand getLastCommand() {
+        return assembleMergedJar;
     }
 }

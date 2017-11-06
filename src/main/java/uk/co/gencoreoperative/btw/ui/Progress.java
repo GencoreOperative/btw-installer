@@ -10,11 +10,11 @@ import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
 
-import uk.co.gencoreoperative.btw.Command;
 import uk.co.gencoreoperative.btw.Main;
+import uk.co.gencoreoperative.btw.command.AbstractCommand;
 
 public class Progress extends JDialog implements Observer {
-    private final DefaultListModel<Command> model = new DefaultListModel<>();
+    private final DefaultListModel<AbstractCommand> model = new DefaultListModel<>();
 
     private final Action closeAction = new AbstractAction() {
         {
@@ -60,7 +60,7 @@ public class Progress extends JDialog implements Observer {
     }
 
     private JComponent centerLayout() {
-        JList<Command> list = new JList<>(model);
+        JList<AbstractCommand> list = new JList<>(model);
         list.setCellRenderer((list1, value, index, isSelected, cellHasFocus) -> render(value));
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize((new Dimension(300, 150)));
@@ -74,7 +74,7 @@ public class Progress extends JDialog implements Observer {
         return panel;
     }
 
-    public void addItem(Command command) {
+    public void addItem(AbstractCommand command) {
         command.addObserver(this);
         model.addElement(command);
     }
@@ -87,9 +87,9 @@ public class Progress extends JDialog implements Observer {
         boolean complete = true;
         boolean failed = false;
         for (int ii = 0; ii < model.getSize(); ii++) {
-            Command command = model.getElementAt(ii);
-            complete = complete && command.isProcessed() && command.isSuccessful();
-            failed = failed || command.isProcessed() && !command.isSuccessful();
+            AbstractCommand command = model.getElementAt(ii);
+            complete = complete && command.isSuccess();
+            failed = failed || !command.isSuccess();
         }
         if (complete || failed) {
             patchAction.setEnabled(false);
@@ -101,17 +101,18 @@ public class Progress extends JDialog implements Observer {
      *
      * @param command Non null Command to render.
      */
-    private JLabel render(Command command) {
+    private JLabel render(AbstractCommand command) {
         final Icons icon;
-        if (command.isProcessed()) {
-            if (command.isSuccessful()) {
-                icon = Icons.TICK;
-            } else {
-                icon = Icons.ERROR;
-            }
+        if (command.isSuccess()) {
+            icon = Icons.TICK;
         } else {
-            icon = Icons.QUESTION;
+            icon = Icons.ERROR;
         }
+//        if (command.isProcessed()) {
+//
+//        } else {
+//            icon = Icons.QUESTION;
+//        }
         return new JLabel(command.getDescription(), icon.getIcon(), SwingConstants.LEADING);
     }
 

@@ -7,12 +7,11 @@
  */
 package uk.co.gencoreoperative.btw.command;
 
+import java.util.Observable;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-
-import uk.co.gencoreoperative.btw.Command;
 
 /**
  * A generic command concept which has the ability to be processed and generate a result
@@ -25,7 +24,7 @@ import uk.co.gencoreoperative.btw.Command;
  *     <li><b>Cancelled</b>: The user cancelled the action in some way.</li>
  * </ul>
  */
-public abstract class AbstractCommand<T> {
+public abstract class AbstractCommand<T> extends Observable {
     private final String description;
 
     private final AtomicBoolean success = new AtomicBoolean();
