@@ -97,22 +97,23 @@ public class Progress extends JDialog implements Observer {
     }
 
     /**
-     * Given an {@link Command}, render this to a JLabel suitable for display to the user.
+     * Given an {@link AbstractCommand}, render this to a JLabel suitable for display to the user.
      *
-     * @param command Non null Command to render.
+     * The command has a textual description and a state which will be of interest for display.
+     *
+     * @param command Non null {@link AbstractCommand} to render.
      */
     private JLabel render(AbstractCommand command) {
         final Icons icon;
-        if (command.isSuccess()) {
-            icon = Icons.TICK;
+        if (command.isProcessed()) {
+            if (command.isSuccess()) {
+                icon = Icons.TICK;
+            } else {
+                icon = Icons.ERROR;
+            }
         } else {
-            icon = Icons.ERROR;
+            icon = Icons.QUESTION;
         }
-//        if (command.isProcessed()) {
-//
-//        } else {
-//            icon = Icons.QUESTION;
-//        }
         return new JLabel(command.getDescription(), icon.getIcon(), SwingConstants.LEADING);
     }
 

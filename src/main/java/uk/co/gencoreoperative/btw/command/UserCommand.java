@@ -10,16 +10,18 @@ package uk.co.gencoreoperative.btw.command;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
+
 /**
  * Describes a command which is completed by user action. This action needs
  * a validation step to verify that the user has performed the action
  * correctly. It also needs to support the concept of being cancelled.
  */
 public class UserCommand<T> extends AbstractCommand<T> {
-    private final Supplier<T> action;
+    private final ThrowingSupplier<T> action;
     private final Predicate<T> validator;
 
-    public UserCommand(Supplier<T> action, Predicate<T> validator, String description) {
+    public UserCommand(ThrowingSupplier<T> action, Predicate<T> validator, String description) {
         super(description);
         this.action = action;
         this.validator = validator;
@@ -32,7 +34,7 @@ public class UserCommand<T> extends AbstractCommand<T> {
      * @throws Exception If the validation failed to validate T.
      */
     public T processAction() throws Exception {
-        T result = action.get();
+        T result = action.getOrThrow();
         if (result == null) {
             // Cancelled
             return null;

@@ -75,7 +75,9 @@ public abstract class AbstractCommand<T> extends Observable {
      */
     public Supplier<Optional<T>> promise() {
         return () -> {
-            process();
+            if (!isProcessed()) {
+                process();
+            }
             if (isSuccess()) {
                 return Optional.of(result.get());
             }
@@ -84,10 +86,19 @@ public abstract class AbstractCommand<T> extends Observable {
     }
 
     /**
+     * Indicates if the action has been processed yet. Attempting to determine the state of the
+     * action (success/error) before the command has been processed will result in an error.
+     * @return True if the state of processing is ready to collect. False if not.
+     */
+    public boolean isProcessed() {
+        return processed.get();
+    }
+
+    /**
      * @return True if the processed command was successful, otherwise false.
      */
     public boolean isSuccess() {
-        if (!processed.get()) throw new IllegalStateException("Command not processed yet");
+        if (!isProcessed()) throw new IllegalStateException("Command not processed yet");
         return success.get();
     }
 
@@ -95,7 +106,7 @@ public abstract class AbstractCommand<T> extends Observable {
      * @return If the user cancelled the action, this will be true.
      */
     public boolean isCancelled() {
-        if (!processed.get()) throw new IllegalStateException("Command not processed yet");
+        if (!isProcessed()) throw new IllegalStateException("Command not processed yet");
         return cancelled.get();
     }
 
@@ -103,7 +114,7 @@ public abstract class AbstractCommand<T> extends Observable {
      * @return If {@link #isSuccess()} is false, this will return the reason for the failure.
      */
     public String getFailedReason() {
-        if (!processed.get()) throw new IllegalStateException("Command not processed yet");
+        if (!isProcessed()) throw new IllegalStateException("Command not processed yet");
         return error;
     }
 

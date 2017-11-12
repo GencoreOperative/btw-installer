@@ -39,14 +39,16 @@ public class PathResolver implements Supplier<File> {
     }
 
     public static File getDefaultMinecraftPath() {
-        String operatingSystem = System.getProperty("os.name");
-        File folder;
-        if ("Mac OS X".equalsIgnoreCase(operatingSystem)) {
-            folder = new File(System.getProperty("user.home") + "/Library/Application Support/minecraft");
+        return new File(new File(System.getProperty("user.home"), "tmp"), "minecraft");
 
-        } else {
-            folder = new File("%appdata%\\.minecraft");
-        }
-        return folder;
+//        String operatingSystem = System.getProperty("os.name");
+//        File folder;
+//        if ("Mac OS X".equalsIgnoreCase(operatingSystem)) {
+//            folder = new File(System.getProperty("user.home") + "/Library/Application Support/minecraft");
+//
+//        } else {
+//            folder = new File("%appdata%\\.minecraft");
+//        }
+//        return folder;
     }
 }
