@@ -2,6 +2,8 @@ package uk.co.gencoreoperative.btw.command;
 
 import static org.junit.Assert.*;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -10,43 +12,40 @@ import org.junit.Test;
 public class AbstractCommandTest {
 
     @Test
-    public void shouldYieldResultWhenPromiseTriggered() {
-        AbstractCommand<String> command = new AbstractCommand<String>("test") {
+    public void shouldYieldResultWhenPromiseTriggered() throws Exception {
+        AbstractCommand<String> command = new AbstractCommand<String>("test", null) {
             @Override
-            protected String processAction() throws Exception {
+            protected String processAction(Map<Class, Object> inputs) throws Exception {
                 return "badger";
             }
         };
-        Supplier<Optional<String>> promise = command.promise();
-        String result = promise.get().get();
-        assertEquals(result, "badger");
+        Optional<String> result = command.process(Collections.emptyMap());
+        assertEquals(result.get(), "badger");
         assertTrue(command.isSuccess());
     }
 
     @Test
-    public void shouldReturnNullWhenCancelled() {
-        AbstractCommand<String> command = new AbstractCommand<String>("test") {
+    public void shouldReturnNullWhenCancelled() throws Exception {
+        AbstractCommand<String> command = new AbstractCommand<String>("test", null) {
             @Override
-            protected String processAction() throws Exception {
+            protected String processAction(Map<Class, Object> inputs) throws Exception {
                 return null;
             }
         };
-        Supplier<Optional<String>> promise = command.promise();
-        Optional<String> result = promise.get();
+        Optional<String> result = command.process(Collections.emptyMap());
         assertFalse(result.isPresent());
         assertTrue(command.isCancelled());
     }
 
     @Test
-    public void shouldReturnNullWhenFailed() {
-        AbstractCommand<String> command = new AbstractCommand<String>("test") {
+    public void shouldReturnNullWhenFailed() throws Exception {
+        AbstractCommand<String> command = new AbstractCommand<String>("test", null) {
             @Override
-            protected String processAction() throws Exception {
+            protected String processAction(Map<Class, Object> inputs) throws Exception {
                 throw new Exception("Badgers!");
             }
         };
-        Supplier<Optional<String>> promise = command.promise();
-        Optional<String> result = promise.get();
+        Optional<String> result = command.process(Collections.emptyMap());
         assertFalse(result.isPresent());
         assertFalse(command.isSuccess());
         assertTrue(command.getFailedReason() != null);

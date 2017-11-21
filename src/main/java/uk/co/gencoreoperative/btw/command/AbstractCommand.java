@@ -1,14 +1,11 @@
-/*
- * Copyright 2017 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
 package uk.co.gencoreoperative.btw.command;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -26,6 +23,8 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractCommand<T> extends Observable {
     private final String description;
+    private final Class output;
+    private final Set<Class> inputs = new HashSet<>();
 
     private final AtomicBoolean success = new AtomicBoolean();
     private final AtomicBoolean processed  = new AtomicBoolean(false);
@@ -33,8 +32,32 @@ public abstract class AbstractCommand<T> extends Observable {
     private final AtomicReference<T> result = new AtomicReference<>();
     private String error;
 
-    public AbstractCommand(String description) {
+    public AbstractCommand(String description, Class output, Class... inputs) {
         this.description = description;
+        this.output = output;
+        this.inputs.addAll(Arrays.asList(inputs));
+    }
+
+    /**
+     * Each command needs to define the input objects it requires for processing.
+     *
+     * @see CommandManager for details about the wiring of commands together.
+     *
+     * @return Non null, possibly empty set of classes.
+     */
+    public Set<Class> input() {
+        return inputs;
+    }
+
+    /**
+     * Each command needs to define the output value it produces.
+     *
+     * @see CommandManager for details about the wiring of commands together.
+     *
+     * @return Possibly null response which indicates no response.
+     */
+    public Class output() {
+        return output;
     }
 
     /**
@@ -47,21 +70,24 @@ public abstract class AbstractCommand<T> extends Observable {
      *
      * Otherwise the action was successful.
      */
-
-    private void process() {
+    // TODO: JavaDoc
+    public Optional<T> process(Map<Class, Object> inputs) throws Exception {
         try {
-            result.set(processAction());
+            result.set(processAction(inputs));
             if (result.get() == null) {
                 cancelled.set(true);
             } else {
                 success.set(true);
+                return Optional.of(result.get());
             }
         } catch (Exception e) {
+            // TODO: Throw exception
             success.set(false);
             error = e.getMessage();
         } finally {
             processed.set(true);
         }
+        return Optional.empty();
     }
 
     /**
@@ -75,12 +101,12 @@ public abstract class AbstractCommand<T> extends Observable {
      */
     public Supplier<Optional<T>> promise() {
         return () -> {
-            if (!isProcessed()) {
-                process();
-            }
-            if (isSuccess()) {
-                return Optional.of(result.get());
-            }
+//            if (!isProcessed()) {
+//                process();
+//            }
+//            if (isSuccess()) {
+//                return Optional.of(result.get());
+//            }
             return Optional.empty();
         };
     }
@@ -145,5 +171,6 @@ public abstract class AbstractCommand<T> extends Observable {
      * exception. <i>Note:</i> We are choosing {@link Exception} here for simplicity sake. Promoting to a generic
      * type comes with its own problems which we are choosing to avoid by keeping this simple.
      */
-    protected abstract T processAction() throws Exception;
+    // TODO: JavaDoc
+    protected abstract T processAction(Map<Class, Object> inputs) throws Exception;
 }

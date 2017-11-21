@@ -1,11 +1,6 @@
-/*
- * Copyright 2017 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
 package uk.co.gencoreoperative.btw.command;
+
+import java.util.Map;
 
 import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
 
@@ -19,8 +14,8 @@ import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
 public class SystemCommand<T> extends AbstractCommand<T> {
     private ThrowingSupplier<T> action;
 
-    public <E extends Exception> SystemCommand(ThrowingSupplier<T> action, String description) {
-        super(description);
+    public <E extends Exception> SystemCommand(ThrowingSupplier<T> action, String description, Class output, Class... inputs) {
+        super(description, output, inputs);
         this.action = action;
     }
 
@@ -31,7 +26,7 @@ public class SystemCommand<T> extends AbstractCommand<T> {
      * @throws Exception If the operation failed.
      */
     @Override
-    protected T processAction() throws Exception {
-        return action.getOrThrow();
+    protected T processAction(Map<Class, Object> inputs) throws Exception {
+        return action.getOrThrow(inputs);
     }
 }

@@ -1,28 +1,16 @@
-/*
- * Copyright 2017 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
 package uk.co.gencoreoperative.btw;
 
-import static uk.co.gencoreoperative.btw.ui.Errors.*;
+import static uk.co.gencoreoperative.btw.utils.ThrowingSupplier.getInputValue;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
 import uk.co.gencoreoperative.btw.command.SystemCommand;
 import uk.co.gencoreoperative.btw.command.UserCommand;
 import uk.co.gencoreoperative.btw.ui.Errors;
-import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
 
 /**
  * Defines and wires together all commands that are performed by the installer.
@@ -44,7 +32,7 @@ public class Commands {
 
     public Commands(ActionFactory actionFactory) {
         AbstractCommand<PathResolver> minecraftHome = new UserCommand<>(
-                () -> {
+                inputs -> {
                     PathResolver resolver = new PathResolver(actionFactory.selectMinecraftHome());
                     boolean exists = resolver.oneFiveTwo().exists();
                     if (!exists) {
@@ -53,66 +41,53 @@ public class Commands {
                     return resolver;
                 },
                 r -> r.versions().exists(),
-                "minecraft installation was selected");
-
-        SystemCommand<File> removePrevious = new SystemCommand<>(
-                () -> {
-                    Optional<PathResolver> result = minecraftHome.promise().get();
-                    if (!result.isPresent()) {
-                        throw new Exception();
-                    }
-                    return actionFactory.removePreviousInstallation(result.get());
-                }, "previous installation removed");
+                "minecraft installation was selected",
+                PathResolver.class);
 
         /**
          * Create the target installation folder.
          * Depends on the previous installation folder being removed.
          * Depends on the user selected the minecraft home folder.
          */
-        SystemCommand<File> createTargetFolder = new SystemCommand<>(
-                () -> {
-                    Optional<File> previous = removePrevious.promise().get();
-                    if (!previous.isPresent()) {
-                        throw new Exception();
-                    }
-                    Optional<PathResolver> pathResolver = minecraftHome.promise().get();
-                    if (!pathResolver.isPresent()) {
-                        throw new Exception();
-                    }
-
-                    return actionFactory.createInstallationFolder(pathResolver.get());
-                }, "created installation folder");
+        SystemCommand<TargetFolder> createTargetFolder = new SystemCommand<>(
+                inputs -> {
+                    PathResolver pathResolver = getInputValue(inputs, PathResolver.class);
+                    actionFactory.removePreviousInstallation(pathResolver);
+                    return new TargetFolder(actionFactory.createInstallationFolder(pathResolver));
+                },
+                "created installation folder",
+                TargetFolder.class,
+                PathResolver.class);
 
         SystemCommand<File> copyJsonFromResources = new SystemCommand<>(
-                () -> {
-                    Optional<File> file = createTargetFolder.promise().get();
-                    if (!file.isPresent()) {
-                        throw new Exception();
-                    }
-                    return actionFactory.copyJsonToInstallation(file.get());
-                }, "copy BetterThanWolves.json");
+                inputs -> {
+                    TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);
+                    actionFactory.copyJsonToInstallation(targetFolder.getFolder());
+                    return null;
+                },
+                "copy BetterThanWolves.json",
+                null,
+                TargetFolder.class);
 
 
         UserCommand<File> requestPatch = new UserCommand<>(
-                actionFactory::selectPatchZip, EXISTS, "patch file was selected");
+                inputs -> actionFactory.selectPatchZip(), EXISTS,
+                "patch file was selected",
+                PatchFile.class);
 
         assembleMergedJar = new SystemCommand<>(
-                () -> {
-                    Optional<File> targetJson = copyJsonFromResources.promise().get();
-                    Optional<File> targetFolder = createTargetFolder.promise().get();
-                    Optional<File> patchFile = requestPatch.promise().get();
-                    Optional<PathResolver> pathResolver = minecraftHome.promise().get();
-
-                    if (!Stream.of(targetJson, targetFolder, patchFile, pathResolver).allMatch(Optional::isPresent)) {
-                        throw new Exception();
-                    }
-
-                    return actionFactory.mergePatchAndRelease(targetFolder.get(), patchFile.get(), pathResolver.get());
-                }, "created BetterThanWolves.jar");
+                inputs -> {
+                    PatchFile patchFile = getInputValue(inputs, PatchFile.class);
+                    TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);
+                    PathResolver pathResolver = getInputValue(inputs, PathResolver.class);
+                    return actionFactory.mergePatchAndRelease(targetFolder.getFolder(), patchFile.getFile(), pathResolver);
+                },
+                "created BetterThanWolves.jar",
+                null,
+                PathResolver.class, TargetFolder.class, PatchFile.class);
 
         commands = Arrays.asList(
                 minecraftHome,
-                removePrevious,
                 createTargetFolder,
                 copyJsonFromResources,
                 requestPatch,
@@ -135,5 +110,29 @@ public class Commands {
      */
     public AbstractCommand<File> getLastCommand() {
         return assembleMergedJar;
+    }
+
+    private class TargetFolder {
+        private final File folder;
+
+        public TargetFolder(File installationFolder) {
+            this.folder = installationFolder;
+        }
+
+        public File getFolder() {
+            return folder;
+        }
+    }
+
+    private class PatchFile {
+        private final File file;
+
+        public PatchFile(File pathFile) {
+            this.file = pathFile;
+        }
+
+        public File getFile() {
+            return file;
+        }
     }
 }

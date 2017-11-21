@@ -1,12 +1,6 @@
-/*
- * Copyright 2017 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
 package uk.co.gencoreoperative.btw.command;
 
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -21,8 +15,8 @@ public class UserCommand<T> extends AbstractCommand<T> {
     private final ThrowingSupplier<T> action;
     private final Predicate<T> validator;
 
-    public UserCommand(ThrowingSupplier<T> action, Predicate<T> validator, String description) {
-        super(description);
+    public UserCommand(ThrowingSupplier<T> action, Predicate<T> validator, String description, Class output, Class... inputs) {
+        super(description, output, inputs);
         this.action = action;
         this.validator = validator;
     }
@@ -33,8 +27,8 @@ public class UserCommand<T> extends AbstractCommand<T> {
      * @return T if the action was successfully completed, {@code null} if the user cancelled the action.
      * @throws Exception If the validation failed to validate T.
      */
-    public T processAction() throws Exception {
-        T result = action.getOrThrow();
+    protected T processAction(Map<Class, Object> inputs) throws Exception {
+        T result = action.getOrThrow(inputs);
         if (result == null) {
             // Cancelled
             return null;
