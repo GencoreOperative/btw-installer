@@ -1,5 +1,6 @@
 package uk.co.gencoreoperative.btw.command;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -173,4 +174,9 @@ public abstract class AbstractCommand<T> extends Observable {
      */
     // TODO: JavaDoc
     protected abstract T processAction(Map<Class, Object> inputs) throws Exception;
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("{0} [{1}]", description, isProcessed());
+    }
 }
