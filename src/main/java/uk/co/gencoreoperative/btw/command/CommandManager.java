@@ -11,16 +11,37 @@ import java.util.stream.Collectors;
 
 /**
  * The role of the {@link CommandManager} is to orchestrate the {@link AbstractCommand}
- * instances that it is provided.
+ * instances that it is provided with.
  *
- * It will be responsible for resolving each command and executing them in order to
- * ensure that all pre-requisites are met.
+ * It will be responsible for resolving each command and executing them in an order that
+ * ensures all pre-requisites are met.
  *
- * If there is a failure during the execution chain, then the error can halt processing
- * and be presented to the caller.
+ * If there is a failure during the execution chain, then the {@link CommandManager} will
+ * halt execution at this point.
+ *
+ * *Note:* There is no guarantee over the over in which the commands will be executed, other
+ * than to follow the dependency graph between commands.
  */
 public class CommandManager {
+
+    /**
+     * Execute the commands as provided in the set.
+     *
+     * Start with the commands that have no input requirements, these will generate
+     * values as output. Then iterate over the available non-processed commands looking
+     * to meet the dependencies of those commands by executing all subsequently
+     * available commands.
+     *
+     * *Note:* If processing encounters a command that fails to execute, then execution
+     * is halted at this point.
+     *
+     * @param commands Non null, non empty set of {@link AbstractCommand} to execute.
+     *
+     * @throws Exception If the commands provided were empty, or if there was an error
+     * with the dependency graph between commands in the set.
+     */
     public void process(Set<AbstractCommand> commands) throws Exception {
+        if (commands == null || commands.isEmpty()) throw new NullPointerException("empty commands");
         Map<Class, Object> results = new HashMap<>();
         while (!areAllCommandsComplete(commands)) {
 

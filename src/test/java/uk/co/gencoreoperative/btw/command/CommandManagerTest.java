@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.mock;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,14 @@ public class CommandManagerTest {
     {
         describe("With a CommandManager", () -> {
             final CommandManager manager = new CommandManager();
+            describe("and no commands", () -> {
+                it("will fail", () -> {
+                    try {
+                        manager.process(Collections.emptySet());
+                        fail();
+                    } catch (Exception ignored) {}
+                });
+            });
             describe("and some dummy Commands", () -> {
                 final Set<AbstractCommand> commands = new HashSet<>();
                 final List<String> results = new ArrayList<>();
