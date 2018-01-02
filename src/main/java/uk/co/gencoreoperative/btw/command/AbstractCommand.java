@@ -1,5 +1,7 @@
 package uk.co.gencoreoperative.btw.command;
 
+import static java.text.MessageFormat.format;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,10 +19,13 @@ import java.util.function.Supplier;
  *
  * <ul>
  *     <li><b>Initial</b>: When created the Command will be in this state.</li>
- *     <li><b>Success</b>: The {@link #process()} method has been called and processing was successful</li>
- *     <li><b>Failed</b>: When {@link #process()} was called but something went wrong. The error is captured.</li>
+ *     <li><b>Success</b>: The {@link #process(Map)} method has been called and processing was successful</li>
+ *     <li><b>Failed</b>: When {@link #process(Map)} was called but something went wrong. The error is captured.</li>
  *     <li><b>Cancelled</b>: The user cancelled the action in some way.</li>
  * </ul>
+ *
+ * All commands are able to describe their state to an {@link java.util.Observer} which
+ * will be updated after any state change in the command.
  */
 public abstract class AbstractCommand<T> extends Observable {
     private final String description;
@@ -33,7 +38,15 @@ public abstract class AbstractCommand<T> extends Observable {
     private final AtomicReference<T> result = new AtomicReference<>();
     private String error;
 
-    public AbstractCommand(String description, Class output, Class... inputs) {
+    /**
+     * Create a command which describes what it does, what inputs it requires and
+     * what it will output when processing completes.
+     *
+     * @param description A non null description suitable for display.
+     * @param output A possibly null output class.
+     * @param inputs A possible null collection of input classes.
+     */
+    public AbstractCommand(String description, Class<T> output, Class... inputs) {
         this.description = description;
         this.output = output;
         this.inputs.addAll(Arrays.asList(inputs));
@@ -64,15 +77,17 @@ public abstract class AbstractCommand<T> extends Observable {
     /**
      * Process the action.
      *
-     * If the action fails due to {@link Exception} being thrown, then extract the message from the error and
-     * indicate unsuccessful.
+     * A call to this method will trigger the {@link #processAction(Map)} abstract method
+     * which will do the work of the action.
      *
-     * If the action was cancelled, then we will indicate cancelled and unsuccessful.
+     * After this method completes, the action will be in a new state which will either be
+     * successful, or unsuccessful and a reason why.
      *
-     * Otherwise the action was successful.
+     * @param inputs A non null. but possibly empty map of inputs which will be
+     *               passed to {@link #processAction(Map)}.
+     * @return Optional of type T
      */
-    // TODO: JavaDoc
-    public Optional<T> process(Map<Class, Object> inputs) throws Exception {
+    public Optional<T> process(Map<Class, Object> inputs) {
         try {
             result.set(processAction(inputs));
             if (result.get() == null) {
@@ -82,7 +97,6 @@ public abstract class AbstractCommand<T> extends Observable {
                 return Optional.of(result.get());
             }
         } catch (Exception e) {
-            // TODO: Throw exception
             success.set(false);
             error = e.getMessage();
         } finally {
@@ -90,27 +104,6 @@ public abstract class AbstractCommand<T> extends Observable {
             notifyObservers();
         }
         return Optional.empty();
-    }
-
-    /**
-     * Create a promise that a caller can be issued with. The result of the command will
-     * be yielded on request. By invoking the {@link Supplier} of this method, the
-     * associated command will be processed.
-     *
-     * @return A supplier which will yield an {@link Optional} of the processed value only
-     * if the processing was successful. If there was any error (exception or cancelled) then
-     * the optional will be empty.
-     */
-    public Supplier<Optional<T>> promise() {
-        return () -> {
-//            if (!isProcessed()) {
-//                process();
-//            }
-//            if (isSuccess()) {
-//                return Optional.of(result.get());
-//            }
-            return Optional.empty();
-        };
     }
 
     /**
@@ -161,23 +154,24 @@ public abstract class AbstractCommand<T> extends Observable {
      *
      * The convention for an action is as follows:
      *
-     * If the action was <b>successful</b>, return the result of Type T.
-     * If the action could not be started because of <b>invalid state</b>, throw an exception.
-     * If the action was processed by <b>validation</b> indicated it was not successful, throw an exception.
-     * If the user <b>cancels</b> the action, return null.
+     * <ul>
+     *  <li>If the action was <b>successful</b>, return the result of Type T.</li>
+     *  <li>If the action could not be started because of <b>invalid state</b>, throw an exception.</li>
+     *  <li>If the action was processed by <b>validation</b> indicated it was not successful, throw an exception.</li>
+     *  <li>If the user <b>cancels</b> the action, return null.</li>
+     * </ul>
      *
-     * @return If the user cancelled the Command, return {@code null} otherwise return the result of type T from
-     * processing.
+     * @return The result according to the processing of the action implementation and the
+     * states abovee.
      *
      * @throws Exception If there was any error in processing which prevents subsequent processing, throw an
      * exception. <i>Note:</i> We are choosing {@link Exception} here for simplicity sake. Promoting to a generic
      * type comes with its own problems which we are choosing to avoid by keeping this simple.
      */
-    // TODO: JavaDoc
     protected abstract T processAction(Map<Class, Object> inputs) throws Exception;
 
     @Override
     public String toString() {
-        return MessageFormat.format("{0} [{1}]", description, isProcessed());
+        return format("{0} [{1}]", description, isProcessed());
     }
 }

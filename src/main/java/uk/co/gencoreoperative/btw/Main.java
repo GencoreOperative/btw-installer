@@ -40,7 +40,7 @@ public class Main {
         if (error.isPresent()) {
             dialogFactory.getFailedDialog(error.get());
         } else {
-            dialogFactory.getSuccessDialog(Strings.SUCCESS_TITLE.getText(), Strings.SUCCESS_MSG.getText());
+            dialogFactory.getSuccessDialog(Strings.SUCCESS_MSG.getText());
         }
     }
 

@@ -1,5 +1,7 @@
 package uk.co.gencoreoperative.btw.ui;
 
+import static java.text.MessageFormat.format;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,14 +14,16 @@ import java.text.MessageFormat;
 public enum Strings {
     APP_NAME("Patch Installer"),
     VERSION(readProperty("/app.version")),
-    TITLE(MessageFormat.format("{0} - {1}", APP_NAME.getText(), VERSION.getText())),
+    TITLE(format("{0} - {1}", APP_NAME.getText(), VERSION.getText())),
     BUTTON_CLOSE("Close"),
     BUTTON_SELECT("Select"),
     BUTTON_PATCH("Patch"),
     SELECT_ZIP_TITLE("Select BetterThanWolves Zip"),
     SELECT_MC_HOME("Select Minecraft Installation"),
     SUCCESS_TITLE("Patch complete"),
-    SUCCESS_MSG("Patch was successfully applied");
+    SUCCESS_MSG("Patch was successfully applied"),
+    ERROR_TITLE("Error"),
+    ERROR_DETAIL("An error occurred whilst processing:\n{0}\nReason:\n{1}");
 
     private final String text;
 

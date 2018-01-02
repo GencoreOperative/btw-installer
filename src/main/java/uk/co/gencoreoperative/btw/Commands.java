@@ -4,10 +4,9 @@ import static java.text.MessageFormat.format;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
 import uk.co.gencoreoperative.btw.command.SystemCommand;
@@ -20,14 +19,8 @@ import uk.co.gencoreoperative.btw.ui.Errors;
  * Each command represents a single action to be performed either by the user
  * or by the system. Commands can fail if a validation stage does not succeed,
  * or if the user cancels an action.
- *
- * The commands defined have an implicit dependency on prior commands, and as
- * such their order is fixed by the {@link #getCommands()} and
- * {@link #getLastCommand()} methods.
  */
 public class Commands {
-    // Common validation case
-    private static final Predicate<File> EXISTS = File::exists;
 
     private final Set<AbstractCommand> commands;
     private final SystemCommand<File> assembleMergedJar;
@@ -51,10 +44,10 @@ public class Commands {
                 "minecraft installation was selected",
                 PathResolver.class);
 
-        /**
-         * Create the target installation folder.
-         * Depends on the previous installation folder being removed.
-         * Depends on the user selected the minecraft home folder.
+        /*
+          Create the target installation folder.
+          Depends on the previous installation folder being removed.
+          Depends on the user selected the minecraft home folder.
          */
         SystemCommand<TargetFolder> createTargetFolder = new SystemCommand<>(
                 inputs -> {
@@ -93,23 +86,25 @@ public class Commands {
                 null,
                 PathResolver.class, TargetFolder.class, PatchFile.class);
 
-        commands = new HashSet<>(Arrays.asList(
+        commands = new LinkedHashSet<>(Arrays.asList(
                 minecraftHome,
+                requestPatch,
                 createTargetFolder,
                 copyJsonFromResources,
-                requestPatch,
                 assembleMergedJar));
     }
 
     /**
+     * Given a Map of inputs and the requested class, find the value that corresponds to the
+     * requested class.
      *
-     * @param inputs
-     * @param clazz
-     * @param <T>
-     * @return
+     * @param inputs Non null, possibly empty
+     * @param clazz Non null
+     * @param <T> The type of the return value (complete with unchecked casting)
+     * @return Possibly null return value of type T
      */
     @SuppressWarnings("unchecked")
-    static <T> T getInputValue(Map<Class, Object> inputs, Class<T> clazz) throws Exception {
+    private static <T> T getInputValue(Map<Class, Object> inputs, Class<T> clazz) throws Exception {
         Object o = inputs.get(clazz);
         try {
             return (T) o;
@@ -122,21 +117,10 @@ public class Commands {
     }
 
     /**
-     * @return An ordered list of commands. The relationship between commands
-     * should hopefully reflect this order.
+     * @return An ordered list of commands.
      */
     public Set<AbstractCommand> getCommands() {
         return commands;
-    }
-
-    /**
-     * The last command will be the one at the bottom of the chain. When this command
-     * is executed it will trigger the chain of previous commands to execute.
-     *
-     * @return A single command which can act as the entry point for processing.
-     */
-    public AbstractCommand<File> getLastCommand() {
-        return assembleMergedJar;
     }
 
     private class TargetFolder {

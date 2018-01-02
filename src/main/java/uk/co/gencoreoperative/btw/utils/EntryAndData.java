@@ -3,6 +3,9 @@ package uk.co.gencoreoperative.btw.utils;
 import java.io.ByteArrayInputStream;
 import java.util.zip.ZipEntry;
 
+/**
+ * Models a ZipEntry and its data (byte[]) in a single value object.
+ */
 public class EntryAndData {
 
     private ZipEntry entry;

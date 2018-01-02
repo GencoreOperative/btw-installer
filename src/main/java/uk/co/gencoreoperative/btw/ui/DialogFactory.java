@@ -26,10 +26,6 @@ public class DialogFactory {
         this.parent = parent;
     }
 
-    public void getSuccessDialog(String title, String content) {
-        JOptionPane.showMessageDialog(parent, title, content, JOptionPane.PLAIN_MESSAGE);
-    }
-
     public File requestFileLocation(Strings title, final File current, File defaultLocation, Predicate<File> selector) {
         File path = current;
         if (current == null) path = defaultLocation;
@@ -89,12 +85,17 @@ public class DialogFactory {
         return chooser;
     }
 
+
+    public void getSuccessDialog(String content) {
+        JOptionPane.showMessageDialog(parent, Strings.SUCCESS_TITLE.getText(), content, JOptionPane.PLAIN_MESSAGE);
+    }
+
     public void getFailedDialog(AbstractCommand command) {
         JOptionPane.showMessageDialog(parent,
-                format("The command {0} failed\n{1}",
+                format(Strings.ERROR_DETAIL.getText(),
                         command.getDescription(),
                         command.getFailedReason()),
-                "Error",
+                Strings.ERROR_TITLE.getText(),
                 JOptionPane.ERROR_MESSAGE);
     }
 }
