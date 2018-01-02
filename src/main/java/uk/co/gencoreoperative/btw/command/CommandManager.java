@@ -42,6 +42,7 @@ public class CommandManager {
      */
     public void process(Set<AbstractCommand> commands) throws Exception {
         if (commands == null || commands.isEmpty()) throw new NullPointerException("empty commands");
+
         Map<Class, Object> results = new HashMap<>();
         while (!areAllCommandsComplete(commands)) {
 
@@ -50,11 +51,10 @@ public class CommandManager {
             if (available.isEmpty()) throw new NoRemainingCommandsException(commands, results);
             for (AbstractCommand command : available) {
                 Optional result = command.process(results);
-                if (result.isPresent()) {
+                // Only store a result if the command declares a result.
+                if (result.isPresent() && command.output() != null) {
                     Object value = result.get();
                     results.put(command.output(), value);
-                } else {
-                    return;
                 }
             }
         }

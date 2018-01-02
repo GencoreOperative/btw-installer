@@ -87,6 +87,7 @@ public abstract class AbstractCommand<T> extends Observable {
             error = e.getMessage();
         } finally {
             processed.set(true);
+            notifyObservers();
         }
         return Optional.empty();
     }

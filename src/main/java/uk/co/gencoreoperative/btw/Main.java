@@ -1,6 +1,7 @@
 package uk.co.gencoreoperative.btw;
 
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
+import uk.co.gencoreoperative.btw.command.CommandManager;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Progress;
 import uk.co.gencoreoperative.btw.ui.Strings;
@@ -27,17 +28,19 @@ public class Main {
     }
 
     public void start() {
-        boolean complete = true;
-
         // The commands are organised in a chain, with the last depending on all previous.
-        Optional<File> result = commands.getLastCommand().promise().get();
+        CommandManager manager = new CommandManager();
+        try {
+            manager.process(commands.getCommands());
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
 
-        // Signal the user that all tasks are complete.
-        if (result.isPresent()) {
-            dialogFactory.getSuccessDialog(Strings.SUCCESS_TITLE.getText(), Strings.SUCCESS_MSG.getText());
+        Optional<AbstractCommand> error = commands.getCommands().stream().filter(c -> !c.isSuccess()).findFirst();
+        if (error.isPresent()) {
+            dialogFactory.getFailedDialog(error.get());
         } else {
-
-            // TODO signal error and reason.
+            dialogFactory.getSuccessDialog(Strings.SUCCESS_TITLE.getText(), Strings.SUCCESS_MSG.getText());
         }
     }
 

@@ -1,5 +1,8 @@
 package uk.co.gencoreoperative.btw.utils;
 
+import static java.text.MessageFormat.format;
+
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -16,16 +19,4 @@ import java.util.function.Supplier;
 @FunctionalInterface
 public interface ThrowingSupplier<O> {
     O getOrThrow(Map<Class, Object> inputs) throws Exception;
-
-    /**
-     *
-     * @param inputs
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    static <T> T getInputValue(Map<Class, Object> inputs, Class<T> clazz) {
-        return (T) inputs.get(clazz);
-    }
 }

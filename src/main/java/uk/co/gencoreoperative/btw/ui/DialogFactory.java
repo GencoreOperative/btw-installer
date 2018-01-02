@@ -7,11 +7,16 @@
  */
 package uk.co.gencoreoperative.btw.ui;
 
+import static java.text.MessageFormat.format;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.function.Predicate;
+
+import uk.co.gencoreoperative.btw.command.AbstractCommand;
 
 public class DialogFactory {
 
@@ -82,5 +87,14 @@ public class DialogFactory {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle(title);
         return chooser;
+    }
+
+    public void getFailedDialog(AbstractCommand command) {
+        JOptionPane.showMessageDialog(parent,
+                format("The command {0} failed\n{1}",
+                        command.getDescription(),
+                        command.getFailedReason()),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 }

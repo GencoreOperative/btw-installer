@@ -1,10 +1,12 @@
 package uk.co.gencoreoperative.btw;
 
-import static uk.co.gencoreoperative.btw.utils.ThrowingSupplier.getInputValue;
+import static java.text.MessageFormat.format;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
@@ -27,13 +29,18 @@ public class Commands {
     // Common validation case
     private static final Predicate<File> EXISTS = File::exists;
 
-    private final List<AbstractCommand> commands;
+    private final Set<AbstractCommand> commands;
     private final SystemCommand<File> assembleMergedJar;
 
     public Commands(ActionFactory actionFactory) {
+        // TODO: Split this into two actions.
         AbstractCommand<PathResolver> minecraftHome = new UserCommand<>(
                 inputs -> {
-                    PathResolver resolver = new PathResolver(actionFactory.selectMinecraftHome());
+                    File path = actionFactory.selectMinecraftHome();
+                    if (path == null) {
+                        return null;
+                    }
+                    PathResolver resolver = new PathResolver(path);
                     boolean exists = resolver.oneFiveTwo().exists();
                     if (!exists) {
                         throw new Exception(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
@@ -62,16 +69,16 @@ public class Commands {
         SystemCommand<File> copyJsonFromResources = new SystemCommand<>(
                 inputs -> {
                     TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);
-                    actionFactory.copyJsonToInstallation(targetFolder.getFolder());
-                    return null;
+                    return actionFactory.copyJsonToInstallation(targetFolder.getFolder());
                 },
                 "copy BetterThanWolves.json",
                 null,
                 TargetFolder.class);
 
 
-        UserCommand<File> requestPatch = new UserCommand<>(
-                inputs -> actionFactory.selectPatchZip(), EXISTS,
+        UserCommand<PatchFile> requestPatch = new UserCommand<>(
+                inputs -> new PatchFile(actionFactory.selectPatchZip()),
+                p -> p.getFile().exists(),
                 "patch file was selected",
                 PatchFile.class);
 
@@ -86,19 +93,39 @@ public class Commands {
                 null,
                 PathResolver.class, TargetFolder.class, PatchFile.class);
 
-        commands = Arrays.asList(
+        commands = new HashSet<>(Arrays.asList(
                 minecraftHome,
                 createTargetFolder,
                 copyJsonFromResources,
                 requestPatch,
-                assembleMergedJar);
+                assembleMergedJar));
+    }
+
+    /**
+     *
+     * @param inputs
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    static <T> T getInputValue(Map<Class, Object> inputs, Class<T> clazz) throws Exception {
+        Object o = inputs.get(clazz);
+        try {
+            return (T) o;
+        } catch (ClassCastException e) {
+            throw new Exception(format(
+                    "Failed to cast value class {0} to type {1}",
+                    o.getClass(), clazz));
+        }
+
     }
 
     /**
      * @return An ordered list of commands. The relationship between commands
      * should hopefully reflect this order.
      */
-    public List<AbstractCommand> getCommands() {
+    public Set<AbstractCommand> getCommands() {
         return commands;
     }
 
