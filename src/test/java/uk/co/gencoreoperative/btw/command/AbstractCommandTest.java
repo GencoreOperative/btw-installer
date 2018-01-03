@@ -38,6 +38,18 @@ public class AbstractCommandTest {
     }
 
     @Test
+    public void shouldIndicateFailedWhenCancelled() throws Exception {
+        AbstractCommand<String> command = new AbstractCommand<String>("test", null) {
+            @Override
+            protected String processAction(Map<Class, Object> inputs) throws Exception {
+                return null;
+            }
+        };
+        command.process(Collections.emptyMap());
+        assertFalse(command.isSuccess());
+    }
+
+    @Test
     public void shouldReturnNullWhenFailed() throws Exception {
         AbstractCommand<String> command = new AbstractCommand<String>("test", null) {
             @Override

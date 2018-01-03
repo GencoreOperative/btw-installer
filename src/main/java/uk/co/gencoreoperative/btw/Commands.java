@@ -23,7 +23,6 @@ import uk.co.gencoreoperative.btw.ui.Errors;
 public class Commands {
 
     private final Set<AbstractCommand> commands;
-    private final SystemCommand<File> assembleMergedJar;
 
     public Commands(ActionFactory actionFactory) {
         // TODO: Split this into two actions.
@@ -75,7 +74,7 @@ public class Commands {
                 "patch file was selected",
                 PatchFile.class);
 
-        assembleMergedJar = new SystemCommand<>(
+        SystemCommand<File> assembleMergedJar = new SystemCommand<>(
                 inputs -> {
                     PatchFile patchFile = getInputValue(inputs, PatchFile.class);
                     TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);

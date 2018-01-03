@@ -22,7 +22,7 @@ import uk.co.gencoreoperative.btw.utils.ThrowingSupplier;
 @SuppressWarnings("unchecked")
 public class CommandManagerTest {
     {
-        describe("With a CommandManager", () -> {
+        describe("with a CommandManager", () -> {
             final CommandManager manager = new CommandManager();
             describe("and no commands", () -> {
                 it("will fail", () -> {
@@ -60,7 +60,7 @@ public class CommandManagerTest {
                     } catch (Exception ignored) {}
                 });
             });
-            describe("And a command that cannot be processed", () -> {
+            describe("and a command that cannot be processed", () -> {
                 final Set<AbstractCommand> commands = new HashSet<>();
                 commands.add(new SystemCommand<>(mock(ThrowingSupplier.class),"Print String",null, String.class));
                 it("throws an error", () -> {
@@ -68,19 +68,47 @@ public class CommandManagerTest {
                         manager.process(commands);
                         fail();
                     } catch (Exception error) {
-                        assertThat(error instanceof CommandManager.NoRemainingCommandsException);
+                        assertThat(error instanceof CommandManager.MissingInputsException);
                     }
                 });
             });
-            describe("and a failing command in the set", () -> {
+            describe("and a 'cancelled' command in the set", () -> {
                 final Set<AbstractCommand> commands = new HashSet<>();
                 final List<String> results = new ArrayList<>();
-                // Creates a number as a String
+                // Command will not return anything
                 final ThrowingSupplier<String> stringSupplier = inputs -> {results.add("first"); return null;};
                 commands.add(new SystemCommand<>(stringSupplier, "Magic number", String.class));
                 // Prints any given String
                 final ThrowingSupplier<String> printSupplier = inputs -> {results.add("second"); return "string";};
                 commands.add(new SystemCommand<>(printSupplier,"Print String",null, String.class));
+                it("will stop processing after the failure", () -> {
+                    manager.process(commands);
+                    assertThat(results).containsSequence("first");
+                });
+            });
+            describe("and a 'failed' command is in the set", () -> {
+                final Set<AbstractCommand> commands = new HashSet<>();
+                final List<String> results = new ArrayList<>();
+                // Command will not return anything
+                final ThrowingSupplier<String> stringSupplier = inputs -> {results.add("first"); throw new Exception("test");};
+                commands.add(new SystemCommand<>(stringSupplier, "Magic number", String.class));
+                // Prints any given String
+                final ThrowingSupplier<String> printSupplier = inputs -> {results.add("second"); return "string";};
+                commands.add(new SystemCommand<>(printSupplier,"Print String",null, String.class));
+                it("will stop processing after the failure", () -> {
+                    manager.process(commands);
+                    assertThat(results).containsSequence("first");
+                });
+            });
+            describe("and multiple actions are selected for processing, one is cancelled", () -> {
+                final Set<AbstractCommand> commands = new HashSet<>();
+                final List<String> results = new ArrayList<>();
+                // Command will not return anything
+                final ThrowingSupplier<String> stringSupplier1 = inputs -> {results.add("first"); return null;};
+                commands.add(new SystemCommand<>(stringSupplier1, "Magic number", String.class));
+                final ThrowingSupplier<String> stringSupplier2 = inputs -> {results.add("second"); return "1";};
+                commands.add(new SystemCommand<>(stringSupplier2, "Magic number", String.class));
+
                 it("will stop processing after the failure", () -> {
                     manager.process(commands);
                     assertThat(results).containsSequence("first");

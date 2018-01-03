@@ -48,7 +48,7 @@ public class CommandManager {
 
             // Find all commands that are not yet processed.
             Set<AbstractCommand> available = getAvailableCommands(commands, results);
-            if (available.isEmpty()) throw new NoRemainingCommandsException(commands, results);
+            if (available.isEmpty()) throw new MissingInputsException(commands, results);
             for (AbstractCommand command : available) {
                 Optional result = command.process(results);
                 // Only store a result if the command declares a result.
@@ -56,6 +56,11 @@ public class CommandManager {
                     Object value = result.get();
                     results.put(command.output(), value);
                 }
+                // Now check for failure
+                long failed = commands.stream()
+                        .filter(AbstractCommand::isProcessed)
+                        .filter(c -> !c.isSuccess()).count();
+                if (failed > 0) return;
             }
         }
     }
@@ -75,11 +80,11 @@ public class CommandManager {
      * because it was unable to find a suitable command to fulfil the requirements
      * of the remaining commands as yet un-processed.
      */
-    public class NoRemainingCommandsException extends RuntimeException {
-        public NoRemainingCommandsException(Set<AbstractCommand> commands, Map<Class, Object> results) {
-            super(format("Could not find any further commands to execute:\nCommands:\n{0}\nResults:\n{1}",
+    public class MissingInputsException extends RuntimeException {
+        public MissingInputsException(Set<AbstractCommand> commands, Map<Class, Object> results) {
+            super(format("Could not find any inputs to process remaining commands:\nCommands:\n{0}\nResults:\n{1}",
                     commands.stream().map(AbstractCommand::toString).collect(joining("\n")),
-                    results.keySet().stream().map(k -> format("{0}={1}", k, results.get(k))).collect(joining("\n"))));
+                    results.keySet().stream().map(k -> format("\"{0}\"=\"{1}\"", k, results.get(k))).collect(joining("\n"))));
         }
     }
 }
