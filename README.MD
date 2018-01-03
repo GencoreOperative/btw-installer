@@ -13,7 +13,7 @@ an existing configuration and apply the Better Than Wolves patch to it.
 Before you can use this utility you need to have the following set up:
 
 * **[Java](https://java.com/en/download/)** - the utility requires a 
-Java 8 JRE or JDK to work
+Java 8 to work
 
 * **[Latest Patch](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272992-better-than-wolves-now-with-bloody-stumps-total)** - Download the latest version of the Better Than Wolves
 patch from the Minecraft Forum post.
