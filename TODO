@@ -1,12 +1,45 @@
-TODO: Can we de-duplicate the null check in Commands?
-
-NPE if the user selects the Patch for the Minecraft Home location.
-
-TODO: Reason for failure should be captured in UI, error in a dialog, cancelled not.
+TODO: NPE if the user selects the Patch for the Minecraft Home location.
 TODO: Prompt the user to use their default Minecraft installation or another.
 TODO: Move project to Github
 TODO: Add option to remove the mod
 TODO: JitWatch - Stream Copy is called many times.
+TODO: Update documentation
+TODO: Test on Windows
+TODO: Release to general public
+
+
+TODO: Server Mode!
+===
+#!/bin/bash
+# A script which automates the installation of a new version of BTW
+
+# Cleanup
+[ -f minecraft_server.jar ] && rm minecraft_server.jar
+
+# Merge in patch
+#VERSION=BTWMod4-A2TimingRodentb
+VERSION=BTWMod4-A3HeadedBeastie
+
+[ ! -d $VERSION ] && echo "BTW Folder $VERSION missing" && exit -1
+
+# Download and unpack server
+mkdir tmp
+curl https://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/minecraft_server.1.5.2.jar -o tmp/minecraft_server.jar
+cd tmp && jar xf minecraft_server.jar && rm minecraft_server.jar && cd ..
+
+# Overlay the new patch files
+cp $VERSION/MINECRAFT_SERVER-JAR/* tmp
+
+# Package minecraft server
+cd tmp && jar cvfe minecraft_server.jar net.minecraft.server.MinecraftServer * && mv minecraft_server.jar ../minecraft_server.jar && cd ..
+
+# Cleanup
+rm -rf tmp
+
+# Copy the BTW Config
+cp $VERSION/BTWConfig.txt .
+===
+
 
 DONE
 ----

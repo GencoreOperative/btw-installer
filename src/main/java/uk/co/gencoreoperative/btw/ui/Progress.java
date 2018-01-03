@@ -27,6 +27,13 @@ public class Progress extends JDialog implements Observer {
             System.exit(0);
         }
     };
+
+    /**
+     * Allows the user to start the patching process.
+     *
+     * Note: Because the command framework does not yet support reset, we
+     * will disable the button to prevent the user re-trying.
+     */
     private final Action patchAction = new AbstractAction() {
         {
             putValue(Action.NAME, Strings.BUTTON_PATCH.getText());
@@ -34,8 +41,10 @@ public class Progress extends JDialog implements Observer {
         @Override
         public void actionPerformed(ActionEvent e) {
             main.start();
+            setEnabled(false);
         }
     };
+
     private Main main;
 
     public Progress(Main main) {

@@ -13,7 +13,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.function.Predicate;
 
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
@@ -97,5 +96,12 @@ public class DialogFactory {
                         command.getFailedReason()),
                 Strings.ERROR_TITLE.getText(),
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void getInformationDialog(String text) {
+        JOptionPane.showMessageDialog(parent,
+                text,
+                Strings.INFORMATION_TITLE.getText(),
+                JOptionPane.INFORMATION_MESSAGE);
     }
 }

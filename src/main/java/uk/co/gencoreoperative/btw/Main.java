@@ -6,8 +6,6 @@ import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Progress;
 import uk.co.gencoreoperative.btw.ui.Strings;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.Optional;
 
 // Based on  http://www.sargunster.com/btwforum/viewtopic.php?f=9&t=8925
@@ -36,9 +34,17 @@ public class Main {
             System.err.println(e.getMessage());
         }
 
-        Optional<AbstractCommand> error = commands.getCommands().stream().filter(c -> !c.isSuccess()).findFirst();
-        if (error.isPresent()) {
-            dialogFactory.getFailedDialog(error.get());
+        Optional<AbstractCommand> cancelled = commands.getCommands().stream()
+                .filter(AbstractCommand::isProcessed)
+                .filter(AbstractCommand::isCancelled)
+                .findFirst();
+        Optional<AbstractCommand> failed = commands.getCommands().stream()
+                .filter(AbstractCommand::isProcessed)
+                .filter(    c -> !c.isSuccess()).findFirst();
+        if (cancelled.isPresent()) {
+            dialogFactory.getInformationDialog(Strings.CANCELLED_DETAIL.getText());
+        } else if (failed.isPresent()) {
+            dialogFactory.getFailedDialog(failed.get());
         } else {
             dialogFactory.getSuccessDialog(Strings.SUCCESS_MSG.getText());
         }

@@ -69,8 +69,12 @@ public class Commands {
 
 
         UserCommand<PatchFile> requestPatch = new UserCommand<>(
-                inputs -> new PatchFile(actionFactory.selectPatchZip()),
-                p -> p.getFile().exists(),
+                inputs -> {
+                    File pathFile = actionFactory.selectPatchZip();
+                    if (pathFile == null) return null;
+                    return new PatchFile(pathFile);
+                },
+                p -> p.getFile().exists() && p.getFile().isFile(),
                 "patch file was selected",
                 PatchFile.class);
 

@@ -6,14 +6,12 @@ import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.utils.EntryAndData;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
@@ -87,7 +85,7 @@ public class ActionFactory {
 
     public File copyJsonToInstallation(File folder) {
         File targetJson = new File(folder, "BetterThanWolves.json");
-        FileUtils.copyStream(Main.class.getResourceAsStream("/4-A2/BetterThanWolves.json"),
+        FileUtils.copyStream(Main.class.getResourceAsStream("/json/BetterThanWolves.json"),
                 write(targetJson),
                 true, true);
         return targetJson;
