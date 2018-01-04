@@ -5,11 +5,13 @@ import static uk.co.gencoreoperative.btw.ui.Strings.TITLE;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.scene.input.KeyCode;
 import uk.co.gencoreoperative.btw.Main;
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
 
@@ -19,6 +21,7 @@ public class Progress extends JDialog implements Observer {
     private final Action closeAction = new AbstractAction() {
         {
             putValue(Action.NAME, Strings.BUTTON_CLOSE.getText());
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false));
         }
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -56,6 +59,11 @@ public class Progress extends JDialog implements Observer {
                 closeAction.actionPerformed(null);
             }
         });
+
+        getRootPane().registerKeyboardAction(
+                closeAction,
+                (KeyStroke) closeAction.getValue(Action.ACCELERATOR_KEY),
+                JComponent.WHEN_FOCUSED);
 
         setTitle(TITLE.getText());
 
