@@ -25,14 +25,34 @@ public class Commands {
     private final Set<AbstractCommand> commands;
 
     public Commands(ActionFactory actionFactory) {
-        // TODO: Split this into two actions.
-        AbstractCommand<PathResolver> minecraftHome = new UserCommand<>(
+
+        // TODO: Test - can we find the default installation location?
+        // TODO: If not - ask "Please provide location of MC installation"
+            // TODO: Show location chooser
+        // TODO: Else - ask "Would you like to install to the default location?"
+            // TODO: Default is Yes
+            // TODO: No - show location chooser
+        // TODO: Store MinecraftPath, Validate path is a folder
+
+        // TODO: Create PathResolver for path - validate 1-5-2 exists
+
+        AbstractCommand<MinecraftPath> locateMinecraft = new UserCommand<>(
                 inputs -> {
                     File path = actionFactory.selectMinecraftHome();
                     if (path == null) {
                         return null;
                     }
-                    PathResolver resolver = new PathResolver(path);
+                    return new MinecraftPath(path);
+                },
+                m -> m.file.isDirectory(),
+                "select minecraft installation folder",
+                MinecraftPath.class);
+
+
+        AbstractCommand<PathResolver> pathResolver = new UserCommand<>(
+                inputs -> {
+                    File minecraftPath = getInputValue(inputs, MinecraftPath.class).file;
+                    PathResolver resolver = new PathResolver(minecraftPath);
                     boolean exists = resolver.oneFiveTwo().exists();
                     if (!exists) {
                         throw new Exception(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
@@ -40,8 +60,9 @@ public class Commands {
                     return resolver;
                 },
                 r -> r.versions().exists(),
-                "minecraft installation was selected",
-                PathResolver.class);
+                "verify version 1.5.2 exists",
+                PathResolver.class,
+                MinecraftPath.class);
 
         /*
           Create the target installation folder.
@@ -50,9 +71,9 @@ public class Commands {
          */
         SystemCommand<TargetFolder> createTargetFolder = new SystemCommand<>(
                 inputs -> {
-                    PathResolver pathResolver = getInputValue(inputs, PathResolver.class);
-                    actionFactory.removePreviousInstallation(pathResolver);
-                    return new TargetFolder(actionFactory.createInstallationFolder(pathResolver));
+                    PathResolver resolver = getInputValue(inputs, PathResolver.class);
+                    actionFactory.removePreviousInstallation(resolver);
+                    return new TargetFolder(actionFactory.createInstallationFolder(resolver));
                 },
                 "created installation folder",
                 TargetFolder.class,
@@ -61,7 +82,7 @@ public class Commands {
         SystemCommand<File> copyJsonFromResources = new SystemCommand<>(
                 inputs -> {
                     TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);
-                    return actionFactory.copyJsonToInstallation(targetFolder.getFolder());
+                    return actionFactory.copyJsonToInstallation(targetFolder.folder);
                 },
                 "copy BetterThanWolves.json",
                 null,
@@ -74,7 +95,7 @@ public class Commands {
                     if (pathFile == null) return null;
                     return new PatchFile(pathFile);
                 },
-                p -> p.getFile().exists() && p.getFile().isFile(),
+                p -> p.file.exists() && p.file.isFile(),
                 "patch file was selected",
                 PatchFile.class);
 
@@ -82,15 +103,16 @@ public class Commands {
                 inputs -> {
                     PatchFile patchFile = getInputValue(inputs, PatchFile.class);
                     TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);
-                    PathResolver pathResolver = getInputValue(inputs, PathResolver.class);
-                    return actionFactory.mergePatchAndRelease(targetFolder.getFolder(), patchFile.getFile(), pathResolver);
+                    PathResolver resolver = getInputValue(inputs, PathResolver.class);
+                    return actionFactory.mergePatchAndRelease(targetFolder.folder, patchFile.file, resolver);
                 },
                 "created BetterThanWolves.jar",
                 null,
                 PathResolver.class, TargetFolder.class, PatchFile.class);
 
         commands = new LinkedHashSet<>(Arrays.asList(
-                minecraftHome,
+                locateMinecraft,
+                pathResolver,
                 requestPatch,
                 createTargetFolder,
                 copyJsonFromResources,
@@ -127,26 +149,23 @@ public class Commands {
     }
 
     private class TargetFolder {
-        private final File folder;
-
+        public final File folder;
         public TargetFolder(File installationFolder) {
             this.folder = installationFolder;
-        }
-
-        public File getFolder() {
-            return folder;
         }
     }
 
     private class PatchFile {
-        private final File file;
-
+        public final File file;
         public PatchFile(File pathFile) {
             this.file = pathFile;
         }
+    }
 
-        public File getFile() {
-            return file;
+    private class MinecraftPath {
+        public final File file;
+        private MinecraftPath(File file) {
+            this.file = file;
         }
     }
 }

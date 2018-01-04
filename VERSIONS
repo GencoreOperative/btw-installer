@@ -1,0 +1,5 @@
+*0.3*: Fixed a number of bugs around cancellation.
+
+*0.2*: Fix bug where utility would keep processing tasks after one had failed.
+
+*0.1*: First working version with enough features to be dangerous
