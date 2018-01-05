@@ -42,11 +42,11 @@ public class Main {
                 .filter(AbstractCommand::isProcessed)
                 .filter(    c -> !c.isSuccess()).findFirst();
         if (cancelled.isPresent()) {
-            dialogFactory.getInformationDialog(Strings.CANCELLED_DETAIL.getText());
+            dialogFactory.information(Strings.CANCELLED_DETAIL.getText());
         } else if (failed.isPresent()) {
-            dialogFactory.getFailedDialog(failed.get());
+            dialogFactory.failed(failed.get());
         } else {
-            dialogFactory.getSuccessDialog(Strings.SUCCESS_MSG.getText());
+            dialogFactory.success(Strings.SUCCESS_MSG.getText());
         }
     }
 

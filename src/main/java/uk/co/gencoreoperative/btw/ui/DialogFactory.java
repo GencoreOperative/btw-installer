@@ -85,11 +85,11 @@ public class DialogFactory {
     }
 
 
-    public void getSuccessDialog(String content) {
+    public void success(String content) {
         JOptionPane.showMessageDialog(parent, Strings.SUCCESS_TITLE.getText(), content, JOptionPane.PLAIN_MESSAGE);
     }
 
-    public void getFailedDialog(AbstractCommand command) {
+    public void failed(AbstractCommand command) {
         JOptionPane.showMessageDialog(parent,
                 format(Strings.ERROR_DETAIL.getText(),
                         command.getDescription(),
@@ -98,10 +98,19 @@ public class DialogFactory {
                 JOptionPane.ERROR_MESSAGE);
     }
 
-    public void getInformationDialog(String text) {
+    public void information(String text) {
         JOptionPane.showMessageDialog(parent,
                 text,
                 Strings.INFORMATION_TITLE.getText(),
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public boolean confirm(String message, String title) {
+        int response = JOptionPane.showConfirmDialog(parent,
+                message,
+                title,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        return response == JOptionPane.YES_OPTION;
     }
 }

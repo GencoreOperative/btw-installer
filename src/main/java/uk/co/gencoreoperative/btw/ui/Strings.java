@@ -19,13 +19,15 @@ public enum Strings {
     BUTTON_SELECT("Select"),
     BUTTON_PATCH("Patch"),
     SELECT_ZIP_TITLE("Select BetterThanWolves Zip"),
-    SELECT_MC_HOME("Select Minecraft Installation"),
+    SELECT_MC_HOME("Select Minecraft Installation folder"),
     SUCCESS_TITLE("Patch complete"),
     SUCCESS_MSG("Patch was successfully applied"),
     ERROR_TITLE("Error"),
     ERROR_DETAIL("An error occurred whilst processing:\n{0}\nReason:\n{1}"),
     CANCELLED_DETAIL("Cancelled by user"),
-    INFORMATION_TITLE("Information");
+    INFORMATION_TITLE("Information"),
+    CONFIRM_DEFAULT_MESSAGE("Minecraft installation detected, use the default Minecraft installation?"),
+    CONFIRM_DEFAULT_TITLE("Confirm default Minecraft installation?");
 
     private final String text;
 

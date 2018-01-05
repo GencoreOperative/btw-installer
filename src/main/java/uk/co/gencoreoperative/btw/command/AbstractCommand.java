@@ -44,7 +44,7 @@ public abstract class AbstractCommand<T> extends Observable {
      *
      * @param description A non null description suitable for display.
      * @param output A possibly null output class.
-     * @param inputs A possible null collection of input classes.
+     * @param inputs A possibly null collection of input classes.
      */
     public AbstractCommand(String description, Class<T> output, Class... inputs) {
         this.description = description;

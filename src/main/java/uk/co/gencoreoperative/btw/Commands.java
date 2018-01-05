@@ -3,6 +3,7 @@ package uk.co.gencoreoperative.btw;
 import static java.text.MessageFormat.format;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -25,44 +26,29 @@ public class Commands {
     private final Set<AbstractCommand> commands;
 
     public Commands(ActionFactory actionFactory) {
-
-        // TODO: Test - can we find the default installation location?
-        // TODO: If not - ask "Please provide location of MC installation"
-            // TODO: Show location chooser
-        // TODO: Else - ask "Would you like to install to the default location?"
-            // TODO: Default is Yes
-            // TODO: No - show location chooser
-        // TODO: Store MinecraftPath, Validate path is a folder
-
-        // TODO: Create PathResolver for path - validate 1-5-2 exists
-
-        AbstractCommand<MinecraftPath> locateMinecraft = new UserCommand<>(
+        AbstractCommand<PathResolver> detectMinecraftHome = new UserCommand<>(
                 inputs -> {
-                    File path = actionFactory.selectMinecraftHome();
-                    if (path == null) {
-                        return null;
+                    PathResolver resolver = new PathResolver();
+                    if (resolver.versions().exists() && actionFactory.confirmDefaultInstallation()) {
+                        return resolver;
                     }
-                    return new MinecraftPath(path);
+                    return new PathResolver(actionFactory.selectMinecraftHome());
                 },
-                m -> m.file.isDirectory(),
-                "select minecraft installation folder",
-                MinecraftPath.class);
+                r -> r.oneFiveTwo().exists(),
+                "Use default Minecraft installation",
+                PathResolver.class);
 
-
-        AbstractCommand<PathResolver> pathResolver = new UserCommand<>(
+        AbstractCommand<PathResolver> verifyOneFiveTwo = new SystemCommand<>(
                 inputs -> {
-                    File minecraftPath = getInputValue(inputs, MinecraftPath.class).file;
-                    PathResolver resolver = new PathResolver(minecraftPath);
-                    boolean exists = resolver.oneFiveTwo().exists();
-                    if (!exists) {
+                    PathResolver resolver = getInputValue(inputs, PathResolver.class);
+                    if (!resolver.oneFiveTwo().exists()) {
                         throw new Exception(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
                     }
                     return resolver;
                 },
-                r -> r.versions().exists(),
                 "verify version 1.5.2 exists",
-                PathResolver.class,
-                MinecraftPath.class);
+                null,
+                PathResolver.class);
 
         /*
           Create the target installation folder.
@@ -111,8 +97,8 @@ public class Commands {
                 PathResolver.class, TargetFolder.class, PatchFile.class);
 
         commands = new LinkedHashSet<>(Arrays.asList(
-                locateMinecraft,
-                pathResolver,
+                detectMinecraftHome,
+                verifyOneFiveTwo,
                 requestPatch,
                 createTargetFolder,
                 copyJsonFromResources,

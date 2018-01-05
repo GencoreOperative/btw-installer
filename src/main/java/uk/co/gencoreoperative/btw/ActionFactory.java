@@ -134,4 +134,10 @@ public class ActionFactory {
         String name = entry.getName();
         return new ZipEntry(name.substring(PATCH_FOLDER.length(), name.length()));
     }
+
+    public boolean confirmDefaultInstallation() {
+        return dialogFactory.confirm(
+                Strings.CONFIRM_DEFAULT_MESSAGE.getText(),
+                Strings.CONFIRM_DEFAULT_TITLE.getText());
+    }
 }
