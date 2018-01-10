@@ -85,8 +85,8 @@ public class DialogFactory {
     }
 
 
-    public void success(String content) {
-        JOptionPane.showMessageDialog(parent, Strings.SUCCESS_TITLE.getText(), content, JOptionPane.PLAIN_MESSAGE);
+    public void success(String title, String content) {
+        JOptionPane.showMessageDialog(parent, content, title, JOptionPane.PLAIN_MESSAGE);
     }
 
     public void failed(AbstractCommand command) {

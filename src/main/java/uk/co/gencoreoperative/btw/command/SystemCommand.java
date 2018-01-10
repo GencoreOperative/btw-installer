@@ -29,4 +29,12 @@ public class SystemCommand<T> extends AbstractCommand<T> {
     protected T processAction(Map<Class, Object> inputs) throws Exception {
         return action.getOrThrow(inputs);
     }
+
+    /**
+     * @return false as {@link SystemCommand} do not involve user interaction.
+     */
+    @Override
+    protected boolean canCancel() {
+        return false;
+    }
 }

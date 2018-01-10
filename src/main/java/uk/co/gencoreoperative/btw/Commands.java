@@ -13,6 +13,7 @@ import uk.co.gencoreoperative.btw.command.AbstractCommand;
 import uk.co.gencoreoperative.btw.command.SystemCommand;
 import uk.co.gencoreoperative.btw.command.UserCommand;
 import uk.co.gencoreoperative.btw.ui.Errors;
+import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 /**
  * Defines and wires together all commands that are performed by the installer.
@@ -22,29 +23,37 @@ import uk.co.gencoreoperative.btw.ui.Errors;
  * or if the user cancels an action.
  */
 public class Commands {
+    private ActionFactory actionFactory;
 
-    private final Set<AbstractCommand> commands;
+    private AbstractCommand<PathResolver> detectMinecraftHome = new UserCommand<>(
+            inputs -> {
+                PathResolver resolver = new PathResolver();
+                if (resolver.versions().exists() && actionFactory.confirmDefaultInstallation()) {
+                    return resolver;
+                }
+                return new PathResolver(actionFactory.selectMinecraftHome());
+            },
+            r -> r.oneFiveTwo().exists(),
+            "Use default Minecraft installation",
+            PathResolver.class);
+
 
     public Commands(ActionFactory actionFactory) {
-        AbstractCommand<PathResolver> detectMinecraftHome = new UserCommand<>(
-                inputs -> {
-                    PathResolver resolver = new PathResolver();
-                    if (resolver.versions().exists() && actionFactory.confirmDefaultInstallation()) {
-                        return resolver;
-                    }
-                    return new PathResolver(actionFactory.selectMinecraftHome());
-                },
-                r -> r.oneFiveTwo().exists(),
-                "Use default Minecraft installation",
-                PathResolver.class);
+        this.actionFactory = actionFactory;
+    }
 
-        AbstractCommand<PathResolver> verifyOneFiveTwo = new SystemCommand<>(
+    /**
+     * Get all commands needed for client installation.
+     * @return An ordered non null non empty set.
+     */
+    public Set<AbstractCommand> getClientCommands() {
+        AbstractCommand<Void> verifyOneFiveTwo = new SystemCommand<>(
                 inputs -> {
                     PathResolver resolver = getInputValue(inputs, PathResolver.class);
                     if (!resolver.oneFiveTwo().exists()) {
                         throw new Exception(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
                     }
-                    return resolver;
+                    return null;
                 },
                 "verify version 1.5.2 exists",
                 null,
@@ -96,13 +105,48 @@ public class Commands {
                 null,
                 PathResolver.class, TargetFolder.class, PatchFile.class);
 
-        commands = new LinkedHashSet<>(Arrays.asList(
+        return new LinkedHashSet<>(Arrays.asList(
                 detectMinecraftHome,
                 verifyOneFiveTwo,
                 requestPatch,
                 createTargetFolder,
                 copyJsonFromResources,
                 assembleMergedJar));
+    }
+
+    /**
+     * A series of commands that will remove the BetterThanWolves version from the clients
+     * installation.
+     *
+     * @return Non null ordered set of {@link AbstractCommand}.
+     */
+    public Set<AbstractCommand> getClientRemoveCommands() {
+        AbstractCommand<BTWPath> verifyBTW = new SystemCommand<>(
+                inputs -> {
+                    PathResolver resolver = getInputValue(inputs, PathResolver.class);
+                    if (!resolver.betterThanWolves().exists()) {
+                        throw new Exception(Errors.BTW_RELEASE_NOT_FOUND.getReason());
+                    }
+                    return new BTWPath(resolver.betterThanWolves());
+                },
+                "Verify BetterThanWolves version exists",
+                BTWPath.class,
+                PathResolver.class);
+
+        AbstractCommand<Void> removeFolder = new SystemCommand<>(
+                inputs -> {
+                    BTWPath path = getInputValue(inputs, BTWPath.class);
+                    FileUtils.recursiveDelete(path.file);
+                    return null;
+                },
+                "Remove Better Than Wolves version",
+                null,
+                BTWPath.class);
+
+        return new LinkedHashSet<>(Arrays.asList(
+                detectMinecraftHome,
+                verifyBTW,
+                removeFolder));
     }
 
     /**
@@ -127,13 +171,6 @@ public class Commands {
 
     }
 
-    /**
-     * @return An ordered list of commands.
-     */
-    public Set<AbstractCommand> getCommands() {
-        return commands;
-    }
-
     private class TargetFolder {
         public final File folder;
         public TargetFolder(File installationFolder) {
@@ -151,6 +188,13 @@ public class Commands {
     private class MinecraftPath {
         public final File file;
         private MinecraftPath(File file) {
+            this.file = file;
+        }
+    }
+
+    private class BTWPath {
+        public final File file;
+        private BTWPath(File file) {
             this.file = file;
         }
     }

@@ -1,5 +1,7 @@
-TODO: Move project to Github
+TODO: Test mode
 TODO: Add option to remove the mod
+
+TODO: Move project to Github
 TODO: JitWatch - Stream Copy is called many times.
 TODO: Update documentation
 TODO: Test on Windows
@@ -37,12 +39,3 @@ rm -rf tmp
 # Copy the BTW Config
 cp $VERSION/BTWConfig.txt .
 ===
-
-
-DONE
-----
-
-Failure of a task item should halt processing
-Handle cancel from file selector
-Easy and obvious way to close the application
-Version information in UI

@@ -39,4 +39,12 @@ public class UserCommand<T> extends AbstractCommand<T> {
             throw new Exception(getDescription());
         }
     }
+
+    /**
+     * @return true as {@link UserCommand} support being cancelled by the user.
+     */
+    @Override
+    protected boolean canCancel() {
+        return true;
+    }
 }

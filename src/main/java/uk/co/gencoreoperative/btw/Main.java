@@ -1,5 +1,6 @@
 package uk.co.gencoreoperative.btw;
 
+import com.beust.jcommander.JCommander;
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
 import uk.co.gencoreoperative.btw.command.CommandManager;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
@@ -12,45 +13,19 @@ import java.util.Optional;
 
 public class Main {
 
-    private Progress progress;
-    private DialogFactory dialogFactory = new DialogFactory(progress);
-    private ActionFactory actionFactory = new ActionFactory(dialogFactory);
-    private Commands commands = new Commands(actionFactory);
-
-    public Main() {
-        // Initialise UI with the commands to visualise
-        progress = new Progress(this);
-        for (AbstractCommand command : commands.getCommands()) {
-            progress.addItem(command);
-        }
-    }
-
-    public void start() {
-        // The commands are organised in a chain, with the last depending on all previous.
-        CommandManager manager = new CommandManager();
-        try {
-            manager.process(commands.getCommands());
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
-        Optional<AbstractCommand> cancelled = commands.getCommands().stream()
-                .filter(AbstractCommand::isProcessed)
-                .filter(AbstractCommand::isCancelled)
-                .findFirst();
-        Optional<AbstractCommand> failed = commands.getCommands().stream()
-                .filter(AbstractCommand::isProcessed)
-                .filter(    c -> !c.isSuccess()).findFirst();
-        if (cancelled.isPresent()) {
-            dialogFactory.information(Strings.CANCELLED_DETAIL.getText());
-        } else if (failed.isPresent()) {
-            dialogFactory.failed(failed.get());
-        } else {
-            dialogFactory.success(Strings.SUCCESS_MSG.getText());
-        }
-    }
-
     public static void main(String... args) {
-        new Main();
+        Installer installer = new Installer();
+
+        JCommander commander = new JCommander(installer);
+        commander.parse(args);
+
+        if (installer.isHelp()) {
+            commander.usage();
+            System.exit(0);
+        }
+
+        Progress progress = installer.getUserInterface();
+        progress.setCommands(installer.getCommands());
+        progress.start();
     }
 }

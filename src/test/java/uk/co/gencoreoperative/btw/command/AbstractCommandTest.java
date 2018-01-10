@@ -18,6 +18,11 @@ public class AbstractCommandTest {
             protected String processAction(Map<Class, Object> inputs) throws Exception {
                 return "badger";
             }
+
+            @Override
+            protected boolean canCancel() {
+                return false;
+            }
         };
         Optional<String> result = command.process(Collections.emptyMap());
         assertEquals(result.get(), "badger");
@@ -30,6 +35,11 @@ public class AbstractCommandTest {
             @Override
             protected String processAction(Map<Class, Object> inputs) throws Exception {
                 return null;
+            }
+
+            @Override
+            protected boolean canCancel() {
+                return true;
             }
         };
         Optional<String> result = command.process(Collections.emptyMap());
@@ -44,9 +54,31 @@ public class AbstractCommandTest {
             protected String processAction(Map<Class, Object> inputs) throws Exception {
                 return null;
             }
+
+            @Override
+            protected boolean canCancel() {
+                return true;
+            }
         };
         command.process(Collections.emptyMap());
         assertFalse(command.isSuccess());
+    }
+
+    @Test
+    public void shouldIndicateSuccessWhenNotCapableOfCancel() {
+        AbstractCommand<String> command = new AbstractCommand<String>("test", null) {
+            @Override
+            protected String processAction(Map<Class, Object> inputs) throws Exception {
+                return null;
+            }
+
+            @Override
+            protected boolean canCancel() {
+                return false;
+            }
+        };
+        command.process(Collections.emptyMap());
+        assertTrue(command.isSuccess());
     }
 
     @Test
@@ -55,6 +87,11 @@ public class AbstractCommandTest {
             @Override
             protected String processAction(Map<Class, Object> inputs) throws Exception {
                 throw new Exception("Badgers!");
+            }
+
+            @Override
+            protected boolean canCancel() {
+                return false;
             }
         };
         Optional<String> result = command.process(Collections.emptyMap());

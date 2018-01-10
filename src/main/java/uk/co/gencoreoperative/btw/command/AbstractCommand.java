@@ -90,12 +90,21 @@ public abstract class AbstractCommand<T> extends Observable {
     public Optional<T> process(Map<Class, Object> inputs) {
         try {
             result.set(processAction(inputs));
-            if (result.get() == null) {
+
+            T resultValue = result.get();
+            if (resultValue != null) {
+                success.set(true);
+                return Optional.of(resultValue);
+            }
+
+            if (canCancel()) {
                 cancelled.set(true);
+                success.set(false);
             } else {
                 success.set(true);
-                return Optional.of(result.get());
             }
+            return Optional.empty();
+
         } catch (Exception e) {
             success.set(false);
             error = e.getMessage();
@@ -169,6 +178,12 @@ public abstract class AbstractCommand<T> extends Observable {
      * type comes with its own problems which we are choosing to avoid by keeping this simple.
      */
     protected abstract T processAction(Map<Class, Object> inputs) throws Exception;
+
+    /**
+     * Indicates whether the implementation supports the concept of cancelling.
+     * @return True if it intends a null return from {@link #processAction(Map)} to indicate cancelled.
+     */
+    protected abstract boolean canCancel();
 
     @Override
     public String toString() {

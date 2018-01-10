@@ -1,6 +1,6 @@
 package uk.co.gencoreoperative.btw.ui;
 
-import static uk.co.gencoreoperative.btw.ui.Strings.TITLE;
+import static uk.co.gencoreoperative.btw.ui.Strings.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,17 +10,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
+import java.util.Set;
 
-import javafx.scene.input.KeyCode;
-import uk.co.gencoreoperative.btw.Main;
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
+import uk.co.gencoreoperative.btw.command.CommandManager;
 
 public class Progress extends JDialog implements Observer {
+    private final DialogFactory dialogFactory;
     private final DefaultListModel<AbstractCommand> model = new DefaultListModel<>();
 
     private final Action closeAction = new AbstractAction() {
         {
-            putValue(Action.NAME, Strings.BUTTON_CLOSE.getText());
+            putValue(Action.NAME, BUTTON_CLOSE.getText());
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false));
         }
         @Override
@@ -38,20 +40,19 @@ public class Progress extends JDialog implements Observer {
      * will disable the button to prevent the user re-trying.
      */
     private final Action patchAction = new AbstractAction() {
-        {
-            putValue(Action.NAME, Strings.BUTTON_PATCH.getText());
-        }
         @Override
         public void actionPerformed(ActionEvent e) {
-            main.start();
+            processCommands();
             setEnabled(false);
         }
     };
 
-    private Main main;
+    private Set<AbstractCommand> commands;
+    private String successMessage;
+    private String successTitle;
 
-    public Progress(Main main) {
-        this.main = main;
+    public Progress() {
+        dialogFactory = new DialogFactory(this);
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -65,15 +66,9 @@ public class Progress extends JDialog implements Observer {
                 (KeyStroke) closeAction.getValue(Action.ACCELERATOR_KEY),
                 JComponent.WHEN_FOCUSED);
 
-        setTitle(TITLE.getText());
-
         setLayout(new BorderLayout());
         add(centerLayout(), BorderLayout.CENTER);
         add(getBottomLayout(), BorderLayout.SOUTH);
-
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
     }
 
     private JComponent centerLayout() {
@@ -134,4 +129,48 @@ public class Progress extends JDialog implements Observer {
         return new JLabel(command.getDescription(), icon.getIcon(), SwingConstants.LEADING);
     }
 
+    public void setCommands(Set<AbstractCommand> commands) {
+        this.commands = commands;
+        commands.forEach(this::addItem);
+    }
+
+    public void setMainAction(String mainAction) {
+        patchAction.putValue(Action.NAME, mainAction);
+    }
+
+    private void processCommands() {
+        // The commands are organised in a chain, with the last depending on all previous.
+        CommandManager manager = new CommandManager();
+        try {
+            manager.process(commands);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        Optional<AbstractCommand> cancelled = commands.stream()
+                .filter(AbstractCommand::isProcessed)
+                .filter(AbstractCommand::isCancelled)
+                .findFirst();
+        Optional<AbstractCommand> failed = commands.stream()
+                .filter(AbstractCommand::isProcessed)
+                .filter(    c -> !c.isSuccess()).findFirst();
+        if (cancelled.isPresent()) {
+            dialogFactory.information(CANCELLED_DETAIL.getText());
+        } else if (failed.isPresent()) {
+            dialogFactory.failed(failed.get());
+        } else {
+            dialogFactory.success(successTitle, successMessage);
+        }
+    }
+
+    public void start() {
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    public void setSuccessMessage(String title, String message) {
+        this.successMessage = message;
+        this.successTitle = title;
+    }
 }
