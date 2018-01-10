@@ -77,7 +77,7 @@ public class CommandManagerTest {
                 final List<String> results = new ArrayList<>();
                 // Command will not return anything
                 final ThrowingSupplier<String> stringSupplier = inputs -> {results.add("first"); return null;};
-                commands.add(new SystemCommand<>(stringSupplier, "Magic number", String.class));
+                commands.add(new UserCommand(stringSupplier, null, "Magic number", String.class));
                 // Prints any given String
                 final ThrowingSupplier<String> printSupplier = inputs -> {results.add("second"); return "string";};
                 commands.add(new SystemCommand<>(printSupplier,"Print String",null, String.class));
