@@ -10,8 +10,8 @@ import java.io.InputStreamReader;
  */
 public enum Strings {
     VERSION(readProperty("/app.version")),
-    TITLE_PATCH("Patch Installer - " + VERSION.getText()),
-    TITLE_REMOVE("Patch Remover - " + VERSION.getText()),
+    TITLE_PATCH("BTW Installer - " + VERSION.getText()),
+    TITLE_REMOVE("BTW Remover - " + VERSION.getText()),
 
     TITLE_PATCH_SUCCESS("Patch complete"),
     TITLE_REMOVE_SUCCESS("Removal complete"),
@@ -30,8 +30,8 @@ public enum Strings {
     ERROR_DETAIL("An error occurred whilst processing:\n{0}\nReason:\n{1}"),
     CANCELLED_DETAIL("Cancelled by user"),
     INFORMATION_TITLE("Information"),
-    CONFIRM_DEFAULT_MESSAGE("Minecraft installation detected, use the default Minecraft installation?"),
-    CONFIRM_DEFAULT_TITLE("Confirm default Minecraft installation?");
+    CONFIRM_DEFAULT_MESSAGE("Default Minecraft installation detected, use this installation?"),
+    CONFIRM_DEFAULT_TITLE("Confirm default Minecraft installation");
 
 
     private final String text;

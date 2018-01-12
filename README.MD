@@ -1,11 +1,12 @@
 # Introduction
 
 This utility has been made for those who are new to Minecraft, or new to 
-installing the Better Than Wolves mod. It has been developed to work with
-the latest Minecraft launcher has been tested on both Windows and MacOS.
+installing the Better Than Wolves mod. This installer has been developed 
+to work with the latest Minecraft launcher has been tested on both 
+Windows and MacOS.
 
 Minecraft supports multiple "Configurations", which can be set to use
-a specific version of the Minecraft binary files. This patcher will copy
+a specific version of the Minecraft binary files. This installer will copy
 an existing configuration and apply the Better Than Wolves patch to it.
 
 ## Before You Start
@@ -15,26 +16,26 @@ Before you can use this utility you need to have the following set up:
 * **[Java](https://java.com/en/download/)** - the utility requires a 
 Java 8 to work
 
-* **[Latest Patch](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272992-better-than-wolves-now-with-bloody-stumps-total)** - Download the latest version of the Better Than Wolves
-patch from the Minecraft Forum post.
+* **[Latest Patch](http://www.sargunster.com/btwforum/viewforum.php?f=3)** - Download the latest version of the Better Than Wolves
+patch from the Better Than Wolves Forum post.
 
 * **A Minecraft 1.5.2 configuration** -  Better Than Wolves requires a 
-Minecraft 1.5.2 configuration which this utility will look for as part of 
+Minecraft 1.5.2 configuration which this installer will look for as part of 
 installation. If you have not already created this release please see 
 the section on [creating a new profile](New-Profile.MD).
 
 ## Download and Run
 
-To use the patching utility, download the [patcher.jar](https://bitbucket.org/rwapshott/btw-installer/downloads/patcher.jar) 
+To use the installer, download the [installer.jar](https://bitbucket.org/rwapshott/btw-installer/downloads/installer.jar) 
 from the BitBucket release page.
 
-Start by opening a command prompt or terminal and selecting the folder 
-where the utility was downloaded to. In this case we have downloaded 
-it to "Downloads":
+If your system supports running Java Executable files then you can 
+double click the file to start the installer. Otherwise you can 
+start the installer by using a terminal or command prompt:
 
 ```bash
 $ cd Downloads
-$ java -jar patcher.jar
+$ java -jar installer.jar
 ```
 
 ## Patch Installation
@@ -44,12 +45,20 @@ process, press the "Patch" button.
 
 ![Click Patch to start](images/patch-start.png)
 
-First you will need to select your Minecraft installation folder:
+**Select Minecraft Installation**
 
-![File selection dialog for Minecraft Home](images/select-mc-home.png)
+If you are happy to install the patch into the default Minecraft location
+then select "Yes".
+
+![Confirm Default Minecraft Installation](images/select-mc-home-default.png)
+
+Otherwise you will need to use the folder chooser dialog to select where
+Minecraft is installed.
+
+**Select Better Than Wolves Download**
 
 Then you will need to select the downloaded BetterThanWolves zip file which you 
-can download from [here](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1272992-better-than-wolves-now-with-bloody-stumps-total).
+can download from the Better Than Wolves Forum [here](http://www.sargunster.com/btwforum/viewforum.php?f=3).
 
 ![File selection dialog for BTW Patch](images/select-patch.png)
 

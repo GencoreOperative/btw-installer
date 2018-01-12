@@ -6,7 +6,7 @@
 
     <groupId>uk.co.gencoreoperative</groupId>
     <artifactId>btw-installer</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
     <build>
         <plugins>
             <!-- Java 8 required -->
@@ -20,7 +20,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Use Cuppa for tests -->
+            <!-- Using Cuppa for tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -73,7 +73,7 @@
                         </goals>
                         <configuration>
                             <sourceFile>${project.build.directory}/btw-installer-${project.version}-jar-with-dependencies.jar</sourceFile>
-                            <destinationFile>${project.build.directory}/../packager-${project.version}.jar</destinationFile>
+                            <destinationFile>${project.build.directory}/../installer.jar</destinationFile>
                         </configuration>
                     </execution>
                 </executions>
