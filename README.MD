@@ -9,6 +9,9 @@ Minecraft supports multiple "Configurations", which can be set to use
 a specific version of the Minecraft binary files. This installer will copy
 an existing configuration and apply the Better Than Wolves patch to it.
 
+If you want to know how to remove the mod, see the 
+[Removal Instructions](Remove.MD).
+
 ## Before You Start
 
 Before you can use this utility you need to have the following set up:
