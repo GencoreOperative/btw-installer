@@ -154,6 +154,10 @@ public class Progress extends JDialog implements Observer {
         Optional<AbstractCommand> failed = commands.stream()
                 .filter(AbstractCommand::isProcessed)
                 .filter(    c -> !c.isSuccess()).findFirst();
+
+        // Trigger UI to refresh
+        update(null, null);
+
         if (cancelled.isPresent()) {
             dialogFactory.information(CANCELLED_DETAIL.getText());
         } else if (failed.isPresent()) {

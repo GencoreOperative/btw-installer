@@ -3,6 +3,8 @@ package uk.co.gencoreoperative.btw;
 import java.io.File;
 import java.util.function.Supplier;
 
+import uk.co.gencoreoperative.btw.utils.OSUtils;
+
 /**
  * Responsible for providing the platform dependent location of Minecraft
  */
@@ -18,7 +20,7 @@ public class PathResolver implements Supplier<File> {
     }
 
     public PathResolver() {
-        this("/Users/robert.wapshott/Library/Application Support/minecraft");
+        this(getDefaultMinecraftPath());
     }
 
     @Override
@@ -39,14 +41,20 @@ public class PathResolver implements Supplier<File> {
     }
 
     public static File getDefaultMinecraftPath() {
-        String operatingSystem = System.getProperty("os.name");
-        File folder;
-        if ("Mac OS X".equalsIgnoreCase(operatingSystem)) {
-            folder = new File(System.getProperty("user.home") + "/Library/Application Support/minecraft");
-
+        if (OSUtils.isWindows()) {
+            String appdata = System.getenv("APPDATA");
+            return folder(appdata, ".minecraft");
         } else {
-            folder = new File("%appdata%\\.minecraft");
+            String home = System.getProperty("user.home");
+            return folder(folder(folder(home, "Library"), "Application Support"), "minecraft");
         }
-        return folder;
+    }
+
+    private static File folder(String parent, String child) {
+        return new File(parent, child);
+    }
+
+    private static File folder(File parent, String child) {
+        return new File(parent, child);
     }
 }

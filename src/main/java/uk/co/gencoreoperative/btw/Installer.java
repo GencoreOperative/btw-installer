@@ -1,13 +1,13 @@
-/*
- * Copyright 2017 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
 package uk.co.gencoreoperative.btw;
 
-import static uk.co.gencoreoperative.btw.ui.Strings.*;
+import static uk.co.gencoreoperative.btw.ui.Strings.BUTTON_PATCH;
+import static uk.co.gencoreoperative.btw.ui.Strings.BUTTON_REMOVE;
+import static uk.co.gencoreoperative.btw.ui.Strings.MSG_PATCH_SUCCESS;
+import static uk.co.gencoreoperative.btw.ui.Strings.MSG_REMOVE_SUCCESS;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE_PATCH;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE_PATCH_SUCCESS;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE_REMOVE;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE_REMOVE_SUCCESS;
 
 import java.util.Set;
 
@@ -15,7 +15,6 @@ import com.beust.jcommander.Parameter;
 import uk.co.gencoreoperative.btw.command.AbstractCommand;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Progress;
-import uk.co.gencoreoperative.btw.ui.Strings;
 
 /**
  * Describes the configuration and resolution of dependencies based on the

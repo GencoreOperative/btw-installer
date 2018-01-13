@@ -28,10 +28,16 @@ public class Commands {
     private AbstractCommand<PathResolver> detectMinecraftHome = new UserCommand<>(
             inputs -> {
                 PathResolver resolver = new PathResolver();
-                if (resolver.versions().exists() && actionFactory.confirmDefaultInstallation()) {
+                if (resolver.get().isDirectory() && actionFactory.confirmDefaultInstallation()) {
                     return resolver;
                 }
-                return new PathResolver(actionFactory.selectMinecraftHome());
+
+                // Otherwise ask for the installation location
+                File path = actionFactory.selectMinecraftHome();
+                if (path == null) {
+                    return null;
+                }
+                return new PathResolver(path);
             },
             r -> r.oneFiveTwo().exists(),
             "Use default Minecraft installation",

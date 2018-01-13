@@ -1,10 +1,3 @@
-/*
- * Copyright 2017 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
 package uk.co.gencoreoperative.btw.ui;
 
 import static java.text.MessageFormat.format;
@@ -30,7 +23,6 @@ public class DialogFactory {
         if (current == null) path = defaultLocation;
 
         JFileChooser chooser = getDefaultChooser(title.getText());
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setSelectedFile(path);
         chooser.ensureFileIsVisible(path);
         chooser.setFileFilter(new FileFilter() {

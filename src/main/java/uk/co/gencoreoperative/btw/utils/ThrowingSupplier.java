@@ -1,8 +1,5 @@
 package uk.co.gencoreoperative.btw.utils;
 
-import static java.text.MessageFormat.format;
-
-import java.text.MessageFormat;
 import java.util.Map;
 import java.util.function.Supplier;
 
