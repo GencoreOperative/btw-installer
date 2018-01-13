@@ -4,7 +4,7 @@ If you decide you have had enough of Better Than Wolves, this
 installer supports removing of the patch when launched with a 
 specific command line argument provided.
 
-1) From Command Prompt or Terminal, run the [installer.jar](https://bitbucket.org/rwapshott/btw-installer/downloads/installer.jar)
+1) From Command Prompt or Terminal, run the [installer.jar](https://github.com/rwapshott/btw-installer/blob/master/installer.jar)
 with the following argument:
 
 ```bash
