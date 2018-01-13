@@ -44,9 +44,11 @@ public class PathResolver implements Supplier<File> {
         if (OSUtils.isWindows()) {
             String appdata = System.getenv("APPDATA");
             return folder(appdata, ".minecraft");
-        } else {
+        } else if (OSUtils.isMacOS()) {
             String home = System.getProperty("user.home");
             return folder(folder(folder(home, "Library"), "Application Support"), "minecraft");
+        } else {
+            return new File(System.getProperty("user.dir"));
         }
     }
 
