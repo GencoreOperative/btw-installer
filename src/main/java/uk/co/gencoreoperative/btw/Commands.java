@@ -1,9 +1,11 @@
 package uk.co.gencoreoperative.btw;
 
+import static java.text.MessageFormat.*;
 import static java.text.MessageFormat.format;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class Commands {
                 }
                 return new PathResolver(path);
             },
-            r -> r.oneFiveTwo().exists(),
+            r -> r.get().exists(),
             "Use default Minecraft installation",
             PathResolver.class);
 
@@ -57,7 +59,10 @@ public class Commands {
                 inputs -> {
                     PathResolver resolver = getInputValue(inputs, PathResolver.class);
                     if (!resolver.oneFiveTwo().exists()) {
-                        throw new Exception(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
+                        String error = format("{0} in folder\n{1}",
+                                Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason(),
+                                resolver.versions().getAbsolutePath());
+                        throw new Exception(error);
                     }
                     return null;
                 },

@@ -100,8 +100,8 @@ public class Progress extends JDialog implements Observer {
         boolean failed = false;
         for (int ii = 0; ii < model.getSize(); ii++) {
             AbstractCommand command = model.getElementAt(ii);
-            complete = complete && command.isSuccess();
-            failed = failed || !command.isSuccess();
+            complete = complete && command.isProcessed() && command.isSuccess();
+            failed = failed || command.isProcessed() && !command.isSuccess();
         }
         if (complete || failed) {
             patchAction.setEnabled(false);

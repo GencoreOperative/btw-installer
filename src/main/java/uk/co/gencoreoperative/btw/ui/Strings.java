@@ -27,7 +27,7 @@ public enum Strings {
     MSG_PATCH_SUCCESS("Better Than Wolves was successfully installed"),
     MSG_REMOVE_SUCCESS("Better Than Wolves was removed"),
     ERROR_TITLE("Error"),
-    ERROR_DETAIL("An error occurred whilst processing:\n{0}\nReason:\n{1}"),
+    ERROR_DETAIL("An error occurred whilst processing\n{0}\nReason:\n{1}"),
     CANCELLED_DETAIL("Cancelled by user"),
     INFORMATION_TITLE("Information"),
     CONFIRM_DEFAULT_MESSAGE("Default Minecraft installation detected, use this installation?"),

@@ -25,17 +25,7 @@ public class DialogFactory {
         JFileChooser chooser = getDefaultChooser(title.getText());
         chooser.setSelectedFile(path);
         chooser.ensureFileIsVisible(path);
-        chooser.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return selector.test(f);
-            }
-
-            @Override
-            public String getDescription() {
-                return "Zip Archives";
-            }
-        });
+        chooser.setFileFilter(getFilter("Zip Archives", selector));
         int result = chooser.showDialog(parent, Strings.BUTTON_SELECT.getText());
         if (result == JFileChooser.APPROVE_OPTION) {
             return chooser.getSelectedFile();
@@ -52,22 +42,26 @@ public class DialogFactory {
         chooser.setCurrentDirectory(path.getParentFile());
         chooser.setSelectedFile(path);
         chooser.ensureFileIsVisible(path);
-        chooser.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return selector.test(f);
-            }
-
-            @Override
-            public String getDescription() {
-                return "Folders";
-            }
-        });
+        chooser.setFileFilter(getFilter("Folders", selector));
         int result = chooser.showDialog(parent, Strings.BUTTON_SELECT.getText());
         if (result == JFileChooser.APPROVE_OPTION) {
             return chooser.getSelectedFile();
         }
         return null;
+    }
+
+    private FileFilter getFilter(final String description, final Predicate<File> selector) {
+        return new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || selector.test(f);
+            }
+
+            @Override
+            public String getDescription() {
+                return description;
+            }
+        };
     }
 
     private JFileChooser getDefaultChooser(String title) {
