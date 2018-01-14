@@ -12,6 +12,8 @@ an existing configuration and apply the Better Than Wolves patch to it.
 If you want to know how to remove the mod, see the 
 [Removal Instructions](Remove.MD).
 
+This project is provided as is, and is licensed under a [MIT license](License.txt).
+
 ## Before You Start
 
 Before you can use this utility you need to have the following set up:
