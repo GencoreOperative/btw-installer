@@ -1,7 +1,11 @@
 package uk.co.gencoreoperative.btw.utils;
 
+import static uk.co.gencoreoperative.btw.utils.FileUtils.copyStream;
+import static uk.co.gencoreoperative.btw.utils.FileUtils.openZip;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Spliterator;
@@ -10,22 +14,17 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
-import static uk.co.gencoreoperative.btw.utils.FileUtils.copyStream;
-
-/**
- * Wraps around the Java Zip classes to provide a handy stream of the zip contents.
- */
-public class ZipFileSpliterator implements Spliterator<EntryAndData> {
-
+public class ZipFileStream implements Spliterator<PathAndData> {
     private final ZipInputStream inputStream;
 
-    public ZipFileSpliterator(final InputStream stream) {
+    public ZipFileStream(final InputStream stream) {
         inputStream = new ZipInputStream(stream);
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super EntryAndData> action) {
+    public boolean tryAdvance(Consumer<? super PathAndData> action) {
         try {
             ZipEntry entry = inputStream.getNextEntry();
             if (entry == null) {
@@ -33,13 +32,13 @@ public class ZipFileSpliterator implements Spliterator<EntryAndData> {
                 return false;
             }
 
-            final EntryAndData result;
+            final PathAndData result;
             if (entry.isDirectory()) {
-                result = EntryAndData.folder(entry);
+                result = PathAndData.fromZipEntry(entry);
             } else {
                 ByteArrayOutputStream zipContents = new ByteArrayOutputStream();
                 copyStream(inputStream, zipContents, false, true);
-                result = EntryAndData.file(entry, new ByteArrayInputStream(zipContents.toByteArray()));
+                result = PathAndData.fromZipEntry(entry, new ByteArrayInputStream(zipContents.toByteArray()));
             }
 
             action.accept(result);
@@ -51,7 +50,7 @@ public class ZipFileSpliterator implements Spliterator<EntryAndData> {
     }
 
     @Override
-    public Spliterator<EntryAndData> trySplit() {
+    public Spliterator<PathAndData> trySplit() {
         return null; // ZipFile cannot be accessed in parallel
     }
 
@@ -70,7 +69,24 @@ public class ZipFileSpliterator implements Spliterator<EntryAndData> {
      * @param stream Non null stream which must contain a zip archive.
      * @return Non null stream of its contents.
      */
-    public static Stream<EntryAndData> streamZip(InputStream stream) {
-        return StreamSupport.stream(new ZipFileSpliterator(stream), false);
+    public static Stream<PathAndData> streamZip(InputStream stream) {
+        return StreamSupport.stream(new ZipFileStream(stream), false);
+    }
+
+    public static File writeStreamToFile(Stream<PathAndData> stream, File target) {
+        try (ZipOutputStream targetStream = openZip(target)) {
+            Consumer<PathAndData> copyToTargetJar = p -> {
+                try {
+                    targetStream.putNextEntry(new ZipEntry(p.getPath()));
+                    copyStream(p.getDataStream(), targetStream, true, false);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            };
+            stream.forEach(copyToTargetJar);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return target;
     }
 }

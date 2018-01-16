@@ -1,6 +1,9 @@
 TODO: JitWatch - Stream Copy is called many times.
 TODO: Release to general public
 
+TODO: Feedback - the patcher does not explain what it will do, or what it has done
+TODO: It just does a thing.
+
 TODO: Server Mode!
 ===
 #!/bin/bash

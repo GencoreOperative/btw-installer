@@ -1,11 +1,8 @@
 package uk.co.gencoreoperative.btw;
 
-import static java.text.MessageFormat.*;
 import static java.text.MessageFormat.format;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -107,10 +104,9 @@ public class Commands {
 
         SystemCommand<File> assembleMergedJar = new SystemCommand<>(
                 inputs -> {
-                    PatchFile patchFile = getInputValue(inputs, PatchFile.class);
-                    TargetFolder targetFolder = getInputValue(inputs, TargetFolder.class);
                     PathResolver resolver = getInputValue(inputs, PathResolver.class);
-                    return actionFactory.mergePatchAndRelease(targetFolder.folder, patchFile.file, resolver);
+                    PatchFile patchFile = getInputValue(inputs, PatchFile.class);
+                    return actionFactory.mergeClientJarWithPatch(resolver, patchFile.file);
                 },
                 "created BetterThanWolves.jar",
                 null,

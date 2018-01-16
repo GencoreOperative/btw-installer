@@ -3,23 +3,21 @@ package uk.co.gencoreoperative.btw;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.FileChooser;
 import uk.co.gencoreoperative.btw.ui.Strings;
-import uk.co.gencoreoperative.btw.utils.EntryAndData;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
+import uk.co.gencoreoperative.btw.utils.PathAndData;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static uk.co.gencoreoperative.btw.utils.FileUtils.openZip;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip;
+import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip2;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
+import static uk.co.gencoreoperative.btw.utils.ZipFileStream.*;
 
 /**
  * Captures the ability to describe actions that can be performed.
@@ -50,10 +48,6 @@ public class ActionFactory {
             FileChooser.setLastOpenedPath(MINECRAFT_LOCATION, selected);
         }
         return selected;
-    }
-
-    public PathResolver getPathResolver(File path) {
-        return new PathResolver(path);
     }
 
     public File removePreviousInstallation(PathResolver resolver) {
@@ -91,48 +85,40 @@ public class ActionFactory {
         return targetJson;
     }
 
-    public File mergePatchAndRelease(File targetFolder, File patchFile, PathResolver pathResolver) {
-        File targetJarFile = new File(targetFolder, "BetterThanWolves.jar");
+    /**
+     * Merge the contents of the source file, with the patch file and store the result in
+     * the target file.
+     *
+     * This operation will stream the source zip file and patch zip file, layering the patch
+     * over the source to create the target zip file. If there are duplicate files in the source
+     * and patch files, the patch file version will be kept.
+     *
+     * @param targetZip Target file to write to.
+     *
+     * @return Non null reference to the target file.
+     */
+    public File mergePatchAndRelease(Stream<PathAndData> source, Stream<PathAndData> patch, File targetZip) {
+        Set<PathAndData> files = source
+                .filter(PathAndData::isFile)
+                .collect(Collectors.toSet());
 
-        // stream the contents of the BTW Patch utils into a map
-        Map<String, EntryAndData> modFiles = new HashMap<>();
-        streamZip(patchFile)
-                .filter(entry -> entry.getName().startsWith(PATCH_FOLDER))
-                .map(entry -> EntryAndData.file(trimModPath(entry.getEntry()), entry.getData()))
-                .forEach(entry -> modFiles.put(entry.getName(), entry));
+        patch.filter(PathAndData::isFile).collect(Collectors.toCollection(() -> files));
 
-        try (ZipOutputStream targetStream = openZip(targetJarFile)) {
-            // Define function for streaming contents to target jar.
-            Consumer<EntryAndData> copyToTargetJar = entry -> {
-                try {
-                    targetStream.putNextEntry(entry.getEntry());
-                    FileUtils.copyStream(entry.getData(), targetStream, true, false);
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            };
-
-            // stream the 1.5.2 jar into the target jar, excluding all files that are in the modFiles map
-            List<String> metaFilter = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
-            streamZip(new File(pathResolver.oneFiveTwo(), "1.5.2.jar"))
-                    .filter(EntryAndData::isFile)
-                    .filter(entry -> !metaFilter.contains(entry.getName()))
-                    .filter(entry -> !modFiles.containsKey(entry.getName()))
-                    .forEach(copyToTargetJar);
-
-            // Stream all files from the modFiles map into the target jar.
-            modFiles.values().stream()
-                    .filter(EntryAndData::isFile)
-                    .forEach(copyToTargetJar);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return targetJarFile;
+        return writeStreamToFile(files.stream(), targetZip);
     }
 
-    private static ZipEntry trimModPath(ZipEntry entry) {
-        String name = entry.getName();
-        return new ZipEntry(name.substring(PATCH_FOLDER.length(), name.length()));
+    public File mergeClientJarWithPatch(PathResolver resolver, File patchZip) {
+        File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
+        List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
+        Stream<PathAndData> sourceStream = streamZip2(source)
+                .filter(p -> !excludes.contains(p.getPath()));
+
+        Stream<PathAndData> patchStream = streamZip2(patchZip)
+                .filter(p -> p.getPath().startsWith(PATCH_FOLDER));
+
+        File target = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
+
+        return mergePatchAndRelease(sourceStream, patchStream, target);
     }
 
     public boolean confirmDefaultInstallation() {

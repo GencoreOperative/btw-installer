@@ -76,6 +76,14 @@ public class FileUtils {
         }
     }
 
+    public static Stream<PathAndData> streamZip2(File file) {
+        try {
+            return ZipFileStream.streamZip(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static Stream<EntryAndData> streamZip(InputStream stream) {
         return StreamSupport.stream(new ZipFileSpliterator(stream), false);
     }
