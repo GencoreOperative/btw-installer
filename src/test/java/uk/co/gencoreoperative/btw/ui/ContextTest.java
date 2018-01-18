@@ -53,7 +53,7 @@ public class ContextTest {
             context.register(String.class, mockListener);
             it("notifies a listener", () -> {
                 context.add("badger");
-                context.remove("badger");
+                context.remove(String.class);
                 verify(mockListener, times(2)).update(any(Observable.class), stringCaptor.capture());
                 assertThat(stringCaptor.getAllValues()).containsSequence("badger", null);
             });

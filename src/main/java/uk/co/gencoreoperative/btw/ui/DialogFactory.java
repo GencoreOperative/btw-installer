@@ -84,6 +84,13 @@ public class DialogFactory {
                 JOptionPane.ERROR_MESSAGE);
     }
 
+    public void failed(String message) {
+        JOptionPane.showMessageDialog(parent,
+                format("Failed to install patch:\n{0}", message),
+                Strings.ERROR_TITLE.getText(),
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     public void information(String text) {
         JOptionPane.showMessageDialog(parent,
                 text,
