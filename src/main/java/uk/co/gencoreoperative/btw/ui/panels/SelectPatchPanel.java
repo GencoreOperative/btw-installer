@@ -10,13 +10,17 @@ import uk.co.gencoreoperative.btw.ui.actions.ChoosePatch;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
 public class SelectPatchPanel extends JPanel {
+    private static final ImageIcon COMPRESS = new ImageIcon(MinecraftHomePanel.class.getResource("/icons/compress.png"));
+
     public SelectPatchPanel(ActionFactory factory, Context context) {
-        setBorder(new TitledBorder("Select Patch"));
+        setBorder(new TitledBorder("Better Than Wolves Patch"));
         setLayout(new MigLayout(
-                "wrap 2, fillx",
-                "[][min!]"));
+                "fillx",
+                "[min!][][min!]"));
 
         // Row 1
+        final JLabel folderIcon = new JLabel(COMPRESS);
+        add(folderIcon);
         final JTextField selectPatchField = new JTextField(20);
         selectPatchField.setEditable(false);
         selectPatchField.setEnabled(true);

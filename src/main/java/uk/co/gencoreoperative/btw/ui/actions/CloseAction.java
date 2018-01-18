@@ -14,6 +14,11 @@ public class CloseAction extends AbstractAction {
 
         putValue(Action.NAME, Strings.BUTTON_CLOSE.getText());
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false));
+
+        dialog.getRootPane().registerKeyboardAction(
+                this,
+                (KeyStroke) getValue(Action.ACCELERATOR_KEY),
+                JComponent.WHEN_FOCUSED);
     }
 
     @Override

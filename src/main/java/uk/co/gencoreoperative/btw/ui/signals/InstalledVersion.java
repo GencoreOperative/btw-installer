@@ -2,6 +2,10 @@ package uk.co.gencoreoperative.btw.ui.signals;
 
 import java.io.File;
 
+/**
+ * Represents the installed version of Better Than Wolves after this
+ * patching utility has completed the installation.
+ */
 public class InstalledVersion {
     private final File jar;
     private String version;
