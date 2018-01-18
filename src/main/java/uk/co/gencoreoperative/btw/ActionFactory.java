@@ -6,9 +6,13 @@ import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 import uk.co.gencoreoperative.btw.utils.PathAndData;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -30,6 +34,7 @@ public class ActionFactory {
 
     private static final String MINECRAFT_LOCATION = "minecraft.location";
     private static final String PATCH_LOCATION = "patch.location";
+    public static final String PREFIX = "FlowerChild's Better Than Wolves Total Conversion";
 
     private final DialogFactory dialogFactory;
 
@@ -125,5 +130,23 @@ public class ActionFactory {
         return dialogFactory.confirm(
                 Strings.CONFIRM_DEFAULT_MESSAGE.getText(),
                 Strings.CONFIRM_DEFAULT_TITLE.getText());
+    }
+
+    public String extractVersionFromPatch(File zip) {
+        Optional<PathAndData> readme = streamZip2(zip)
+                .filter(p -> p.getPath().endsWith("readme.txt"))
+                .findFirst();
+        if (!readme.isPresent()) return null;
+
+        String first;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readme.get().getDataStream()))){
+            first = reader.readLine();
+        } catch (IOException e) {
+            return null;
+        }
+
+        if (!first.startsWith(PREFIX)) return null;
+
+        return first.substring(PREFIX.length()).trim();
     }
 }
