@@ -14,6 +14,7 @@ import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.panels.BTWVersionPanel;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
+import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 
 public class NewUI extends JPanel {
@@ -41,9 +42,23 @@ public class NewUI extends JPanel {
     }
 
     public void initialiseMinecraftHome() {
-        File defaultHome = new PathResolver().get();
+        PathResolver resolver = new PathResolver();
+        File defaultHome = resolver.get();
         if (defaultHome.exists()) {
-            context.add(new MinecraftHome(defaultHome));
+
+            MinecraftHome value = new MinecraftHome(defaultHome);
+            context.add(value);
+
+            // Is BTW already installed?
+            if (resolver.betterThanWolves().exists()) {
+                File jar = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
+                String version = actionFactory.readVersion(resolver.betterThanWolves());
+                if (version != null) {
+                    InstalledVersion installedVersion = new InstalledVersion(jar);
+                    installedVersion.setVersion(version);
+                    context.add(installedVersion);
+                }
+            }
         }
     }
 

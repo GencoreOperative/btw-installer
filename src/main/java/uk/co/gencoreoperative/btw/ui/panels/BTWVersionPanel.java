@@ -6,6 +6,7 @@ import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
@@ -21,9 +22,13 @@ public class BTWVersionPanel extends JPanel {
         JTextField installedVersionField = new JTextField();
         installedVersionField.setEditable(false);
         installedVersionField.setEnabled(true);
-        context.register(MinecraftHome.class, (o, arg) -> {}
-            //new PathResolver(minecraftHome.getFolder())
-        );
+        context.register(InstalledVersion.class, (o, arg) -> {
+            String text = "";
+            if (context.contains(InstalledVersion.class)) {
+                text = context.get(InstalledVersion.class).getVersion();
+            }
+            installedVersionField.setText(text);
+        });
         add(installedVersionField, "grow");
 
         // Row 2
@@ -34,7 +39,7 @@ public class BTWVersionPanel extends JPanel {
         context.register(PatchFile.class, (o, arg) -> {
             String text = "";
             if (context.contains(PatchFile.class)) {
-                text = factory.extractVersionFromPatch(context.get(PatchFile.class).getFile());
+                text = context.get(PatchFile.class).getVersion();
             }
             patchVersionField.setText(text);
         });

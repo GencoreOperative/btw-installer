@@ -8,8 +8,12 @@ import uk.co.gencoreoperative.btw.utils.PathAndData;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -148,5 +152,21 @@ public class ActionFactory {
         if (!first.startsWith(PREFIX)) return null;
 
         return first.substring(PREFIX.length()).trim();
+    }
+
+    public void writeVersion(File folder, String version) {
+        File versionFile = new File(folder, "version.txt");
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(versionFile))) {
+            writer.println(version);
+        } catch (FileNotFoundException ignored) {}
+    }
+
+    public String readVersion(File folder) {
+        File versionFile = new File(folder, "version.txt");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(versionFile)))) {
+            return reader.readLine();
+        } catch (IOException ignored) {
+        }
+        return null;
     }
 }
