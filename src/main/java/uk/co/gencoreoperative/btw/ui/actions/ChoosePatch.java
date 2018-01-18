@@ -24,6 +24,15 @@ public class ChoosePatch extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         File file = factory.selectPatchZip();
         if (file == null) return;
-        context.add(new PatchFile(file));
+
+        PatchFile patchFile = new PatchFile(file);
+
+        // If we can detect the patch version, apply this to the PatchFile.
+        String version = factory.extractVersionFromPatch(patchFile.getFile());
+        if (version != null) {
+            patchFile.setVersion(version);
+        }
+
+        context.add(patchFile);
     }
 }

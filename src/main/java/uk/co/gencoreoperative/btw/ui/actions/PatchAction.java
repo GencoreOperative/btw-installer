@@ -36,12 +36,21 @@ public class PatchAction extends AbstractAction implements Observer {
 
         PathResolver pathResolver = new PathResolver(minecraftHome.getFolder());
 
+        // TODO: Failed to create folder
         File installationFolder = factory.createInstallationFolder(pathResolver);
+        // TODO: Failed to write JSON
         File json = factory.copyJsonToInstallation(installationFolder);
 
         // TODO: Async task
+        // Create the Better Than Wolves Jar
         File jar = factory.mergeClientJarWithPatch(pathResolver, patchFile.getFile());
-        context.add(new InstalledVersion(jar));
+        InstalledVersion installedVersion = new InstalledVersion(jar);
+
+        // Assign version to folder
+        installedVersion.setVersion(patchFile.getVersion());
+        context.add(installedVersion);
+
+        factory.writeVersion(pathResolver.betterThanWolves(), installedVersion.getVersion());
     }
 
     @Override
