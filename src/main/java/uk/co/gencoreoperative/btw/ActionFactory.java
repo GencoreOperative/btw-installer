@@ -38,7 +38,6 @@ public class ActionFactory {
 
     private static final String MINECRAFT_LOCATION = "minecraft.location";
     private static final String PATCH_LOCATION = "patch.location";
-    public static final String PREFIX = "FlowerChild's Better Than Wolves Total Conversion";
 
     private final DialogFactory dialogFactory;
 
@@ -134,39 +133,5 @@ public class ActionFactory {
         return dialogFactory.confirm(
                 Strings.CONFIRM_DEFAULT_MESSAGE.getText(),
                 Strings.CONFIRM_DEFAULT_TITLE.getText());
-    }
-
-    public String extractVersionFromPatch(File zip) {
-        Optional<PathAndData> readme = streamZip2(zip)
-                .filter(p -> p.getPath().endsWith("readme.txt"))
-                .findFirst();
-        if (!readme.isPresent()) return null;
-
-        String first;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readme.get().getDataStream()))){
-            first = reader.readLine();
-        } catch (IOException e) {
-            return null;
-        }
-
-        if (!first.startsWith(PREFIX)) return null;
-
-        return first.substring(PREFIX.length()).trim();
-    }
-
-    public void writeVersion(File folder, String version) {
-        File versionFile = new File(folder, "version.txt");
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(versionFile))) {
-            writer.println(version);
-        } catch (FileNotFoundException ignored) {}
-    }
-
-    public String readVersion(File folder) {
-        File versionFile = new File(folder, "version.txt");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(versionFile)))) {
-            return reader.readLine();
-        } catch (IOException ignored) {
-        }
-        return null;
     }
 }

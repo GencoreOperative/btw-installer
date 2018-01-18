@@ -8,6 +8,7 @@ import java.util.Observer;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
@@ -50,7 +51,8 @@ public class PatchAction extends AbstractAction implements Observer {
         installedVersion.setVersion(patchFile.getVersion());
         context.add(installedVersion);
 
-        factory.writeVersion(pathResolver.betterThanWolves(), installedVersion.getVersion());
+        VersionResolver versionResolver = new VersionResolver();
+        versionResolver.writeVersion(pathResolver.betterThanWolves(), installedVersion.getVersion());
     }
 
     @Override

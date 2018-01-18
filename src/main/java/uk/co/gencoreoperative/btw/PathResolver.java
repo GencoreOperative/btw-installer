@@ -40,7 +40,7 @@ public class PathResolver implements Supplier<File> {
         return new File(versions(), "BetterThanWolves");
     }
 
-    public static File getDefaultMinecraftPath() {
+    static File getDefaultMinecraftPath() {
         if (OSUtils.isWindows()) {
             String appdata = System.getenv("APPDATA");
             return folder(appdata, ".minecraft");

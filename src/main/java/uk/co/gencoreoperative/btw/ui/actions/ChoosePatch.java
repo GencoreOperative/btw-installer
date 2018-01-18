@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
+import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
@@ -28,7 +29,8 @@ public class ChoosePatch extends AbstractAction {
         PatchFile patchFile = new PatchFile(file);
 
         // If we can detect the patch version, apply this to the PatchFile.
-        String version = factory.extractVersionFromPatch(patchFile.getFile());
+        VersionResolver versionResolver = new VersionResolver();
+        String version = versionResolver.extractVersionFromPatch(patchFile.getFile());
         if (version != null) {
             patchFile.setVersion(version);
         }

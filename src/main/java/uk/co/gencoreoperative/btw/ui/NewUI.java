@@ -9,6 +9,8 @@ import java.io.File;
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.VersionResolver;
+import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.panels.BTWVersionPanel;
@@ -41,31 +43,11 @@ public class NewUI extends JPanel {
         }
     }
 
-    public void initialiseMinecraftHome() {
-        PathResolver resolver = new PathResolver();
-        File defaultHome = resolver.get();
-        if (defaultHome.exists()) {
-
-            MinecraftHome value = new MinecraftHome(defaultHome);
-            context.add(value);
-
-            // Is BTW already installed?
-            if (resolver.betterThanWolves().exists()) {
-                File jar = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
-                String version = actionFactory.readVersion(resolver.betterThanWolves());
-                if (version != null) {
-                    InstalledVersion installedVersion = new InstalledVersion(jar);
-                    installedVersion.setVersion(version);
-                    context.add(installedVersion);
-                }
-            }
-        }
-    }
-
     public static void main(String... args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) { }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) {
+        }
 
 
         JDialog dialog = new JDialog();
@@ -88,6 +70,10 @@ public class NewUI extends JPanel {
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
 
-        ui.initialiseMinecraftHome();
+        ChooseMinecraftHome.initaliseMinecraftHome(ui.getContext());
+    }
+
+    public Context getContext() {
+        return context;
     }
 }
