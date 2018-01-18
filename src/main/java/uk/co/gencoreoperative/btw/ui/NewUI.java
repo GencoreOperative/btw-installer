@@ -49,8 +49,8 @@ public class NewUI extends JPanel {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) {
         }
 
-
         JDialog dialog = new JDialog();
+        dialog.setTitle(Strings.TITLE_PATCH.getText());
         NewUI ui = new NewUI(dialog);
         dialog.add(ui);
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);

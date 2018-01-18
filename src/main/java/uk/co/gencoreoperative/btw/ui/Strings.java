@@ -17,10 +17,10 @@ public enum Strings {
     TITLE_REMOVE_SUCCESS("Removal complete"),
 
     BUTTON_CLOSE("Close"),
-    BUTTON_CHANGE_MINECRAFT_HOME("Change"),
+    BUTTON_CHANGE_MINECRAFT_HOME("Change..."),
     BUTTON_PATCH("Patch"),
     BUTTON_REMOVE("Remove"),
-    BUTTON_CHOOSE_PATCH("Choose"),
+    BUTTON_CHOOSE_PATCH("Choose..."),
 
     SELECT_ZIP_TITLE("Select BetterThanWolves Zip"),
     SELECT_MC_HOME("Select Minecraft Installation folder"),

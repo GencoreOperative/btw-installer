@@ -37,6 +37,9 @@ public class PatchAction extends AbstractAction implements Observer {
 
         PathResolver pathResolver = new PathResolver(minecraftHome.getFolder());
 
+        // Remove previous installation.
+        factory.removePreviousInstallation(pathResolver);
+
         // TODO: Failed to create folder
         File installationFolder = factory.createInstallationFolder(pathResolver);
         // TODO: Failed to write JSON
