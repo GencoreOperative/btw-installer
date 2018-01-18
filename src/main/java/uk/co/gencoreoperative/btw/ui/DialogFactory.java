@@ -26,7 +26,7 @@ public class DialogFactory {
         chooser.setSelectedFile(path);
         chooser.ensureFileIsVisible(path);
         chooser.setFileFilter(getFilter("Zip Archives", selector));
-        int result = chooser.showDialog(parent, Strings.BUTTON_SELECT.getText());
+        int result = chooser.showDialog(parent, Strings.BUTTON_CHANGE_MINECRAFT_HOME.getText());
         if (result == JFileChooser.APPROVE_OPTION) {
             return chooser.getSelectedFile();
         }
@@ -43,7 +43,7 @@ public class DialogFactory {
         chooser.setSelectedFile(path);
         chooser.ensureFileIsVisible(path);
         chooser.setFileFilter(getFilter("Folders", selector));
-        int result = chooser.showDialog(parent, Strings.BUTTON_SELECT.getText());
+        int result = chooser.showDialog(parent, Strings.BUTTON_CHANGE_MINECRAFT_HOME.getText());
         if (result == JFileChooser.APPROVE_OPTION) {
             return chooser.getSelectedFile();
         }

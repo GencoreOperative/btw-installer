@@ -2,26 +2,49 @@ package uk.co.gencoreoperative.btw.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 
 import net.miginfocom.swing.MigLayout;
+import uk.co.gencoreoperative.btw.ActionFactory;
+import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
+import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.panels.BTWVersionPanel;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
+import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 
 public class NewUI extends JPanel {
-    public NewUI() {
+    private final ActionFactory actionFactory = new ActionFactory(new DialogFactory(this));
+    private final Context context = new Context();
+
+    public NewUI(JDialog dialog) {
         setLayout(new BorderLayout());
 
         JPanel centre = new JPanel(new MigLayout("fillx, wrap 1"));
-        centre.add(new MinecraftHomePanel(), "grow");
-        centre.add(new SelectPatchPanel(), "grow");
-        centre.add(new BTWVersionPanel(), "grow");
+        centre.add(new MinecraftHomePanel(context, actionFactory), "grow");
+        centre.add(new SelectPatchPanel(actionFactory, context), "grow");
+        centre.add(new BTWVersionPanel(actionFactory, context), "grow");
         add(centre, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-        buttons.add(new JButton("Patch"));
-        buttons.add(new JButton("Close"));
+        buttons.add(new JButton(new PatchAction(context, actionFactory)));
+        buttons.add(new JButton(new CloseAction(dialog)));
         add(buttons, BorderLayout.SOUTH);
+
+        File defaultHome = new PathResolver().get();
+        if (defaultHome.exists()) {
+            context.add(new MinecraftHome(defaultHome));
+        }
+    }
+
+    public void initialiseMinecraftHome() {
+        File defaultHome = new PathResolver().get();
+        if (defaultHome.exists()) {
+            context.add(new MinecraftHome(defaultHome));
+        }
     }
 
     public static void main(String... args) {
@@ -31,16 +54,25 @@ public class NewUI extends JPanel {
 
 
         JDialog dialog = new JDialog();
-        dialog.add(new NewUI());
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        NewUI ui = new NewUI(dialog);
+        dialog.add(ui);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                new CloseAction(dialog).actionPerformed(null);
+            }
+        });
 
         // Determine the smallest size
         dialog.pack();
         dialog.setMinimumSize(dialog.getPreferredSize());
 
         // Set a comfortable size
-        dialog.setSize(400, 300);
+        dialog.setSize(300, 300);
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
+
+        ui.initialiseMinecraftHome();
     }
 }

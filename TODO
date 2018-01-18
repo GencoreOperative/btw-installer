@@ -14,6 +14,10 @@ What would a UI look like that explains that to the user?
 
 Redesign the user interface to provide more feedback to the user.
 
+TODO: How to detect version installed?
+- Decompile FCBetterThanWolves.class and look for fcVersionString - :(
+- Record last installed version by this app in version folder - :)
+FlowerChild's Better Than Wolves Total Conversion 4.A4 Kiloblock Boon
 
 
 TODO: Server Mode!
