@@ -4,6 +4,18 @@ TODO: Release to general public
 TODO: Feedback - the patcher does not explain what it will do, or what it has done
 TODO: It just does a thing.
 
+Chris fell foul of a few things:
+- Setup the 1.5.2 release and run it to download the 1.5.2.jar.
+- Requirement that the 1.5.2 release must be a separate configuration folder to later versions
+Once both of these were sorted out, we were set.
+
+Again: the UI does not explain what has happened or what is going to happen.
+What would a UI look like that explains that to the user?
+
+Redesign the user interface to provide more feedback to the user.
+
+
+
 TODO: Server Mode!
 ===
 #!/bin/bash
