@@ -1,6 +1,7 @@
 package uk.co.gencoreoperative.btw.ui.actions;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Observable;
@@ -10,6 +11,8 @@ import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
+import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
@@ -18,10 +21,12 @@ import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 public class PatchAction extends AbstractAction implements Observer {
     private final Context context;
     private final ActionFactory factory;
+    private DialogFactory dialogFactory;
 
-    public PatchAction(Context context, ActionFactory factory) {
+    public PatchAction(Context context, ActionFactory factory, DialogFactory dialogFactory) {
         this.context = context;
         this.factory = factory;
+        this.dialogFactory = dialogFactory;
 
         putValue(Action.NAME, Strings.BUTTON_PATCH.getText());
 
@@ -36,6 +41,11 @@ public class PatchAction extends AbstractAction implements Observer {
         PatchFile patchFile = context.get(PatchFile.class);
 
         PathResolver pathResolver = new PathResolver(minecraftHome.getFolder());
+
+        if (!pathResolver.oneFiveTwo().exists()) {
+            dialogFactory.failed(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
+            return;
+        }
 
         // Remove previous installation.
         factory.removePreviousInstallation(pathResolver);

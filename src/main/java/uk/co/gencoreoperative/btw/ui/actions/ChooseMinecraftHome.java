@@ -50,6 +50,8 @@ public class ChooseMinecraftHome extends AbstractAction {
             InstalledVersion version = new InstalledVersion(installedJar);
             version.setVersion(versionResolver.readVersion(installedFolder));
             context.add(version);
+        } else {
+            context.remove(InstalledVersion.class);
         }
     }
 

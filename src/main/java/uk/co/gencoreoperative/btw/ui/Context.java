@@ -66,16 +66,14 @@ public class Context extends Observable {
      * will be signalled with a {@code null} signal to indicate that the element
      * has been removed.
      *
-     * @param value
-     * @param <T>
+     * @param classToRemove
      */
     @SuppressWarnings("unchecked")
-    public <T> void remove(T value) {
-        Class<?> aClass = value.getClass();
-        if (!actionsMap.containsKey(aClass)) return;
+    public void remove(Class classToRemove) {
+        if (!actionsMap.containsKey(classToRemove)) return;
 
-        values.get(aClass).set(null);
-        actionsMap.get(aClass).forEach(o -> o.update(Context.this, null));
+        values.get(classToRemove).set(null);
+        actionsMap.get(classToRemove).forEach(o -> o.update(Context.this, null));
     }
 
     /**

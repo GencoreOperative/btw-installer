@@ -20,7 +20,8 @@ import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 
 public class NewUI extends JPanel {
-    private final ActionFactory actionFactory = new ActionFactory(new DialogFactory(this));
+    public final DialogFactory dialogFactory = new DialogFactory(this);
+    private final ActionFactory actionFactory = new ActionFactory(dialogFactory);
     private final Context context = new Context();
 
     public NewUI(JDialog dialog) {
@@ -33,7 +34,7 @@ public class NewUI extends JPanel {
         add(centre, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-        buttons.add(new JButton(new PatchAction(context, actionFactory)));
+        buttons.add(new JButton(new PatchAction(context, actionFactory, dialogFactory)));
         buttons.add(new JButton(new CloseAction(dialog)));
         add(buttons, BorderLayout.SOUTH);
 
