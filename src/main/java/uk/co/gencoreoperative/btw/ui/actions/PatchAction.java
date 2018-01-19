@@ -1,22 +1,20 @@
 package uk.co.gencoreoperative.btw.ui.actions;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
-import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.ui.Strings;
-import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
+import uk.co.gencoreoperative.btw.ui.panels.ProgressPanel;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
+import uk.co.gencoreoperative.btw.ui.workers.PatchWorker;
 
 public class PatchAction extends AbstractAction implements Observer {
     private final Context context;
@@ -47,25 +45,9 @@ public class PatchAction extends AbstractAction implements Observer {
             return;
         }
 
-        // Remove previous installation.
-        factory.removePreviousInstallation(pathResolver);
-
-        // TODO: Failed to create folder
-        File installationFolder = factory.createInstallationFolder(pathResolver);
-        // TODO: Failed to write JSON
-        File json = factory.copyJsonToInstallation(installationFolder);
-
-        // TODO: Async task
-        // Create the Better Than Wolves Jar
-        File jar = factory.mergeClientJarWithPatch(pathResolver, patchFile.getFile());
-        InstalledVersion installedVersion = new InstalledVersion(jar);
-
-        // Assign version to folder
-        installedVersion.setVersion(patchFile.getVersion());
-        context.add(installedVersion);
-
-        VersionResolver versionResolver = new VersionResolver();
-        versionResolver.writeVersion(pathResolver.betterThanWolves(), installedVersion.getVersion());
+        ProgressPanel panel = new ProgressPanel();
+        PatchWorker worker = new PatchWorker(minecraftHome, patchFile, factory, context, panel);
+        worker.execute();
     }
 
     @Override
