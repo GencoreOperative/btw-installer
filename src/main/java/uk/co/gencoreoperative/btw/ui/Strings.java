@@ -18,6 +18,7 @@ public enum Strings {
 
     BUTTON_CLOSE("Close"),
     BUTTON_CHANGE_MINECRAFT_HOME("Change..."),
+    BUTTON_DIALOG_SELECT("Select"),
     BUTTON_PATCH("Patch"),
     BUTTON_REMOVE("Remove"),
     BUTTON_CHOOSE_PATCH("Choose..."),
@@ -32,7 +33,13 @@ public enum Strings {
     CANCELLED_DETAIL("Cancelled by user"),
     INFORMATION_TITLE("Information"),
     CONFIRM_DEFAULT_MESSAGE("Default Minecraft installation detected, use this installation?"),
-    CONFIRM_DEFAULT_TITLE("Confirm default Minecraft installation");
+    CONFIRM_DEFAULT_TITLE("Confirm default Minecraft installation"),
+
+    STATE_REMOVE_PREVIOUS("Remove previous"),
+    STATE_CREATE_FOLDER("Create installation folder"),
+    STATE_COPY_JSON("Write JSON"),
+    STATE_CREATE_JAR("Writing Jar"),
+    STATE_WRITE_VERSION("Writing version");
 
 
     private final String text;
