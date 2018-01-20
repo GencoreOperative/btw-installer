@@ -16,6 +16,12 @@ import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 import uk.co.gencoreoperative.btw.ui.workers.PatchWorker;
 
+/**
+ * The role of {@link PatchAction} is to act as a final gate the user needs
+ * to pass through to complete the installation. Once they have selected
+ * a {@link MinecraftHome} and a {@link PatchFile} then they can proceed
+ * to trigger this action.
+ */
 public class PatchAction extends AbstractAction implements Observer {
     private final Context context;
     private final ActionFactory factory;
@@ -33,6 +39,13 @@ public class PatchAction extends AbstractAction implements Observer {
         update(null, null);
     }
 
+
+    /**
+     * Retrieve the prerequisites from the {@link Context} and trigger the
+     * specific Progress dialog and worker needed for patching.
+     *
+     * @param e Ignored.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         MinecraftHome minecraftHome = context.get(MinecraftHome.class);
@@ -47,9 +60,17 @@ public class PatchAction extends AbstractAction implements Observer {
 
         ProgressPanel panel = new ProgressPanel();
         PatchWorker worker = new PatchWorker(minecraftHome, patchFile, factory, context, panel);
+
+        JDialog dialog = panel.createDialog(dialogFactory.getDialog(), panel);
         worker.execute();
+        dialog.setVisible(true);
     }
 
+    /**
+     * Action is only enabled when both items are present in the context.
+     * @param o Ignored
+     * @param arg Ignored
+     */
     @Override
     public void update(Observable o, Object arg) {
         setEnabled(context.contains(MinecraftHome.class, PatchFile.class));

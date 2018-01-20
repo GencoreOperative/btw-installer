@@ -20,11 +20,14 @@ import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 
 public class NewUI extends JPanel {
-    public final DialogFactory dialogFactory = new DialogFactory(this);
-    private final ActionFactory actionFactory = new ActionFactory(dialogFactory);
+    public final DialogFactory dialogFactory;
+    private final ActionFactory actionFactory;
     private final Context context = new Context();
 
     public NewUI(JDialog dialog) {
+        dialogFactory = new DialogFactory(dialog);
+        actionFactory = new ActionFactory(dialogFactory);
+
         setLayout(new BorderLayout());
 
         JPanel centre = new JPanel(new MigLayout("fillx, wrap 1"));

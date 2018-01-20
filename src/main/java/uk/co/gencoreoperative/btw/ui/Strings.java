@@ -39,7 +39,10 @@ public enum Strings {
     STATE_CREATE_FOLDER("Create installation folder"),
     STATE_COPY_JSON("Write JSON"),
     STATE_CREATE_JAR("Writing Jar"),
-    STATE_WRITE_VERSION("Writing version");
+    STATE_WRITE_VERSION("Writing version"),
+    STATE_COMPLETE("Patch complete"),
+
+    DIALOG_TITLE_PROGRESS("Patching in progress");
 
 
     private final String text;

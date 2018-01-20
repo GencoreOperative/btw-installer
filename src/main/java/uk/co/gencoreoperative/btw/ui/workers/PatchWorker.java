@@ -35,34 +35,34 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
     @Override
     protected Status doInBackground() throws Exception {
         // Remove previous installation.
-        factory.removePreviousInstallation(pathResolver);
         publish(REMOVE_PREVIOUS);
+        factory.removePreviousInstallation(pathResolver);
         if (pathResolver.betterThanWolves().exists()) {
             return new Status(format("{0}\n{1}",
                     Errors.FAILED_TO_DELETE_INSTALLATION.getReason(),
                     pathResolver.betterThanWolves().getAbsolutePath()));
         }
 
+        publish(CREATE_FOLDER);
         File installationFolder = factory.createInstallationFolder(pathResolver);
         if (!installationFolder.exists()) {
             return new Status(format("{0}\n{1}",
                     Errors.FAILED_TC_CREATE_FOLDER.getReason(),
                     installationFolder.getAbsolutePath()));
         }
-        publish(CREATE_FOLDER);
 
         // Write JSON
+        publish(COPY_JSON);
         File json = factory.copyJsonToInstallation(installationFolder);
         if (!json.exists()) {
             return new Status(format("{0}\n{1}",
                     Errors.FAILED_TO_WRITE_JSON.getReason(),
                     json.getAbsolutePath()));
         }
-        publish(COPY_JSON);
 
         // Create the Better Than Wolves Jar
-        File jar = factory.mergeClientJarWithPatch(pathResolver, patchFile.getFile());
         publish(CREATE_JAR);
+        File jar = factory.mergeClientJarWithPatch(pathResolver, patchFile.getFile());
 
         // Signal to the application that BTW has been installed
         InstalledVersion installedVersion = new InstalledVersion(jar);
@@ -70,10 +70,11 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         context.add(installedVersion);
 
         // Write the version to the installation folder
+        publish(WRITE_VERSION);
         VersionResolver versionResolver = new VersionResolver();
         versionResolver.writeVersion(pathResolver.betterThanWolves(), installedVersion.getVersion());
-        publish(WRITE_VERSION);
 
+        publish(COMPLETE);
         return new Status();
     }
 
