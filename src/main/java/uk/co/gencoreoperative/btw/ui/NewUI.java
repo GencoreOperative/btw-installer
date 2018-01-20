@@ -9,14 +9,12 @@ import java.io.File;
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
-import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.panels.BTWVersionPanel;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
-import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 
 public class NewUI extends JPanel {
@@ -33,7 +31,7 @@ public class NewUI extends JPanel {
         JPanel centre = new JPanel(new MigLayout("fillx, wrap 1"));
         centre.add(new MinecraftHomePanel(context, actionFactory), "grow");
         centre.add(new SelectPatchPanel(actionFactory, context), "grow");
-        centre.add(new BTWVersionPanel(actionFactory, context), "grow");
+        centre.add(new BTWVersionPanel(context), "grow");
         add(centre, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.TRAILING));

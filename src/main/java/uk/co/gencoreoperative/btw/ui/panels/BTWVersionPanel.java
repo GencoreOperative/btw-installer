@@ -4,14 +4,13 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import net.miginfocom.swing.MigLayout;
-import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
-import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
+import uk.co.gencoreoperative.btw.ui.signals.Versioned;
 
 public class BTWVersionPanel extends JPanel {
-    public BTWVersionPanel(ActionFactory factory, Context context) {
+    public BTWVersionPanel(Context context) {
         setBorder(new TitledBorder("Versions"));
         setLayout(new MigLayout(
                 "fillx, wrap 2",
@@ -22,13 +21,7 @@ public class BTWVersionPanel extends JPanel {
         JTextField installedVersionField = new JTextField();
         installedVersionField.setEditable(false);
         installedVersionField.setEnabled(true);
-        context.register(InstalledVersion.class, (o, arg) -> {
-            String text = "";
-            if (context.contains(InstalledVersion.class)) {
-                text = context.get(InstalledVersion.class).getVersion();
-            }
-            installedVersionField.setText(text);
-        });
+        register(context, InstalledVersion.class, installedVersionField);
         add(installedVersionField, "grow");
 
         // Row 2
@@ -36,13 +29,17 @@ public class BTWVersionPanel extends JPanel {
         JTextField patchVersionField = new JTextField();
         patchVersionField.setEditable(false);
         patchVersionField.setEnabled(true);
-        context.register(PatchFile.class, (o, arg) -> {
-            String text = "";
-            if (context.contains(PatchFile.class)) {
-                text = context.get(PatchFile.class).getVersion();
-            }
-            patchVersionField.setText(text);
-        });
+        register(context, PatchFile.class, patchVersionField);
         add(patchVersionField, "grow");
+    }
+
+    private void register(Context context, Class<? extends Versioned> type, JTextField field) {
+        context.register(type, (o, arg) -> {
+            String text = "";
+            if (context.contains(type)) {
+                text = context.get(type).getVersion();
+            }
+            field.setText(text);
+        });
     }
 }
