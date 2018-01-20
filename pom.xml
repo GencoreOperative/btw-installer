@@ -41,7 +41,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uk.co.gencoreoperative.btw.Main</mainClass>
+                            <mainClass>uk.co.gencoreoperative.btw.ui.NewUI</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
