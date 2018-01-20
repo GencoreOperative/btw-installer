@@ -12,6 +12,7 @@ import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
+import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
 import uk.co.gencoreoperative.btw.ui.panels.BTWVersionPanel;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
@@ -36,6 +37,7 @@ public class NewUI extends JPanel {
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         buttons.add(new JButton(new PatchAction(context, actionFactory, dialogFactory)));
+        buttons.add(new JButton(new RemoveAction(dialog, context, actionFactory)));
         buttons.add(new JButton(new CloseAction(dialog)));
         add(buttons, BorderLayout.SOUTH);
 

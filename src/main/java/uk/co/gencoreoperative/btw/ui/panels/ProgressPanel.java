@@ -1,6 +1,6 @@
 package uk.co.gencoreoperative.btw.ui.panels;
 
-import static uk.co.gencoreoperative.btw.ui.Strings.DIALOG_TITLE_PROGRESS;
+import static uk.co.gencoreoperative.btw.ui.Strings.TITLE_PROGRESS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +57,7 @@ public class ProgressPanel extends JPanel {
      */
     public JDialog createDialog(Dialog parent, ProgressPanel panel) {
         JDialog dialog = new JDialog(parent, true);
-        dialog.setTitle(DIALOG_TITLE_PROGRESS.getText());
+        dialog.setTitle(TITLE_PROGRESS.getText());
 
         dialog.setLayout(new BorderLayout());
 

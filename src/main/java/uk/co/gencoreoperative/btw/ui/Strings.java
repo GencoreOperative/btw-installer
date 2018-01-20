@@ -15,6 +15,8 @@ public enum Strings {
 
     TITLE_PATCH_SUCCESS("Patch complete"),
     TITLE_REMOVE_SUCCESS("Removal complete"),
+    TITLE_REMOVE_CONFIRM("Confirm Removal"),
+    TITLE_PROGRESS("Patching in progress"),
 
     BUTTON_CLOSE("Close"),
     BUTTON_CHANGE_MINECRAFT_HOME("Change..."),
@@ -22,6 +24,8 @@ public enum Strings {
     BUTTON_PATCH("Patch"),
     BUTTON_REMOVE("Remove"),
     BUTTON_CHOOSE_PATCH("Choose..."),
+
+    REMOVE_QUESTION("Are you sure you want to remove Better Than Wolves?"),
 
     SELECT_ZIP_TITLE("Select BetterThanWolves Zip"),
     SELECT_MC_HOME("Select Minecraft Installation folder"),
@@ -40,10 +44,7 @@ public enum Strings {
     STATE_COPY_JSON("Write JSON"),
     STATE_CREATE_JAR("Writing Jar"),
     STATE_WRITE_VERSION("Writing version"),
-    STATE_COMPLETE("Patch complete"),
-
-    DIALOG_TITLE_PROGRESS("Patching in progress");
-
+    STATE_COMPLETE("Patch complete");
 
     private final String text;
 

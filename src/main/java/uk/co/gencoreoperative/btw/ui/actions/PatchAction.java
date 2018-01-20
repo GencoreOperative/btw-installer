@@ -11,6 +11,7 @@ import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.ui.Strings;
+import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.ProgressPanel;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
@@ -33,6 +34,7 @@ public class PatchAction extends AbstractAction implements Observer {
         this.dialogFactory = dialogFactory;
 
         putValue(Action.NAME, Strings.BUTTON_PATCH.getText());
+        putValue(Action.SMALL_ICON, new ImageIcon(MinecraftHomePanel.class.getResource("/icons/arrow_right.png")));
 
         context.register(MinecraftHome.class, this);
         context.register(PatchFile.class, this);
