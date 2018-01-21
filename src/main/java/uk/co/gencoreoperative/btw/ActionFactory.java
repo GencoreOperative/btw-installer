@@ -106,23 +106,24 @@ public class ActionFactory {
      * @return Non null reference to the target file.
      */
     public File mergePatchAndRelease(Stream<PathAndData> source, Stream<PathAndData> patch, File targetZip) {
-        Set<PathAndData> files = source
+        Set<PathAndData> files = patch
                 .filter(PathAndData::isFile)
                 .collect(Collectors.toSet());
 
-        patch.filter(PathAndData::isFile).collect(Collectors.toCollection(() -> files));
-
+        source.filter(PathAndData::isFile)
+                .collect(Collectors.toCollection(() -> files));
         return writeStreamToFile(files.stream(), targetZip);
     }
 
     public File mergeClientJarWithPatch(PathResolver resolver, File patchZip) {
         File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
-        List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
+        final List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
         Stream<PathAndData> sourceStream = streamZip2(source)
                 .filter(p -> !excludes.contains(p.getPath()));
 
         Stream<PathAndData> patchStream = streamZip2(patchZip)
-                .filter(p -> p.getPath().startsWith(PATCH_FOLDER));
+                .filter(p -> p.getPath().startsWith(PATCH_FOLDER))
+                .peek(p -> p.setPath(p.getPath().substring(PATCH_FOLDER.length())));
 
         File target = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
 
