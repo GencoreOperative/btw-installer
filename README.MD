@@ -9,9 +9,6 @@ Minecraft supports multiple "Configurations", which can be set to use
 a specific version of the Minecraft binary files. This installer will copy
 an existing configuration and apply the Better Than Wolves patch to it.
 
-If you want to know how to remove the mod, see the 
-[Removal Instructions](Remove.MD).
-
 This project is provided as is, and is licensed under a [MIT license](Extra.MD).
 
 ## Before You Start
@@ -45,32 +42,32 @@ $ java -jar installer.jar
 
 ## Patch Installation
 
-The utility will guide you through the installation process. To start this 
-process, press the "Patch" button.
+The utility will guide you through the installation process.
 
-![Click Patch to start](images/patch-start.png)
-
-**Select Minecraft Installation**
+1) **Select Minecraft Installation**
 
 If you are happy to install the patch into the default Minecraft location
-then select "Yes".
+then you can skip this step. If you would like to install the patch to a different
+ version of Minecraft, use the "Change..." button to select
+the location of where Minecraft is installed.
 
-![Confirm Default Minecraft Installation](images/select-mc-home-default.png)
+2) **Select Better Than Wolves Patch**
 
-Otherwise you will need to use the folder chooser dialog to select where
-Minecraft is installed.
-
-**Select Better Than Wolves Download**
-
-Then you will need to select the downloaded BetterThanWolves zip file which you 
+Then select the downloaded Better Than Wolves zip file which you 
 can download from the Better Than Wolves Forum [here](http://www.sargunster.com/btwforum/viewforum.php?f=3).
 
-![File selection dialog for BTW Patch](images/select-patch.png)
+![Select Patch Zip](images/patch-choose-zip.png)
 
-Then the utility will create a new release called "BetterThanWolves" which will
-be a copy of the 1.5.2 release with the BetterThanWolves patch merged in.
+The selected version will be shown in the version field.
 
-![Patch process complete](images/patch-complete.png)
+![Version selected](images/patch-version-selected.png)
+
+3) **Choose "Patch" to install this version**
+
+The utility will create a new Configuration called "BetterThanWolves" which 
+will be a copy of the 1.5.2 release with the BetterThanWolves patch merged in.
+
+![Patch process complete](images/patch-version-installed.png)
 
 Installation is now complete.
 
@@ -89,13 +86,13 @@ version.
 
 3) Fill in the configuration as follows:
 
-- Name: "BetterThanWolves"
-- Version: release BetterThanWolves
-- Game Directory: Choose a location other than the default Mincraft location
+- **Name**: "BetterThanWolves"
+- **Version**: release BetterThanWolves
+- **Game Directory**: Choose a location other than the default Mincraft location
 
-**Note:** The Game Directory seems important, as we noticed that if 
-BetterThanWolves is started in a Game Directory that has been used for
-a later version of the game, it will fail. 
+**Note:** The Game Directory location cannot be the Minecraft
+default as 1.5.2 is not compatible with the latest Minecraft layout. If
+BetterThanWolves fails to start, check that this is correctly set.
 
 ![Configuration complete](images/mc-configuration-complete.png)
 
