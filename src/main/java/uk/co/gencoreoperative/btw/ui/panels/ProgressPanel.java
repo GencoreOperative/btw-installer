@@ -22,8 +22,8 @@ import uk.co.gencoreoperative.btw.ui.Strings;
  */
 public class ProgressPanel extends JPanel {
 
-    private final JLabel label;
     private final JProgressBar progressBar;
+    private final Map<State, JLabel> labels = new HashMap<>();
 
     /**
      * Build up the panel by enumerating the possible States of the patch progress
@@ -34,11 +34,15 @@ public class ProgressPanel extends JPanel {
                 "[max!]"));
 
 
-        // Row 1
-        label = new JLabel("Preparing to patch...");
-        add(label, "grow");
+        // State Rows
+        Arrays.stream(State.values()).forEach(s -> {
+            JLabel label = new JLabel(s.getText(), s.getIcon(), JLabel.LEADING);
+            label.setEnabled(false);
+            labels.put(s, label);
+            add(label);
+        });
 
-        // Row 2
+        // Progress Row
         progressBar = new JProgressBar();
         add(progressBar, "grow");
     }
@@ -47,10 +51,12 @@ public class ProgressPanel extends JPanel {
      * @param state The state (JLabel) on the panel to enable to indicate progress.
      */
     public void setState(State state) {
-        label.setIcon(state.getIcon());
-        label.setText(state.getText());
-        progressBar.setValue(0);
-        progressBar.setMaximum(0);
+        labels.get(state).setEnabled(true);
+    }
+
+    public void setProgress(int current, int total) {
+        progressBar.setMaximum(total);
+        progressBar.setValue(current);
     }
 
     /**
