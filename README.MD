@@ -28,7 +28,7 @@ the section on [creating a new profile](New-Profile.MD).
 
 ## Download and Run
 
-To use the installer, download the [installer.jar](https://github.com/rwapshott/btw-installer/blob/master/installer.jar) 
+To use the installer, download the [installer.jar](https://github.com/rwapshott/btw-installer/releases/download/latest/installer.jar) 
 from the BitBucket release page.
 
 If your system supports running Java Executable files then you can 
