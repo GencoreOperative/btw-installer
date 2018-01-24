@@ -1,11 +1,13 @@
 package uk.co.gencoreoperative.btw.utils;
 
 import static uk.co.gencoreoperative.btw.utils.FileUtils.copyStream;
-import static uk.co.gencoreoperative.btw.utils.FileUtils.openZip;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Spliterator;
@@ -73,8 +75,18 @@ public class ZipFileStream implements Spliterator<PathAndData> {
         return StreamSupport.stream(new ZipFileStream(stream), false);
     }
 
-    public static File writeStreamToFile(Stream<PathAndData> stream, File target) {
-        try (ZipOutputStream targetStream = openZip(target)) {
+    /**
+     * Write the given file representations to the target zip file.
+     * <p>
+     * This operation will iterate over each entry in the stream and write it to the
+     * zip archive.
+     *
+     * @param stream Non null, possibly empty stream.
+     * @param target Non null zip file, which will be overwritten.
+     * @return The created zip file.
+     */
+    public static File writeStreamToZipFile(Stream<PathAndData> stream, File target) {
+        try (ZipOutputStream targetStream = new ZipOutputStream(new FileOutputStream(target))) {
             Consumer<PathAndData> copyToTargetJar = p -> {
                 try {
                     targetStream.putNextEntry(new ZipEntry(p.getPath()));
@@ -88,5 +100,19 @@ public class ZipFileStream implements Spliterator<PathAndData> {
             throw new IllegalStateException(e);
         }
         return target;
+    }
+
+    /**
+     * Open the zip file and stream its contents.
+     *
+     * @param file Non null file which must contain zip data.
+     * @return Non null, possibly empty stream of the contents.
+     */
+    public static Stream<PathAndData> streamZip(File file) {
+        try {
+            return streamZip(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
