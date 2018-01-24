@@ -8,6 +8,8 @@ TODO: Consider Linux as a test target
 
 TODO: Update Documentation to point to latest installer.jar
 
+TODO: Wire up errors on patch to UI
+
 TODO: Server Mode!
 ===
 #!/bin/bash
