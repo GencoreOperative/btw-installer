@@ -62,7 +62,12 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         // Create the Better Than Wolves Jar
         publish(CREATE_JAR);
-        File jar = factory.mergeClientJarWithPatch(pathResolver, patchFile.getFile());
+        final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(pathResolver, patchFile.getFile());
+        monitoredSet.addObserver((o, arg) -> {
+            setProgress(monitoredSet.getProgress());
+            publish(CREATE_JAR);
+        });
+        File jar = factory.writeToTarget(pathResolver, monitoredSet);
 
         // Signal to the application that BTW has been installed
         InstalledVersion installedVersion = new InstalledVersion(jar);
@@ -80,7 +85,10 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
     @Override
     protected void process(List<ProgressPanel.State> chunks) {
-        chunks.forEach(panel::setState);
+        chunks.forEach(s -> {
+            panel.setState(s);
+            panel.setProgress(this.getProgress());
+        });
     }
 
     public static class Status {

@@ -30,8 +30,8 @@ public class ProgressPanel extends JPanel {
      * and representing these as labels for the user.
      */
     public ProgressPanel() {
-        setLayout(new MigLayout("fillx, wrap 1",
-                "[max!]"));
+        setLayout(new MigLayout("wrap 1",
+                "[min!]"));
 
 
         // State Rows
@@ -43,7 +43,7 @@ public class ProgressPanel extends JPanel {
         });
 
         // Progress Row
-        progressBar = new JProgressBar();
+        progressBar = new JProgressBar(0, 100);
         add(progressBar, "grow");
     }
 
@@ -54,8 +54,7 @@ public class ProgressPanel extends JPanel {
         labels.get(state).setEnabled(true);
     }
 
-    public void setProgress(int current, int total) {
-        progressBar.setMaximum(total);
+    public void setProgress(int current) {
         progressBar.setValue(current);
     }
 
@@ -105,7 +104,6 @@ public class ProgressPanel extends JPanel {
                 JComponent.WHEN_FOCUSED);
 
         dialog.pack();
-        dialog.setSize(200, 100);
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(parent);
 

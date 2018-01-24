@@ -7,6 +7,8 @@ TODO: Progress indicator on Writing Jar
 TODO: Consider Linux as a test target
 /home/username/.minecraft
 
+TODO: Wire up errors on patch to UI
+
 TODO: Server Mode!
 ===
 #!/bin/bash
