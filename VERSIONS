@@ -1,3 +1,7 @@
+*0.9.2*: Added progress bar to patching dialog.
+
+*0.9.1*: Fixed bug in jar generation.
+
 *0.9*: Remove mode added
 
 *0.8*: Re-worked the user interface to provide more feedback
