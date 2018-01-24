@@ -49,14 +49,6 @@ public class FileUtils {
         }
     }
 
-    public static ZipOutputStream openZip(final File file) {
-        try {
-            return new ZipOutputStream(new FileOutputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public static void recursiveDelete(File f) {
         try {
             Files.walk(f.toPath())
@@ -68,23 +60,4 @@ public class FileUtils {
         }
     }
 
-    public static Stream<EntryAndData> streamZip(File file) {
-        try {
-            return streamZip(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static Stream<PathAndData> streamZip2(File file) {
-        try {
-            return ZipFileStream.streamZip(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static Stream<EntryAndData> streamZip(InputStream stream) {
-        return StreamSupport.stream(new ZipFileSpliterator(stream), false);
-    }
 }

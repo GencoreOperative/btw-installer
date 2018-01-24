@@ -6,24 +6,14 @@ import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 import uk.co.gencoreoperative.btw.utils.PathAndData;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip;
-import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip2;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
 import static uk.co.gencoreoperative.btw.utils.ZipFileStream.*;
 
@@ -112,16 +102,16 @@ public class ActionFactory {
 
         source.filter(PathAndData::isFile)
                 .collect(Collectors.toCollection(() -> files));
-        return writeStreamToFile(files.stream(), targetZip);
+        return writeStreamToZipFile(files.stream(), targetZip);
     }
 
     public File mergeClientJarWithPatch(PathResolver resolver, File patchZip) {
         File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
         final List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
-        Stream<PathAndData> sourceStream = streamZip2(source)
+        Stream<PathAndData> sourceStream = streamZip(source)
                 .filter(p -> !excludes.contains(p.getPath()));
 
-        Stream<PathAndData> patchStream = streamZip2(patchZip)
+        Stream<PathAndData> patchStream = streamZip(patchZip)
                 .filter(p -> p.getPath().startsWith(PATCH_FOLDER))
                 .peek(p -> p.setPath(p.getPath().substring(PATCH_FOLDER.length())));
 

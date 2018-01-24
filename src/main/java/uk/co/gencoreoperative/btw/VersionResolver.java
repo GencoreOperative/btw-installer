@@ -1,6 +1,6 @@
 package uk.co.gencoreoperative.btw;
 
-import static uk.co.gencoreoperative.btw.utils.FileUtils.streamZip2;
+import static uk.co.gencoreoperative.btw.utils.ZipFileStream.streamZip;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +43,7 @@ public class VersionResolver {
     }
 
     public String extractVersionFromPatch(File zip) {
-        Optional<PathAndData> readme = streamZip2(zip)
+        Optional<PathAndData> readme = streamZip(zip)
                 .filter(p -> p.getPath().endsWith("readme.txt"))
                 .findFirst();
         if (!readme.isPresent()) return null;
