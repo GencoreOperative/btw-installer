@@ -7,9 +7,12 @@ import uk.co.gencoreoperative.btw.utils.FileUtils;
 import uk.co.gencoreoperative.btw.utils.PathAndData;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -97,27 +100,88 @@ public class ActionFactory {
      */
     public File mergePatchAndRelease(Stream<PathAndData> source, Stream<PathAndData> patch, File targetZip) {
         Set<PathAndData> files = patch
-                .filter(PathAndData::isFile)
                 .collect(Collectors.toSet());
-
-        source.filter(PathAndData::isFile)
-                .collect(Collectors.toCollection(() -> files));
+        source.collect(Collectors.toCollection(() -> files));
         return writeStreamToZipFile(files.stream(), targetZip);
     }
 
     public File mergeClientJarWithPatch(PathResolver resolver, File patchZip) {
         File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
         final List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
+
         Stream<PathAndData> sourceStream = streamZip(source)
+                .filter(PathAndData::isFile)
                 .filter(p -> !excludes.contains(p.getPath()));
 
         Stream<PathAndData> patchStream = streamZip(patchZip)
+                .filter(PathAndData::isFile)
                 .filter(p -> p.getPath().startsWith(PATCH_FOLDER))
                 .peek(p -> p.setPath(p.getPath().substring(PATCH_FOLDER.length())));
 
         File target = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
 
         return mergePatchAndRelease(sourceStream, patchStream, target);
+    }
+
+    public Stream<PathAndData> streamClientJar(PathResolver resolver) {
+        File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
+        final List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
+        return streamZip(source)
+                .filter(PathAndData::isFile)
+                .filter(p -> !excludes.contains(p.getPath()));
+    }
+
+    public Stream<PathAndData> streamPatchZip(File patchZip) {
+        return streamZip(patchZip)
+                .filter(PathAndData::isFile)
+                .filter(p -> p.getPath().startsWith(PATCH_FOLDER))
+                .peek(p -> p.setPath(p.getPath().substring(PATCH_FOLDER.length())));
+    }
+
+    /**
+     * Places the 'first' stream into a set, and then applies the 'second' stream
+     * to this. The set acts as a de-duplication mechanism using object equality.
+     * @param first non null, possibly empty.
+     * @param second non null, possibly empty.
+     * @return Non null, possible empty set of results of type T.
+     */
+    public <T> Set<T> removeDuplicates(Stream<T> first, Stream<T> second) {
+        Set<T> set = first.collect(Collectors.toSet());
+        return second.collect(Collectors.toCollection(() -> set));
+    }
+
+    public MonitoredSet mergeClientWithPatch(PathResolver resolver, File patchZip) {
+        Stream<PathAndData> client = streamClientJar(resolver);
+        Stream<PathAndData> patch = streamPatchZip(patchZip);
+        return new MonitoredSet(removeDuplicates(patch, client));
+    }
+
+    public File writeToTarget(PathResolver resolver, MonitoredSet monitoredSet) {
+        File target = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
+        return writeStreamToZipFile(monitoredSet.stream(), target);
+    }
+
+    public static class MonitoredSet extends Observable {
+        private final Set<PathAndData> set;
+        private final long total;
+        private AtomicLong current = new AtomicLong(0);
+        public MonitoredSet(Set<PathAndData> set) {
+            super();
+            this.set = set;
+            total = set.stream().mapToLong(p -> p.getData().length).sum();
+        }
+
+        public Stream<PathAndData> stream() {
+            return set.stream().peek(p -> {
+                current.getAndAdd(p.getData().length);
+                setChanged();
+                notifyObservers();
+            });
+        }
+
+        public int getProgress() {
+            return (int)((current.get() * 100.0f) / total);
+        }
     }
 
     public boolean confirmDefaultInstallation() {
