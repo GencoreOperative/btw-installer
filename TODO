@@ -1,15 +1,30 @@
-TODO: JitWatch - Stream Copy is called many times.
+Application Icon
+Create a custom icon for the application which appears on the JDialog.
 
-TODO: Tool Tips
+Windows Bug - no task bar icon
+Likely because we are using JDialog rather than a JFrame.
 
-TODO: Progress indicator on Writing Jar
+Errors
+If an error occurs during ProgressWorker, it is currently not shown with
+a dialog.
 
-TODO: Consider Linux as a test target
-/home/username/.minecraft
+JitWatch - Stream Copy is called many times.
+Can we optimise this slightly?
 
-TODO: Wire up errors on patch to UI
+Tool Tips
+Update the UI to provide tool tips on mouse over
 
-TODO: Server Mode!
+Drop Target
+Update the Patch chooser to support Drag and Drop for File targets
+
+Consider Linux as a test target
+The default installation location is: /home/username/.minecraft
+
+Server Mode
+Update the patcher to support Server Mode, as well as Client Mode.
+Question is answer is - how can the user easily select which mode?
+Preferred Option is to create a separate installer which the user can opt to download.
+
 ===
 #!/bin/bash
 # A script which automates the installation of a new version of BTW
