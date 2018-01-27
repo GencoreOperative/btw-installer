@@ -1,17 +1,27 @@
 package uk.co.gencoreoperative.btw.utils;
 
 public class OSUtils {
+
+    public static final String OS_NAME = System.getProperty("os.name");
+
     /**
      * @return True if the Windows operating system is detected.
      */
     public static boolean isWindows() {
-        return System.getProperty("os.name").contains("Windows");
+        return OS_NAME.contains("Windows");
     }
 
     /**
      * @return True if the MacOS operating system is detected.
      */
     public static boolean isMacOS() {
-        return System.getProperty("os.name").contains("Mac OS X");
+        return OS_NAME.contains("Mac OS X");
+    }
+
+    /**
+     * @return True if Linux is the detected operating system.
+     */
+    public static boolean isLinux() {
+        return OS_NAME.toLowerCase().contains("linux");
     }
 }

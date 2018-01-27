@@ -1,12 +1,23 @@
+Server Mode
+Update the patcher to support Server Mode, as well as Client Mode.
+Question is answer is - how can the user easily select which mode?
+Preferred Option is to create a separate installer which the user can opt to download.
+
 Application Icon
 Create a custom icon for the application which appears on the JDialog.
 
-Windows Bug - no task bar icon
-Likely because we are using JDialog rather than a JFrame.
+Localization
+Windows - no task bar icon - Likely because we are using JDialog rather than a JFrame.
+Linux - Task bar entry for Ubuntu
 
 Errors
 If an error occurs during ProgressWorker, it is currently not shown with
 a dialog.
+
+Update UI layout for versions
+The version textfields should be next to the specific field the user
+needs to interact with. Installed Version should be on the Minecraft Home
+panel, and the Patch version should be on the Select Patch panel.
 
 JitWatch - Stream Copy is called many times.
 Can we optimise this slightly?
@@ -20,10 +31,25 @@ Update the Patch chooser to support Drag and Drop for File targets
 Consider Linux as a test target
 The default installation location is: /home/username/.minecraft
 
-Server Mode
-Update the patcher to support Server Mode, as well as Client Mode.
-Question is answer is - how can the user easily select which mode?
-Preferred Option is to create a separate installer which the user can opt to download.
+
+Removal Instructions
+Separate documentation page for removing the patch.
+
+Release Checklist
+VirusTotal scan
+Jotti Malware scan
+Update 'latest' label
+Test on Windows, MacOS and Linux
+
+
+Automate Jotti Malware scan
+POST
+https://virusscan.jotti.org/en-GB/submit-file?isAjax=true
+Body: Base64 encoded?
+
+Automate VirusTotal scan
+http://www.mashthatkey.com/2014/09/using-curl-to-retrieve-virustotal.html
+https://www.virustotal.com/en/documentation/private-api/
 
 ===
 #!/bin/bash

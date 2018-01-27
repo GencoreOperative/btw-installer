@@ -47,6 +47,9 @@ public class PathResolver implements Supplier<File> {
         } else if (OSUtils.isMacOS()) {
             String home = System.getProperty("user.home");
             return folder(folder(folder(home, "Library"), "Application Support"), "minecraft");
+        } else if (OSUtils.isLinux()) {
+            String home = System.getProperty("user.home");
+            return folder(home, ".minecraft");
         } else {
             return new File(System.getProperty("user.dir"));
         }

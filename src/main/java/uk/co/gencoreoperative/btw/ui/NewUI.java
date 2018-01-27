@@ -1,6 +1,7 @@
 package uk.co.gencoreoperative.btw.ui;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -29,17 +30,33 @@ public class NewUI extends JPanel {
 
         setLayout(new BorderLayout());
 
+        // Center
         JPanel centre = new JPanel(new MigLayout("fillx, wrap 1"));
         centre.add(new MinecraftHomePanel(context, actionFactory), "grow");
         centre.add(new SelectPatchPanel(actionFactory, context), "grow");
         centre.add(new BTWVersionPanel(context), "grow");
         add(centre, BorderLayout.CENTER);
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        // South - Splits into two sections
+        JPanel buttonSouth = new JPanel(new BorderLayout());
+        buttonSouth.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+        // South, West - for help button
+        FlowLayout southWestLayout = new FlowLayout(FlowLayout.LEADING);
+        southWestLayout.setAlignOnBaseline(true);
+        JPanel helpPanel = new JPanel(southWestLayout);
+        helpPanel.add(new AboutLabel());
+        buttonSouth.add(helpPanel, BorderLayout.WEST);
+
+        // South, Center - for action buttons.
+        FlowLayout southCenterLayout = new FlowLayout(FlowLayout.TRAILING);
+        southCenterLayout.setAlignOnBaseline(true);
+        JPanel buttons = new JPanel(southCenterLayout);
         buttons.add(new JButton(new PatchAction(context, actionFactory, dialogFactory)));
         buttons.add(new JButton(new RemoveAction(dialog, context, actionFactory)));
         buttons.add(new JButton(new CloseAction(dialog)));
-        add(buttons, BorderLayout.SOUTH);
+        buttonSouth.add(buttons, BorderLayout.CENTER);
+        add(buttonSouth, BorderLayout.SOUTH);
 
         File defaultHome = new PathResolver().get();
         if (defaultHome.exists()) {
