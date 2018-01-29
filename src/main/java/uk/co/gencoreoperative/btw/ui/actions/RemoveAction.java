@@ -1,6 +1,7 @@
 package uk.co.gencoreoperative.btw.ui.actions;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -13,12 +14,12 @@ import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 
 public class RemoveAction extends AbstractAction {
-    private JDialog dialog;
+    private Component parent;
     private final Context context;
     private final ActionFactory actionFactory;
 
-    public RemoveAction(JDialog dialog, Context context, ActionFactory actionFactory) {
-        this.dialog = dialog;
+    public RemoveAction(Component dialog, Context context, ActionFactory actionFactory) {
+        this.parent = dialog;
         this.context = context;
         this.actionFactory = actionFactory;
 
@@ -31,7 +32,7 @@ public class RemoveAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         int response = JOptionPane.showConfirmDialog(
-                dialog,
+                parent,
                 Strings.REMOVE_QUESTION.getText(),
                 Strings.TITLE_REMOVE_CONFIRM.getText(),
                 JOptionPane.YES_NO_OPTION,

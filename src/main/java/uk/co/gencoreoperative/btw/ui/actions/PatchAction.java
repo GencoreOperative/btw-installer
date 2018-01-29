@@ -63,7 +63,7 @@ public class PatchAction extends AbstractAction implements Observer {
         ProgressPanel panel = new ProgressPanel();
         PatchWorker worker = new PatchWorker(minecraftHome, patchFile, factory, context, panel);
 
-        JDialog dialog = panel.createDialog(dialogFactory.getDialog(), panel);
+        JDialog dialog = panel.createDialog(dialogFactory.getParentFrame(), panel);
         worker.execute();
         dialog.setVisible(true);
     }

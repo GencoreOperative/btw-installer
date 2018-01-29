@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
 import static uk.co.gencoreoperative.btw.utils.ZipFileStream.*;
 
+import javax.swing.*;
+
 /**
  * Captures the ability to describe actions that can be performed.
  *
@@ -80,7 +82,7 @@ public class ActionFactory {
 
     public File copyJsonToInstallation(File folder) {
         File targetJson = new File(folder, "BetterThanWolves.json");
-        FileUtils.copyStream(Main.class.getResourceAsStream("/json/BetterThanWolves.json"),
+        FileUtils.copyStream(ActionFactory.class.getResourceAsStream("/json/BetterThanWolves.json"),
                 write(targetJson),
                 true, true);
         return targetJson;

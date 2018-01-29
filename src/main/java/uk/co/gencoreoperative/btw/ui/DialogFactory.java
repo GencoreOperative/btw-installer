@@ -12,9 +12,9 @@ import uk.co.gencoreoperative.btw.command.AbstractCommand;
 
 public class DialogFactory {
 
-    private final Dialog parent;
+    private final JFrame parent;
 
-    public DialogFactory(Dialog parent) {
+    public DialogFactory(JFrame parent) {
         this.parent = parent;
     }
 
@@ -107,7 +107,7 @@ public class DialogFactory {
         return response == JOptionPane.YES_OPTION;
     }
 
-    public Dialog getDialog() {
+    public JFrame getParentFrame() {
         return parent;
     }
 }

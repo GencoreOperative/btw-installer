@@ -64,7 +64,7 @@ public class ProgressPanel extends JPanel {
      * @param panel The initialised ProgressPanel to display
      * @return The dialog to display to the user, not visible, but otherwise initialised.
      */
-    public JDialog createDialog(Dialog parent, ProgressPanel panel) {
+    public JDialog createDialog(Frame parent, ProgressPanel panel) {
         JDialog dialog = new JDialog(parent, true);
         dialog.setTitle(TITLE_PROGRESS.getText());
 
