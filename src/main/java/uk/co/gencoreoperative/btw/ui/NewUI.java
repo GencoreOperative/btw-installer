@@ -1,7 +1,6 @@
 package uk.co.gencoreoperative.btw.ui;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,7 +13,6 @@ import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
-import uk.co.gencoreoperative.btw.ui.panels.BTWVersionPanel;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
@@ -28,13 +26,12 @@ public class NewUI extends JPanel {
         dialogFactory = new DialogFactory(dialog);
         actionFactory = new ActionFactory(dialogFactory);
 
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(0, 0));
 
         // Center
-        JPanel centre = new JPanel(new MigLayout("fillx, wrap 1"));
+        JPanel centre = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
         centre.add(new MinecraftHomePanel(context, actionFactory), "grow");
         centre.add(new SelectPatchPanel(actionFactory, context), "grow");
-        centre.add(new BTWVersionPanel(context), "grow");
         add(centre, BorderLayout.CENTER);
 
         // South - Splits into two sections
@@ -87,7 +84,7 @@ public class NewUI extends JPanel {
         dialog.setMinimumSize(dialog.getPreferredSize());
 
         // Set a comfortable size
-        dialog.setSize(300, 300);
+//        dialog.setSize(300, 300);
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
 

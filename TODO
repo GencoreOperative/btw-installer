@@ -14,11 +14,6 @@ Errors
 If an error occurs during ProgressWorker, it is currently not shown with
 a dialog.
 
-Update UI layout for versions
-The version textfields should be next to the specific field the user
-needs to interact with. Installed Version should be on the Minecraft Home
-panel, and the Patch version should be on the Select Patch panel.
-
 JitWatch - Stream Copy is called many times.
 Can we optimise this slightly?
 
@@ -28,17 +23,13 @@ Update the UI to provide tool tips on mouse over
 Drop Target
 Update the Patch chooser to support Drag and Drop for File targets
 
-Consider Linux as a test target
-The default installation location is: /home/username/.minecraft
-
-
 Removal Instructions
 Separate documentation page for removing the patch.
 
 Release Checklist
 VirusTotal scan
 Jotti Malware scan
-Update 'latest' label
+Update 'latest' label, upload installer.jar
 Test on Windows, MacOS and Linux
 
 

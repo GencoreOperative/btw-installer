@@ -1,5 +1,7 @@
 package uk.co.gencoreoperative.btw.ui.panels;
 
+import static uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel.versionPanel;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
@@ -11,16 +13,28 @@ import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
 public class SelectPatchPanel extends JPanel {
     private static final ImageIcon COMPRESS = new ImageIcon(MinecraftHomePanel.class.getResource("/icons/compress.png"));
+    private ActionFactory factory;
+    private Context context;
 
     public SelectPatchPanel(ActionFactory factory, Context context) {
+        this.factory = factory;
+        this.context = context;
         setBorder(new TitledBorder("Better Than Wolves Patch"));
         setLayout(new MigLayout(
-                "fillx",
+                "fillx, insets 10, wrap 1"));
+
+        add(selectPatch());
+        add(versionPanel(context, PatchFile.class));
+    }
+
+    private JPanel selectPatch() {
+        JPanel panel = new JPanel(new MigLayout(
+                "fillx, insets 0",
                 "[min!][][min!]"));
 
         // Row 1
         final JLabel folderIcon = new JLabel(COMPRESS);
-        add(folderIcon);
+        panel.add(folderIcon);
         final JTextField selectPatchField = new JTextField(20);
         selectPatchField.setEditable(false);
         selectPatchField.setEnabled(true);
@@ -31,7 +45,8 @@ public class SelectPatchPanel extends JPanel {
             }
             selectPatchField.setText(text);
         });
-        add(selectPatchField, "grow");
-        add(new JButton(new ChoosePatch(factory, context)));
+        panel.add(selectPatchField, "grow");
+        panel.add(new JButton(new ChoosePatch(factory, context)));
+        return panel;
     }
 }

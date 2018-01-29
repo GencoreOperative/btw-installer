@@ -12,7 +12,7 @@ an existing configuration and apply the Better Than Wolves patch to it.
 This project is provided as is, and is licensed under a [MIT license](Extra.MD).
 
 Virus scan provided by [VirusTotal.com](https://www.virustotal.com/en/file/8614ff29480bf724754af06e7e1d9f6854f5f47f5c650727171c82f0b122c77e/analysis/1517081047/)
-and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/05ji9jhyzr).
+and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/xvdudriix3).
 
 ## Before You Start
 
