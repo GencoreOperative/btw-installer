@@ -34,24 +34,6 @@ public class ChooseMinecraftHome extends AbstractAction {
         if (homeFolder.exists()) {
             MinecraftHome value = new MinecraftHome(homeFolder);
             context.add(value);
-            detectInstalledVersion(context);
-        }
-    }
-
-    private static void detectInstalledVersion(Context context) {
-        VersionResolver versionResolver = new VersionResolver();
-        MinecraftHome home = context.get(MinecraftHome.class);
-        PathResolver pathResolver = new PathResolver(home.getFolder());
-
-        File installedFolder = pathResolver.betterThanWolves();
-        File installedJar = new File(installedFolder, "BetterThanWolves.jar");
-
-        if (installedFolder.exists() && installedJar.exists()) {
-            InstalledVersion version = new InstalledVersion(installedJar);
-            version.setVersion(versionResolver.readVersion(installedFolder));
-            context.add(version);
-        } else {
-            context.remove(InstalledVersion.class);
         }
     }
 

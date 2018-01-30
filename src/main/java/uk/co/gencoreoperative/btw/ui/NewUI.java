@@ -7,16 +7,20 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
+import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.utils.OSUtils;
 
@@ -62,10 +66,31 @@ public class NewUI extends JPanel {
         buttonSouth.add(buttons, BorderLayout.CENTER);
         add(buttonSouth, BorderLayout.SOUTH);
 
-        File defaultHome = new PathResolver().get();
-        if (defaultHome.exists()) {
-            context.add(new MinecraftHome(defaultHome));
-        }
+        initialiseListenersOnContext();
+    }
+
+    private void initialiseListenersOnContext() {
+        // Installed Version listener - responds to changes in MineCraft Home
+        context.register(MinecraftHome.class, new Observer() {
+            final VersionResolver versionResolver = new VersionResolver();
+
+            @Override
+            public void update(Observable o, Object arg) {
+                MinecraftHome home = context.get(MinecraftHome.class);
+                PathResolver pathResolver = new PathResolver(home.getFolder());
+
+                File installedFolder = pathResolver.betterThanWolves();
+                File installedJar = new File(installedFolder, "BetterThanWolves.jar");
+
+                if (installedFolder.exists() && installedJar.exists()) {
+                    InstalledVersion version = new InstalledVersion(installedJar);
+                    version.setVersion(versionResolver.readVersion(installedFolder));
+                    context.add(version);
+                } else {
+                    context.remove(InstalledVersion.class);
+                }
+            }
+        });
     }
 
     public static void main(String... args) {
