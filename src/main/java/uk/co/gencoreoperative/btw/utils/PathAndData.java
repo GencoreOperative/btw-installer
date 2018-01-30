@@ -28,12 +28,15 @@ public class PathAndData {
     }
 
     /**
-     * @return The data for this file in a streamable format.
+     * @return The entire data array.
      */
     public byte[] getData() {
         return data;
     }
 
+    /**
+     * @return The data in a streamed format.
+     */
     public InputStream getDataStream() {
         return new ByteArrayInputStream(data);
     }
