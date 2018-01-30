@@ -26,12 +26,11 @@ import uk.co.gencoreoperative.btw.ui.workers.PatchWorker;
  */
 public class PatchAction extends AbstractAction implements Observer {
     private final Context context;
-    private final ActionFactory factory;
+    private final ActionFactory factory = new ActionFactory();
     private DialogFactory dialogFactory;
 
-    public PatchAction(Context context, ActionFactory factory, DialogFactory dialogFactory) {
+    public PatchAction(Context context, DialogFactory dialogFactory) {
         this.context = context;
-        this.factory = factory;
         this.dialogFactory = dialogFactory;
 
         putValue(Action.NAME, Strings.BUTTON_PATCH.getText());

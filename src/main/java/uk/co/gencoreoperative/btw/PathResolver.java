@@ -40,7 +40,15 @@ public class PathResolver implements Supplier<File> {
         return new File(versions(), "BetterThanWolves");
     }
 
-    static File getDefaultMinecraftPath() {
+    private static File folder(String parent, String child) {
+        return new File(parent, child);
+    }
+
+    private static File folder(File parent, String child) {
+        return new File(parent, child);
+    }
+
+    public static File getDefaultMinecraftPath() {
         if (OSUtils.isWindows()) {
             String appdata = System.getenv("APPDATA");
             return folder(appdata, ".minecraft");
@@ -53,13 +61,5 @@ public class PathResolver implements Supplier<File> {
         } else {
             return new File(System.getProperty("user.dir"));
         }
-    }
-
-    private static File folder(String parent, String child) {
-        return new File(parent, child);
-    }
-
-    private static File folder(File parent, String child) {
-        return new File(parent, child);
     }
 }

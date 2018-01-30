@@ -17,12 +17,11 @@ import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 public class RemoveAction extends AbstractAction {
     private Component parent;
     private final Context context;
-    private final ActionFactory actionFactory;
+    private final ActionFactory actionFactory = new ActionFactory();
 
-    public RemoveAction(Component dialog, Context context, ActionFactory actionFactory) {
+    public RemoveAction(Component dialog, Context context) {
         this.parent = dialog;
         this.context = context;
-        this.actionFactory = actionFactory;
 
         putValue(Action.NAME, Strings.BUTTON_REMOVE.getText());
         putValue(Action.SMALL_ICON, Icons.BIN_CLOSED.getIcon());

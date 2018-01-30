@@ -8,9 +8,9 @@ import java.awt.*;
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
-import uk.co.gencoreoperative.btw.ui.actions.ChoosePatch;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.Versioned;
@@ -18,11 +18,11 @@ import uk.co.gencoreoperative.btw.ui.signals.Versioned;
 public class MinecraftHomePanel extends JPanel {
 
     private final Context context;
-    private final ActionFactory actionFactory;
+    private final DialogFactory dialogFactory;
 
-    public MinecraftHomePanel(Context context, ActionFactory actionFactory) {
+    public MinecraftHomePanel(Context context, DialogFactory dialogFactory) {
         this.context = context;
-        this.actionFactory = actionFactory;
+        this.dialogFactory = dialogFactory;
 
         setBorder(new TitledBorder("Minecraft Home"));
 
@@ -53,7 +53,7 @@ public class MinecraftHomePanel extends JPanel {
             homeTextField.setText(text);
         });
         panel.add(homeTextField, "grow");
-        panel.add(new JButton(new ChooseMinecraftHome(context, actionFactory)), "wrap");
+        panel.add(new JButton(new ChooseMinecraftHome(context, dialogFactory)), "wrap");
         return panel;
     }
 

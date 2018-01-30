@@ -31,28 +31,10 @@ import javax.swing.*;
 public class ActionFactory {
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 
-    private static final String MINECRAFT_LOCATION = "minecraft.location";
-    private static final String PATCH_LOCATION = "patch.location";
-
-    private final DialogFactory dialogFactory;
-
-    public ActionFactory(DialogFactory dialogFactory) {
-        this.dialogFactory = dialogFactory;
+    public ActionFactory() {
     }
 
-    public File selectMinecraftHome() {
-        File previous = FileChooser.getLastOpenedPath(MINECRAFT_LOCATION);
-        File selected = dialogFactory.requestFolderLocation(
-                Strings.SELECT_MC_HOME,
-                previous,
-                PathResolver.getDefaultMinecraftPath(),
-                File::isDirectory);
-        if (selected != null) {
-            FileChooser.setLastOpenedPath(MINECRAFT_LOCATION, selected);
-        }
-        return selected;
-    }
-
+    // TODO: Fold into FileUtils, test and indicate error
     public File removePreviousInstallation(PathResolver resolver) {
         File targetFolder = resolver.betterThanWolves();
         if (targetFolder.exists()) {
@@ -61,23 +43,11 @@ public class ActionFactory {
         return resolver.betterThanWolves();
     }
 
+    // TODO: Fold into FileUtils, test and indicate error
     public File createInstallationFolder(PathResolver resolver) {
         File targetFolder = resolver.betterThanWolves();
         targetFolder.mkdirs();
         return targetFolder;
-    }
-
-    public File selectPatchZip() {
-        File previous = FileChooser.getLastOpenedPath(PATCH_LOCATION);
-        File selected = dialogFactory.requestFileLocation(
-                Strings.SELECT_ZIP_TITLE,
-                previous,
-                new File(System.getProperty("user.home")),
-                file -> file.getName().toLowerCase().endsWith("zip"));
-        if (selected != null) {
-            FileChooser.setLastOpenedPath(PATCH_LOCATION, selected);
-        }
-        return selected;
     }
 
     public File copyJsonToInstallation(File folder) {
@@ -86,43 +56,6 @@ public class ActionFactory {
                 write(targetJson),
                 true, true);
         return targetJson;
-    }
-
-    /**
-     * Merge the contents of the source file, with the patch file and store the result in
-     * the target file.
-     *
-     * This operation will stream the source zip file and patch zip file, layering the patch
-     * over the source to create the target zip file. If there are duplicate files in the source
-     * and patch files, the patch file version will be kept.
-     *
-     * @param targetZip Target file to write to.
-     *
-     * @return Non null reference to the target file.
-     */
-    public File mergePatchAndRelease(Stream<PathAndData> source, Stream<PathAndData> patch, File targetZip) {
-        Set<PathAndData> files = patch
-                .collect(Collectors.toSet());
-        source.collect(Collectors.toCollection(() -> files));
-        return writeStreamToZipFile(files.stream(), targetZip);
-    }
-
-    public File mergeClientJarWithPatch(PathResolver resolver, File patchZip) {
-        File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
-        final List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
-
-        Stream<PathAndData> sourceStream = streamZip(source)
-                .filter(PathAndData::isFile)
-                .filter(p -> !excludes.contains(p.getPath()));
-
-        Stream<PathAndData> patchStream = streamZip(patchZip)
-                .filter(PathAndData::isFile)
-                .filter(p -> p.getPath().startsWith(PATCH_FOLDER))
-                .peek(p -> p.setPath(p.getPath().substring(PATCH_FOLDER.length())));
-
-        File target = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
-
-        return mergePatchAndRelease(sourceStream, patchStream, target);
     }
 
     public Stream<PathAndData> streamClientJar(PathResolver resolver) {
@@ -184,11 +117,5 @@ public class ActionFactory {
         public int getProgress() {
             return (int)((current.get() * 100.0f) / total);
         }
-    }
-
-    public boolean confirmDefaultInstallation() {
-        return dialogFactory.confirm(
-                Strings.CONFIRM_DEFAULT_MESSAGE.getText(),
-                Strings.CONFIRM_DEFAULT_TITLE.getText());
     }
 }

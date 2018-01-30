@@ -8,17 +8,18 @@ import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.actions.ChoosePatch;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
 public class SelectPatchPanel extends JPanel {
-    private ActionFactory factory;
-    private Context context;
+    private final Context context;
+    private final DialogFactory dialogFactory;
 
-    public SelectPatchPanel(ActionFactory factory, Context context) {
-        this.factory = factory;
+    public SelectPatchPanel(Context context, DialogFactory dialogFactory) {
         this.context = context;
+        this.dialogFactory = dialogFactory;
         setBorder(new TitledBorder("Better Than Wolves Patch"));
         setLayout(new MigLayout(
                 "fillx, insets 10, wrap 1"));
@@ -46,7 +47,7 @@ public class SelectPatchPanel extends JPanel {
             selectPatchField.setText(text);
         });
         panel.add(selectPatchField, "grow");
-        panel.add(new JButton(new ChoosePatch(factory, context)));
+        panel.add(new JButton(new ChoosePatch(context, dialogFactory)));
         return panel;
     }
 }

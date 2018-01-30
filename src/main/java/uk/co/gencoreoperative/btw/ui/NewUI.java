@@ -11,7 +11,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import net.miginfocom.swing.MigLayout;
-import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
@@ -30,19 +29,17 @@ import uk.co.gencoreoperative.btw.utils.OSUtils;
  */
 public class NewUI extends JPanel {
     public final DialogFactory dialogFactory;
-    private final ActionFactory actionFactory;
     private final Context context = new Context();
 
     public NewUI(JFrame frame) {
         dialogFactory = new DialogFactory(frame);
-        actionFactory = new ActionFactory(dialogFactory);
 
         setLayout(new BorderLayout(0, 0));
 
         // Center
         JPanel centre = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
-        centre.add(new MinecraftHomePanel(context, actionFactory), "grow");
-        centre.add(new SelectPatchPanel(actionFactory, context), "grow");
+        centre.add(new MinecraftHomePanel(context, dialogFactory), "grow");
+        centre.add(new SelectPatchPanel(context, dialogFactory), "grow");
         add(centre, BorderLayout.CENTER);
 
         // South - Splits into two sections
@@ -60,8 +57,8 @@ public class NewUI extends JPanel {
         FlowLayout southCenterLayout = new FlowLayout(FlowLayout.TRAILING);
         southCenterLayout.setAlignOnBaseline(true);
         JPanel buttons = new JPanel(southCenterLayout);
-        buttons.add(new JButton(new PatchAction(context, actionFactory, dialogFactory)));
-        buttons.add(new JButton(new RemoveAction(frame, context, actionFactory)));
+        buttons.add(new JButton(new PatchAction(context, dialogFactory)));
+        buttons.add(new JButton(new RemoveAction(frame, context)));
         buttons.add(new JButton(new CloseAction(frame)));
         buttonSouth.add(buttons, BorderLayout.CENTER);
         add(buttonSouth, BorderLayout.SOUTH);

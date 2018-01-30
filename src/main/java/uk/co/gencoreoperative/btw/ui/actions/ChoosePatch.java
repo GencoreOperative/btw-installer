@@ -6,24 +6,26 @@ import java.io.File;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.VersionResolver;
+import uk.co.gencoreoperative.btw.actions.Request;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
 public class ChoosePatch extends AbstractAction {
-    private final ActionFactory factory;
     private final Context context;
+    private final DialogFactory dialogFactory;
 
-    public ChoosePatch(ActionFactory factory, Context context) {
-        this.factory = factory;
+    public ChoosePatch(Context context, DialogFactory dialogFactory) {
         this.context = context;
+        this.dialogFactory = dialogFactory;
 
         putValue(Action.NAME, Strings.BUTTON_CHOOSE_PATCH.getText());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        File file = factory.selectPatchZip();
+        File file = Request.requestPatchZip(dialogFactory);
         if (file == null) return;
 
         PatchFile patchFile = new PatchFile(file);
