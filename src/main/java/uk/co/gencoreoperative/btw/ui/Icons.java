@@ -8,9 +8,16 @@ import java.io.IOException;
  * The available icons that can be used in the user interfaces.
  */
 public enum Icons {
-    QUESTION("black-question-mark-ornament_2753.png"),
-    TICK("white-heavy-check-mark_2705.png"),
-    ERROR("cross-mark_274c.png");
+    ARROW_RIGHT("arrow_right.png"),
+    BIN_CLOSED("bin_closed.png"),
+    FOLDER("folder.png"),
+    COMPRESS("compress.png"),
+    FOLDER_DELETE("folder_delete.png"),
+    FOLDER_ADD("folder_add.png"),
+    PAGE_GO("page_go.png"),
+    PAGE_WHITE_TEXT("page_white_text.png"),
+    ACCEPT("accept.png"),
+    SQUID("squid.png");
 
     private final ImageIcon icon;
     Icons(String path) {

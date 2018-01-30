@@ -1,5 +1,7 @@
 package uk.co.gencoreoperative.btw.ui;
 
+import static uk.co.gencoreoperative.btw.utils.OSUtils.setIcon;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -16,6 +18,7 @@ import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
+import uk.co.gencoreoperative.btw.utils.OSUtils;
 
 /**
  * Updated user interface to better capture the details required from the user in order
@@ -68,11 +71,20 @@ public class NewUI extends JPanel {
     public static void main(String... args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            JFrame.setDefaultLookAndFeelDecorated(true);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) {
         }
 
         JFrame frame = new JFrame();
         frame.setTitle(Strings.TITLE_PATCH.getText());
+
+        Image squid = Icons.SQUID.getIcon().getImage();
+        frame.setIconImage(squid);
+        // MacOS Specific Dock Icon
+        if (OSUtils.isMacOS()) {
+            setIcon(squid);
+        }
+
         NewUI ui = new NewUI(frame);
         frame.add(ui);
         frame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);

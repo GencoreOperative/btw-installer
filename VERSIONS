@@ -1,3 +1,5 @@
+*0.9.5*: Replaced JDialog for JFrame, added Icon, cleanup
+
 *0.9.4*: Updated UI to make version fields more clear.
 
 *0.9.3*: Added default installation location for Linux, added OS information tooltip

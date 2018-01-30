@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.miginfocom.swing.MigLayout;
+import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.Strings;
 
 /**
@@ -114,25 +115,24 @@ public class ProgressPanel extends JPanel {
      * The possible states of installation for the patch.
      */
     public enum State {
-        REMOVE_PREVIOUS("/icons/folder_delete.png", Strings.STATE_REMOVE_PREVIOUS.getText()),
-        CREATE_FOLDER("/icons/folder_add.png", Strings.STATE_CREATE_FOLDER.getText()),
-        COPY_JSON("/icons/page_go.png", Strings.STATE_COPY_JSON.getText()),
-        CREATE_JAR("/icons/compress.png", Strings.STATE_CREATE_JAR.getText()),
-        WRITE_VERSION("/icons/page_white_text.png", Strings.STATE_WRITE_VERSION.getText()),
-        COMPLETE("/icons/accept.png", Strings.STATE_COMPLETE.getText());
+        REMOVE_PREVIOUS(Icons.FOLDER_DELETE.getIcon(), Strings.STATE_REMOVE_PREVIOUS.getText()),
+        CREATE_FOLDER(Icons.FOLDER_ADD.getIcon(), Strings.STATE_CREATE_FOLDER.getText()),
+        COPY_JSON(Icons.PAGE_GO.getIcon(), Strings.STATE_COPY_JSON.getText()),
+        CREATE_JAR(Icons.COMPRESS.getIcon(), Strings.STATE_CREATE_JAR.getText()),
+        WRITE_VERSION(Icons.PAGE_WHITE_TEXT.getIcon(), Strings.STATE_WRITE_VERSION.getText()),
+        COMPLETE(Icons.ACCEPT.getIcon(), Strings.STATE_COMPLETE.getText());
 
 
-        private String icon;
+        private ImageIcon icon;
         private String text;
 
-        State(String icon, String text) {
+        State(ImageIcon icon, String text) {
             this.icon = icon;
             this.text = text;
         }
 
         ImageIcon getIcon() {
-            URL resource = ProgressPanel.class.getResource(icon);
-            return new ImageIcon(resource);
+            return icon;
         }
 
         public String getText() {

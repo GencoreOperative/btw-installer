@@ -8,11 +8,11 @@ import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.actions.ChoosePatch;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
 public class SelectPatchPanel extends JPanel {
-    private static final ImageIcon COMPRESS = new ImageIcon(MinecraftHomePanel.class.getResource("/icons/compress.png"));
     private ActionFactory factory;
     private Context context;
 
@@ -33,7 +33,7 @@ public class SelectPatchPanel extends JPanel {
                 "[min!][][min!]"));
 
         // Row 1
-        final JLabel folderIcon = new JLabel(COMPRESS);
+        final JLabel folderIcon = new JLabel(Icons.COMPRESS.getIcon());
         panel.add(folderIcon);
         final JTextField selectPatchField = new JTextField(20);
         selectPatchField.setEditable(false);

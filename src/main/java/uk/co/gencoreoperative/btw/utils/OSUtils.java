@@ -1,5 +1,9 @@
 package uk.co.gencoreoperative.btw.utils;
 
+import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class OSUtils {
 
     public static final String OS_NAME = System.getProperty("os.name");
@@ -23,5 +27,15 @@ public class OSUtils {
      */
     public static boolean isLinux() {
         return OS_NAME.toLowerCase().contains("linux");
+    }
+
+    public static void setIcon(Image icn ) {
+        try {
+            Class<?> aClass = Class.forName("com.apple.eawt.Application", false, null);
+            aClass.getDeclaredMethod("setDockIconImage", Image.class).invoke(aClass.newInstance(), icn);
+        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return;
+        }
     }
 }

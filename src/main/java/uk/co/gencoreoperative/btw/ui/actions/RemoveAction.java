@@ -8,6 +8,7 @@ import java.io.File;
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
@@ -24,7 +25,7 @@ public class RemoveAction extends AbstractAction {
         this.actionFactory = actionFactory;
 
         putValue(Action.NAME, Strings.BUTTON_REMOVE.getText());
-        putValue(Action.SMALL_ICON, new ImageIcon(MinecraftHomePanel.class.getResource("/icons/bin_closed.png")));
+        putValue(Action.SMALL_ICON, Icons.BIN_CLOSED.getIcon());
 
         setEnabled(isApplicable());
         context.register(InstalledVersion.class, (o, arg) -> setEnabled(isApplicable()));

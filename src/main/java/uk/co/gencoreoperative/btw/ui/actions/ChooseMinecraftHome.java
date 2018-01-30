@@ -34,8 +34,8 @@ public class ChooseMinecraftHome extends AbstractAction {
         if (homeFolder.exists()) {
             MinecraftHome value = new MinecraftHome(homeFolder);
             context.add(value);
+            detectInstalledVersion(context);
         }
-        detectInstalledVersion(context);
     }
 
     private static void detectInstalledVersion(Context context) {
