@@ -2,9 +2,14 @@ package uk.co.gencoreoperative.btw.utils;
 
 import static java.text.MessageFormat.format;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -13,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class CheckSumVerifier {
 
-    public static InputStream verifyStream(String checksum, InputStream inputStream) {
+    public static InputStream verifiableStream(String checksum, InputStream inputStream) {
         return new DigestInputStream(inputStream, createDigest()) {
             @Override
             public void close() throws IOException {
@@ -26,6 +31,22 @@ public class CheckSumVerifier {
                 }
             }
         };
+    }
+
+    public static boolean validateStream(String checksum, InputStream inputStream) {
+        MessageDigest digest = createDigest();
+        DigestOutputStream digestStream = new DigestOutputStream(new ByteArrayOutputStream(), digest);
+        FileUtils.copyStream(inputStream, digestStream, true, true);
+        String hash = byteArrayToHex(digest.digest());
+        return hash.equals(checksum);
+    }
+
+    public static boolean validateFileStream(String checksum, File file) {
+        try {
+            return validateStream(checksum, new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            return false;
+        }
     }
 
     private static String byteArrayToHex(byte[] a) {
