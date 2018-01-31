@@ -11,7 +11,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.utils.CheckSumVerifier;
@@ -47,7 +46,8 @@ public class Locate {
      * @throws IOException If there was an unrecoverable error encountered during one
      * of the operations.
      */
-    public ProgressInputStream locateMinecraftOneFiveTwo(PathResolver resolver) throws IOException {
+    public ProgressInputStream locateMinecraftOneFiveTwo(PathResolver resolver,
+            ProgressInputStream.ProgressListener listener) throws IOException {
         // Can we find it in the existing deployment?
         InputStream localStream = locateVersion(resolver);
 
@@ -57,28 +57,7 @@ public class Locate {
         }
 
         if (localStream == null) return null;
-        return new ProgressInputStream(localStream, MAJONG_1_5_2_FILE_SIZE);
-    }
-
-    public static class ProgressInputStream extends InputStream {
-        private InputStream stream;
-        final private long total;
-        final private AtomicLong readCounter = new AtomicLong(0);
-
-        public ProgressInputStream(InputStream stream, long total) {
-            this.stream = stream;
-            this.total = total;
-        }
-
-        @Override
-        public int read() throws IOException {
-            readCounter.addAndGet(1);
-            return stream.read();
-        }
-
-        public int getProgressPercentage() {
-            return (int)((readCounter.get() * 100.0f) / total);
-        }
+        return new ProgressInputStream(localStream, MAJONG_1_5_2_FILE_SIZE, listener);
     }
 
     /**
@@ -129,7 +108,7 @@ public class Locate {
             jar = Files.walk(folder.toPath())
                     .map(Path::toFile)
                     .filter(File::isFile)
-                    .filter(f -> f.getName().equalsIgnoreCase("jar"))
+                    .filter(f -> f.getName().toLowerCase().endsWith("jar"))
                     .filter(f -> f.length() == MAJONG_1_5_2_FILE_SIZE)
                     .filter(f -> CheckSumVerifier.validateFileStream(MD5_1_5_2, f))
                     .findFirst();

@@ -4,15 +4,20 @@ import static java.text.MessageFormat.*;
 import static uk.co.gencoreoperative.btw.ui.panels.ProgressPanel.State.*;
 
 import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.VersionResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.ui.panels.ProgressPanel;
+import uk.co.gencoreoperative.btw.ui.signals.ClientJar;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
@@ -23,13 +28,15 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
     private final PathResolver pathResolver;
     private final Context context;
     private final ProgressPanel panel;
+    private final DialogFactory dialogFactory;
 
-    public PatchWorker(MinecraftHome minecraftHome, PatchFile patchFile, ActionFactory factory, Context context, ProgressPanel panel) {
+    public PatchWorker(MinecraftHome minecraftHome, PatchFile patchFile, ActionFactory factory, Context context, ProgressPanel panel, DialogFactory dialogFactory) {
         this.patchFile = patchFile;
         this.factory = factory;
         pathResolver = new PathResolver(minecraftHome.getFolder());
         this.context = context;
         this.panel = panel;
+        this.dialogFactory = dialogFactory;
     }
 
     @Override
@@ -51,6 +58,21 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
                     installationFolder.getAbsolutePath()));
         }
 
+        // Locate Client Jar
+        publish(ProgressPanel.State.LOCATE_1_5_2);
+        final LocateWorker worker = new LocateWorker(context, pathResolver, dialogFactory);
+        worker.addPropertyChangeListener(evt -> PatchWorker.this.setProgress(worker.getProgress()));
+        worker.execute();
+        final ClientJar clientJar;
+        try {
+            clientJar = new ClientJar(worker.get());
+        } catch (InterruptedException | ExecutionException e) {
+            dialogFactory.failed(format(
+                    "<b>Failed to locate the 1.5.2 client jar</b><br>{0}",
+                    e.getMessage()));
+            return new Status();
+        }
+
         // Write JSON
         publish(COPY_JSON);
         File json = factory.copyJsonToInstallation(installationFolder);
@@ -62,11 +84,8 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         // Create the Better Than Wolves Jar
         publish(CREATE_JAR);
-        final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(pathResolver, patchFile.getFile());
-        monitoredSet.addObserver((o, arg) -> {
-            setProgress(monitoredSet.getProgress());
-            publish(CREATE_JAR);
-        });
+        final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(clientJar.getClient(), patchFile.getFile());
+        monitoredSet.addObserver((o, arg) -> setProgress(monitoredSet.getProgress()));
         File jar = factory.writeToTarget(pathResolver, monitoredSet);
 
         // Signal to the application that BTW has been installed
@@ -85,10 +104,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
     @Override
     protected void process(List<ProgressPanel.State> chunks) {
-        chunks.forEach(s -> {
-            panel.setState(s);
-            panel.setProgress(this.getProgress());
-        });
+        chunks.forEach(panel::setState);
     }
 
     public static class Status {

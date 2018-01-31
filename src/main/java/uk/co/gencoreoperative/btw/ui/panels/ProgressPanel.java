@@ -8,12 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.miginfocom.swing.MigLayout;
+import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.Strings;
 
@@ -117,6 +117,7 @@ public class ProgressPanel extends JPanel {
     public enum State {
         REMOVE_PREVIOUS(Icons.FOLDER_DELETE.getIcon(), Strings.STATE_REMOVE_PREVIOUS.getText()),
         CREATE_FOLDER(Icons.FOLDER_ADD.getIcon(), Strings.STATE_CREATE_FOLDER.getText()),
+        LOCATE_1_5_2(Icons.MAGNIFIER.getIcon(), Strings.STATE_LOCATE_1_5_2.getText()),
         COPY_JSON(Icons.PAGE_GO.getIcon(), Strings.STATE_COPY_JSON.getText()),
         CREATE_JAR(Icons.COMPRESS.getIcon(), Strings.STATE_CREATE_JAR.getText()),
         WRITE_VERSION(Icons.PAGE_WHITE_TEXT.getIcon(), Strings.STATE_WRITE_VERSION.getText()),

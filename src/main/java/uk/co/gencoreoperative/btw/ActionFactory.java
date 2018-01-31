@@ -57,11 +57,10 @@ public class ActionFactory {
                 true, true);
         return targetJson;
     }
-
-    public Stream<PathAndData> streamClientJar(PathResolver resolver) {
-        File source = new File(resolver.oneFiveTwo(), "1.5.2.jar");
+    
+    public Stream<PathAndData> streamClientJar(File clientJar) {
         final List<String> excludes = Arrays.asList("META-INF/MANIFEST.MF", "META-INF/MOJANG_C.SF", "META-INF/MOJANG_C.DSA");
-        return streamZip(source)
+        return streamZip(clientJar)
                 .filter(PathAndData::isFile)
                 .filter(p -> !excludes.contains(p.getPath()));
     }
@@ -85,8 +84,8 @@ public class ActionFactory {
         return second.collect(Collectors.toCollection(() -> set));
     }
 
-    public MonitoredSet mergeClientWithPatch(PathResolver resolver, File patchZip) {
-        Stream<PathAndData> client = streamClientJar(resolver);
+    public MonitoredSet mergeClientWithPatch(File clientJar, File patchZip) {
+        Stream<PathAndData> client = streamClientJar(clientJar);
         Stream<PathAndData> patch = streamPatchZip(patchZip);
         return new MonitoredSet(removeDuplicates(patch, client));
     }
