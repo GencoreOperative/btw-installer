@@ -1,10 +1,3 @@
-Client Jar Download
-https://mcversions.net/ provides all Majong download links
-which we can use to download the 1.5.2 jar. This removes the
-entire client profile configuration step. Server jar also provided.
-Verify the jar checksum against known version: MD5 (1.5.2.jar) = 6897c3287fb971c9f362eb3ab20f5ddd
-"All download-able jars are provided by official Mojang servers. Content is never re-distributed."
-
 Server Mode
 Update the patcher to support Server Mode, as well as Client Mode.
 Question is answer is - how can the user easily select which mode?

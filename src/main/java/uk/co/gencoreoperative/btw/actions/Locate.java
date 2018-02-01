@@ -2,6 +2,7 @@ package uk.co.gencoreoperative.btw.actions;
 
 import static java.text.MessageFormat.format;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,9 +26,9 @@ import uk.co.gencoreoperative.btw.utils.UrlResolver;
 public class Locate {
 
     // Public download link for the Mojang 1.5.2 client jar.
-    public static final String MOJANG_1_5_2 = "https://launcher.mojang.com/mc/game/1.5.2/client/465378c9dc2f779ae1d6e8046ebc46fb53a57968/client.jar";
+    private static final String MOJANG_1_5_2 = "https://launcher.mojang.com/mc/game/1.5.2/client/465378c9dc2f779ae1d6e8046ebc46fb53a57968/client.jar";
     // The known filesize of the 1.5.2 client jar
-    public static final long MAJONG_1_5_2_FILE_SIZE = 5564661L;
+    private static final long MAJONG_1_5_2_FILE_SIZE = 5564661L;
 
     // MD5 checksum for the 1.5.2 Client Jar
     private static final String MD5_1_5_2 = "6897c3287fb971c9f362eb3ab20f5ddd";

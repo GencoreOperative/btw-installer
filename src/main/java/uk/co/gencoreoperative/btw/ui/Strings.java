@@ -45,7 +45,7 @@ public enum Strings {
     STATE_CREATE_JAR("Writing Jar"),
     STATE_WRITE_VERSION("Writing version"),
     STATE_COMPLETE("Patch complete"),
-    STATE_LOCATE_1_5_2("Locate 1.5.2 Client Jar");
+    STATE_LOCATE_1_5_2("Copying 1.5.2 Client Jar");
 
     private final String text;
 

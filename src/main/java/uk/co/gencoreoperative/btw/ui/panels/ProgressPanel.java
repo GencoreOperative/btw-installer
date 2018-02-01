@@ -117,7 +117,7 @@ public class ProgressPanel extends JPanel {
     public enum State {
         REMOVE_PREVIOUS(Icons.FOLDER_DELETE.getIcon(), Strings.STATE_REMOVE_PREVIOUS.getText()),
         CREATE_FOLDER(Icons.FOLDER_ADD.getIcon(), Strings.STATE_CREATE_FOLDER.getText()),
-        LOCATE_1_5_2(Icons.MAGNIFIER.getIcon(), Strings.STATE_LOCATE_1_5_2.getText()),
+        COPY_1_5_2(Icons.MAGNIFIER.getIcon(), Strings.STATE_LOCATE_1_5_2.getText()),
         COPY_JSON(Icons.PAGE_GO.getIcon(), Strings.STATE_COPY_JSON.getText()),
         CREATE_JAR(Icons.COMPRESS.getIcon(), Strings.STATE_CREATE_JAR.getText()),
         WRITE_VERSION(Icons.PAGE_WHITE_TEXT.getIcon(), Strings.STATE_WRITE_VERSION.getText()),

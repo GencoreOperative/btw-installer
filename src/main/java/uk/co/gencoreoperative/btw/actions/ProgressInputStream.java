@@ -28,7 +28,21 @@ public class ProgressInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
-        readCounter.addAndGet(1);
+        return bytesRead(stream.read());
+    }
+
+    @Override
+    public int read(byte[] b) throws IOException {
+        return bytesRead(stream.read(b));
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        return bytesRead(stream.read(b, off, len));
+    }
+
+    private int bytesRead(int read) {
+        readCounter.addAndGet(read);
         int progress = getProgressPercentage();
         if (progress != previousProgress) {
             previousProgress = progress;
@@ -36,7 +50,7 @@ public class ProgressInputStream extends InputStream {
                 listener.setProgress(progress);
             }
         }
-        return stream.read();
+        return read;
     }
 
     public int getProgressPercentage() {

@@ -2,6 +2,7 @@ package uk.co.gencoreoperative.btw.ui.workers;
 
 import static java.text.MessageFormat.*;
 import static uk.co.gencoreoperative.btw.ui.panels.ProgressPanel.State.*;
+import static uk.co.gencoreoperative.btw.utils.Timer.*;
 
 import javax.swing.*;
 import java.io.File;
@@ -56,7 +57,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         }
 
         // Locate Client Jar
-        publish(ProgressPanel.State.LOCATE_1_5_2);
+        publish(ProgressPanel.State.COPY_1_5_2);
         final LocateWorker worker = new LocateWorker(pathResolver);
         // Wire up workers progress to the ProgressPanel
         worker.addPropertyChangeListener(evt -> panel.setProgress(worker.getProgress()));
@@ -84,7 +85,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         publish(CREATE_JAR);
         final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(clientJar, patchFile.getFile());
         monitoredSet.addObserver((o, arg) -> setProgress(monitoredSet.getProgress()));
-        File jar = factory.writeToTarget(pathResolver, monitoredSet);
+        File jar = timeAndReturn("Creating Jar", () -> factory.writeToTarget(pathResolver, monitoredSet));
 
         // Signal to the application that BTW has been installed
         InstalledVersion installedVersion = new InstalledVersion(jar);
