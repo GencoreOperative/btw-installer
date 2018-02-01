@@ -4,8 +4,6 @@ import static java.text.MessageFormat.*;
 import static uk.co.gencoreoperative.btw.ui.panels.ProgressPanel.State.*;
 
 import javax.swing.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,7 +15,6 @@ import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.ui.panels.ProgressPanel;
-import uk.co.gencoreoperative.btw.ui.signals.ClientJar;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
@@ -60,16 +57,17 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         // Locate Client Jar
         publish(ProgressPanel.State.LOCATE_1_5_2);
-        final LocateWorker worker = new LocateWorker(context, pathResolver, dialogFactory);
-        worker.addPropertyChangeListener(evt -> PatchWorker.this.setProgress(worker.getProgress()));
+        final LocateWorker worker = new LocateWorker(pathResolver);
+        // Wire up workers progress to the ProgressPanel
+        worker.addPropertyChangeListener(evt -> panel.setProgress(worker.getProgress()));
         worker.execute();
-        final ClientJar clientJar;
+        final File clientJar;
         try {
-            clientJar = new ClientJar(worker.get());
+            clientJar = worker.get();
         } catch (InterruptedException | ExecutionException e) {
             dialogFactory.failed(format(
-                    "<b>Failed to locate the 1.5.2 client jar</b><br>{0}",
-                    e.getMessage()));
+                    "<html><b>Failed to locate the 1.5.2 client jar</b><br>{0}</html>",
+                    e.getCause().getMessage()));
             return new Status();
         }
 
@@ -84,7 +82,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         // Create the Better Than Wolves Jar
         publish(CREATE_JAR);
-        final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(clientJar.getClient(), patchFile.getFile());
+        final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(clientJar, patchFile.getFile());
         monitoredSet.addObserver((o, arg) -> setProgress(monitoredSet.getProgress()));
         File jar = factory.writeToTarget(pathResolver, monitoredSet);
 

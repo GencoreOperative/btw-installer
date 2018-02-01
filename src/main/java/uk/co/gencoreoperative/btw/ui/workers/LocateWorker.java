@@ -1,18 +1,13 @@
 package uk.co.gencoreoperative.btw.ui.workers;
 
-import static java.text.MessageFormat.format;
-
 import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.concurrent.ExecutionException;
+import java.rmi.server.ExportException;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.actions.Locate;
 import uk.co.gencoreoperative.btw.actions.ProgressInputStream;
-import uk.co.gencoreoperative.btw.ui.Context;
-import uk.co.gencoreoperative.btw.ui.DialogFactory;
-import uk.co.gencoreoperative.btw.ui.signals.ClientJar;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 /**
@@ -29,19 +24,20 @@ import uk.co.gencoreoperative.btw.utils.FileUtils;
  * is copied from the location it was found to a temporary location.
  */
 public class LocateWorker extends SwingWorker<File, Void> {
-    private Context context;
     private final PathResolver resolver;
-    private final DialogFactory factory;
 
-    public LocateWorker(Context context, PathResolver resolver, DialogFactory factory) {
-        this.context = context;
+    public LocateWorker(PathResolver resolver) {
         this.resolver = resolver;
-        this.factory = factory;
     }
     @Override
     protected File doInBackground() throws Exception {
         Locate locate = new Locate();
         ProgressInputStream inputStream = locate.locateMinecraftOneFiveTwo(resolver, this::setProgress);
+
+        if (inputStream == null) {
+            throw new Exception("Unable to find in Minecraft home or from Majong servers");
+        }
+
         File tempFile = File.createTempFile("client", "jar");
         FileUtils.copyStream(
                 inputStream,
@@ -50,19 +46,5 @@ public class LocateWorker extends SwingWorker<File, Void> {
                 true);
         tempFile.deleteOnExit();
         return tempFile;
-    }
-
-    @Override
-    protected void done() {
-        super.done();
-        try {
-            context.add(new ClientJar(get()));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            factory.failed(format(
-                    "<b>Failed to locate the 1.5.2 client jar</b><br>{0}",
-                    e.getMessage()));
-        }
     }
 }
