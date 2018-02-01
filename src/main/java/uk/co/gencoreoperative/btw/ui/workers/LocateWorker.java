@@ -3,11 +3,11 @@ package uk.co.gencoreoperative.btw.ui.workers;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.rmi.server.ExportException;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.actions.Locate;
 import uk.co.gencoreoperative.btw.actions.ProgressInputStream;
+import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 /**
@@ -35,7 +35,7 @@ public class LocateWorker extends SwingWorker<File, Void> {
         ProgressInputStream inputStream = locate.locateMinecraftOneFiveTwo(resolver, this::setProgress);
 
         if (inputStream == null) {
-            throw new Exception("Unable to find in Minecraft home or from Majong servers");
+            throw new Exception(Errors.MC_ONE_FIVE_TWO_NOT_FOUND.getReason());
         }
 
         File tempFile = File.createTempFile("client", "jar");

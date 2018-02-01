@@ -2,7 +2,7 @@ package uk.co.gencoreoperative.btw.ui;
 
 public enum Errors {
     MC_HOME_NOT_FOUND("Minecraft home folder not found"),
-    MC_ONE_FIVE_TWO_NOT_FOUND("Could not find the 1.5.2 version"),
+    MC_ONE_FIVE_TWO_NOT_FOUND("Unable to find in Minecraft home or from Majong servers"),
     BTW_RELEASE_NOT_FOUND("Could not find the Better Than Wolves version"),
     FAILED_TO_DELETE_INSTALLATION("Unable to delete previous installation."),
     FAILED_TC_CREATE_FOLDER("Unable to create installation folder."),

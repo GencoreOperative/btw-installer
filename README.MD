@@ -13,8 +13,8 @@ to it.
 
 This project is provided as is, and is licensed under a [MIT license](Extra.MD).
 
-Virus scan provided by [VirusTotal.com](https://www.virustotal.com/#/file/a4a15b6014e6489ed552f44e7b22cdcd3d68cf7f2c2621a0a88c82352db9e07a/detection)
-and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/6sea2zhtj2).
+Virus scan provided by [VirusTotal.com](https://www.virustotal.com/#/file/86a9a0b01712bb0cc164470c20240d472e564ac5dc6faad2435fc20892f17e4a/detection)
+and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/vqsdbstwof).
 
 ## Before You Start
 
