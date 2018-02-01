@@ -3,11 +3,13 @@
 This utility has been made for those who are new to Minecraft, or new to 
 installing the Better Than Wolves mod. This installer has been developed 
 to work with the latest Minecraft launcher has been tested on both 
-Windows and MacOS.
+Windows, MacOS and Linux (Ubuntu).
 
 Minecraft supports multiple "Configurations", which can be set to use
-a specific version of the Minecraft binary files. This installer will copy
-an existing configuration and apply the Better Than Wolves patch to it.
+a specific version of the Minecraft binary files. This installer will 
+create a new configuration called "BetterThanWolves" which will contain
+the Minecraft 1.5.2 client with the Better Than Wolves patch applied 
+to it.
 
 This project is provided as is, and is licensed under a [MIT license](Extra.MD).
 
@@ -16,23 +18,24 @@ and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/6sea2z
 
 ## Before You Start
 
-Before you can use this utility you need to have the following set up:
+Before you can use this utility you will the following:
 
 * **[Java](https://java.com/en/download/)** - the utility requires a 
-Java 8 to work
+Java 8 or greater to work.
 
 * **[Latest Patch](http://www.sargunster.com/btwforum/viewforum.php?f=3)** - Download the latest version of the Better Than Wolves
-patch from the Better Than Wolves Forum post.
+patch from the Better Than Wolves Forum.
 
 * **A Minecraft 1.5.2 configuration** -  Better Than Wolves requires a 
 Minecraft 1.5.2 configuration which this installer will look for as part of 
-installation. If you have not already created this release please see 
-the section on [creating a new profile](New-Profile.MD).
+installation. If you do not have a 1.5.2 configuration already, the installer
+will download it automatically as long as you are online and can access the 
+Internet.
 
 ## Download and Run
 
 To use the installer, download the [installer.jar](https://github.com/rwapshott/btw-installer/releases/download/latest/installer.jar) 
-from the BitBucket release page.
+from the GitHub release page.
 
 If your system supports running Java Executable files then you can 
 double click the file to start the installer. Otherwise you can 
@@ -68,7 +71,7 @@ The selected version will be shown in the version field.
 3) **Choose "Patch" to install this version**
 
 The utility will create a new Configuration called "BetterThanWolves" which 
-will be a copy of the 1.5.2 release with the BetterThanWolves patch merged in.
+will be a copy of the 1.5.2 client with the BetterThanWolves patch merged in.
 
 ![Patch process complete](images/patch-version-installed.png)
 

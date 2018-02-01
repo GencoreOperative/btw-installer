@@ -28,3 +28,12 @@ SOFTWARE.
 
 The icons in this user interface are from the 
 [famfamfam Silk](http://www.famfamfam.com/lab/icons/silk/) icon set.
+
+# Copyright
+
+This installer does not package or redistribute the original work of 
+FlowerChild's Better Than Wolves mod.
+
+The installer also does not package or redistribute the Minecraft
+jars required for the patching process. All downloadable jars are 
+provided by official Mojang servers.
