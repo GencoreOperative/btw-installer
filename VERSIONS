@@ -1,4 +1,8 @@
-0.9.6: Added support for automatically downloading the 1.5.2 client jar
+*0.9.7*: Resolved performance issue with Copy 1.5.2
+1/58 https://www.virustotal.com/#/file/ef112be782ba2451fa1fe50f3b178c5b22b6c072620f0dc40d9c5fa8337877eb/detection
+OK https://virusscan.jotti.org/en-GB/filescanjob/m6ch5xu1xk
+
+*0.9.6*: Added support for automatically downloading the 1.5.2 client jar
 1/58 https://www.virustotal.com/#/file/86a9a0b01712bb0cc164470c20240d472e564ac5dc6faad2435fc20892f17e4a/detection
 OK https://virusscan.jotti.org/en-GB/filescanjob/vqsdbstwof
 
