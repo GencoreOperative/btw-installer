@@ -11,19 +11,17 @@ import java.io.InputStreamReader;
 public enum Strings {
     VERSION(readProperty("/app.version")),
     TITLE_PATCH("BTW Installer - " + VERSION.getText()),
-    TITLE_REMOVE("BTW Remover - " + VERSION.getText()),
 
-    TITLE_PATCH_SUCCESS("Patch complete"),
-    TITLE_REMOVE_SUCCESS("Removal complete"),
     TITLE_REMOVE_CONFIRM("Confirm Removal"),
     TITLE_PROGRESS("Patching in progress"),
 
     BUTTON_CLOSE("Close"),
-    BUTTON_CHANGE_MINECRAFT_HOME("Change..."),
     BUTTON_DIALOG_SELECT("Select"),
     BUTTON_PATCH("Patch"),
-    BUTTON_REMOVE("Remove"),
     BUTTON_CHOOSE_PATCH("Choose..."),
+
+    MENU_DEFAULT_MINECRAFT_HOME("Default Minecraft Home"),
+    MENU_CHANGE_MINECRAFT_HOME("Custom Minecraft Home..."),
 
     REMOVE_QUESTION("Are you sure you want to remove Better Than Wolves?"),
 
@@ -36,8 +34,6 @@ public enum Strings {
     ERROR_DETAIL("An error occurred whilst processing\n{0}\nReason:\n{1}"),
     CANCELLED_DETAIL("Cancelled by user"),
     INFORMATION_TITLE("Information"),
-    CONFIRM_DEFAULT_MESSAGE("Default Minecraft installation detected, use this installation?"),
-    CONFIRM_DEFAULT_TITLE("Confirm default Minecraft installation"),
 
     STATE_REMOVE_PREVIOUS("Remove previous"),
     STATE_CREATE_FOLDER("Create installation folder"),
@@ -45,7 +41,9 @@ public enum Strings {
     STATE_CREATE_JAR("Writing Jar"),
     STATE_WRITE_VERSION("Writing version"),
     STATE_COMPLETE("Patch complete"),
-    STATE_LOCATE_1_5_2("Copying 1.5.2 Client Jar");
+    STATE_LOCATE_1_5_2("Copying 1.5.2 Client Jar"),
+
+    ACTION_REMOVE_PATCH("Remove Patch...");
 
     private final String text;
 

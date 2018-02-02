@@ -1,3 +1,19 @@
+JSON Version Format
+Include the installer version (or schema version) for the version file,
+using a JSON file format will make it easier to work with in the future.
+
+Automated Patch Testing
+Each patch in the /static folder should be tested automatically with
+the installer on each platform to simplify the process of testing and
+verifying behaviour.
+Robot tests?
+What are we trying to test? Patching behaviour is critical and should
+be tested on each build. User Interface behaviour is harder to test.
+
+Windows Executable
+Given that Windows is the primary platform, we can simplify the experience
+of using this platform by creating an executable.
+
 Server Mode
 Update the patcher to support Server Mode, as well as Client Mode.
 Question is answer is - how can the user easily select which mode?

@@ -38,8 +38,8 @@ public class NewUI extends JPanel {
 
         // Center
         JPanel centre = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
-        centre.add(new MinecraftHomePanel(context, dialogFactory), "grow");
         centre.add(new SelectPatchPanel(context, dialogFactory), "grow");
+        centre.add(new MinecraftHomePanel(context, dialogFactory), "grow");
         add(centre, BorderLayout.CENTER);
 
         // South - Splits into two sections
@@ -58,7 +58,6 @@ public class NewUI extends JPanel {
         southCenterLayout.setAlignOnBaseline(true);
         JPanel buttons = new JPanel(southCenterLayout);
         buttons.add(new JButton(new PatchAction(context, dialogFactory)));
-        buttons.add(new JButton(new RemoveAction(frame, context)));
         buttons.add(new JButton(new CloseAction(frame)));
         buttonSouth.add(buttons, BorderLayout.CENTER);
         add(buttonSouth, BorderLayout.SOUTH);

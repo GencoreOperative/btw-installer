@@ -1,17 +1,20 @@
 package uk.co.gencoreoperative.btw.ui.panels;
 
-import static uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel.versionPanel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+import java.awt.*;
+
 import net.miginfocom.swing.MigLayout;
-import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.actions.ChoosePatch;
+import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
+import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
+import uk.co.gencoreoperative.btw.ui.signals.Versioned;
 
 public class SelectPatchPanel extends JPanel {
     private final Context context;
@@ -48,6 +51,21 @@ public class SelectPatchPanel extends JPanel {
         });
         panel.add(selectPatchField, "grow");
         panel.add(new JButton(new ChoosePatch(context, dialogFactory)));
+        return panel;
+    }
+
+    private JPanel versionPanel(Context context, Class<? extends Versioned> type) {
+        JPanel panel = new JPanel(new MigLayout(
+                "fillx, insets 0",
+                "[min!][grow][min!]"));
+        panel.add(new JLabel("Version:"));
+
+        JLabel versionLabel = new JLabel();
+        versionLabel.setFont(versionLabel.getFont().deriveFont(Font.ITALIC));
+        versionLabel.setEnabled(false);
+        MinecraftHomePanel.register(context, type, versionLabel);
+
+        panel.add(versionLabel);
         return panel;
     }
 }

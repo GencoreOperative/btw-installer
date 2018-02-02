@@ -6,7 +6,7 @@
 
     <groupId>uk.co.gencoreoperative</groupId>
     <artifactId>btw-installer</artifactId>
-    <version>0.9.7</version>
+    <version>0.9.8</version>
     <build>
         <plugins>
             <!-- Java 8 required -->

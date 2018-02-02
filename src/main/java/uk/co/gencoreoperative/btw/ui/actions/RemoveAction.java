@@ -23,7 +23,7 @@ public class RemoveAction extends AbstractAction {
         this.parent = dialog;
         this.context = context;
 
-        putValue(Action.NAME, Strings.BUTTON_REMOVE.getText());
+        putValue(Action.NAME, Strings.ACTION_REMOVE_PATCH.getText());
         putValue(Action.SMALL_ICON, Icons.BIN_CLOSED.getIcon());
 
         setEnabled(isApplicable());
