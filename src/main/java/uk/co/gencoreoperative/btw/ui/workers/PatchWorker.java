@@ -7,11 +7,13 @@ import static uk.co.gencoreoperative.btw.utils.Timer.*;
 import javax.swing.*;
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
-import uk.co.gencoreoperative.btw.VersionResolver;
+import uk.co.gencoreoperative.btw.version.Version;
+import uk.co.gencoreoperative.btw.version.VersionManager;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Errors;
@@ -27,6 +29,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
     private final Context context;
     private final ProgressPanel panel;
     private final DialogFactory dialogFactory;
+    private VersionManager manager;
 
     public PatchWorker(MinecraftHome minecraftHome, PatchFile patchFile, ActionFactory factory, Context context, ProgressPanel panel, DialogFactory dialogFactory) {
         this.patchFile = patchFile;
@@ -35,10 +38,14 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         this.context = context;
         this.panel = panel;
         this.dialogFactory = dialogFactory;
+        manager = VersionManager.getVersionManager(pathResolver);
     }
 
     @Override
     protected Status doInBackground() throws Exception {
+        // Read previous version - before folder is deleted.
+        Optional<Version> previousVersion = manager.getVersion();
+
         // Remove previous installation.
         publish(REMOVE_PREVIOUS);
         factory.removePreviousInstallation(pathResolver);
@@ -87,17 +94,16 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         monitoredSet.addObserver((o, arg) -> setProgress(monitoredSet.getProgress()));
         File jar = timeAndReturn("Creating Jar", () -> factory.writeToTarget(pathResolver, monitoredSet));
 
-        // Signal to the application that BTW has been installed
-        InstalledVersion installedVersion = new InstalledVersion(jar);
-        installedVersion.setVersion(patchFile.getVersion());
-        context.add(installedVersion);
-
         // Write the version to the installation folder
         publish(WRITE_VERSION);
-        VersionResolver versionResolver = new VersionResolver();
-        versionResolver.writeVersion(pathResolver.betterThanWolves(), installedVersion.getVersion());
+        Version version = manager.createVersion(patchFile);
+        manager.save(version);
 
+        // Signal to the application that BTW has been installed
         publish(COMPLETE);
+        InstalledVersion installedVersion = new InstalledVersion(jar, version);
+        context.add(installedVersion);
+
         return new Status();
     }
 

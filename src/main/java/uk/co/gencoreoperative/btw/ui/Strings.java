@@ -43,7 +43,9 @@ public enum Strings {
     STATE_COMPLETE("Patch complete"),
     STATE_LOCATE_1_5_2("Copying 1.5.2 Client Jar"),
 
-    ACTION_REMOVE_PATCH("Remove Patch...");
+    ACTION_REMOVE_PATCH("Remove Patch..."),
+
+    NOT_RECOGNISED("Not Recognised");
 
     private final String text;
 

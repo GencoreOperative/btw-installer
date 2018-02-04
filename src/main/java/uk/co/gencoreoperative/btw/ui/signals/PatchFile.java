@@ -6,7 +6,7 @@ import java.io.File;
  * The selected BTW Patch file. We model the location of the file, and the
  * detected version of the file this can be determined.
  */
-public class PatchFile implements Versioned {
+public class PatchFile {
     private final File file;
     private String version;
 
@@ -18,11 +18,11 @@ public class PatchFile implements Versioned {
         return file;
     }
 
-    public String getVersion() {
+    public String getPatchVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setPatchVersion(String version) {
         this.version = version;
     }
 }

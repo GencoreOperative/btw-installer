@@ -7,16 +7,15 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.Optional;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.PathResolver;
-import uk.co.gencoreoperative.btw.VersionResolver;
+import uk.co.gencoreoperative.btw.version.Version;
+import uk.co.gencoreoperative.btw.version.VersionManager;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
-import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
@@ -67,26 +66,47 @@ public class NewUI extends JPanel {
 
     private void initialiseListenersOnContext() {
         // Installed Version listener - responds to changes in MineCraft Home
-        context.register(MinecraftHome.class, new Observer() {
-            final VersionResolver versionResolver = new VersionResolver();
+        context.register(MinecraftHome.class, (o, arg) -> {
+            MinecraftHome home = (MinecraftHome) arg;
 
-            @Override
-            public void update(Observable o, Object arg) {
-                MinecraftHome home = context.get(MinecraftHome.class);
-                PathResolver pathResolver = new PathResolver(home.getFolder());
-
-                File installedFolder = pathResolver.betterThanWolves();
-                File installedJar = new File(installedFolder, "BetterThanWolves.jar");
-
-                if (installedFolder.exists() && installedJar.exists()) {
-                    InstalledVersion version = new InstalledVersion(installedJar);
-                    version.setVersion(versionResolver.readVersion(installedFolder));
-                    context.add(version);
-                } else {
+            if (home == null) {
+                context.remove(InstalledVersion.class);
+                if (context.contains(InstalledVersion.class)) {
                     context.remove(InstalledVersion.class);
                 }
+                return;
+            }
+
+            InstalledVersion installedVersion = identifyInstalledVersion(home);
+            if (installedVersion == null) {
+                context.remove(InstalledVersion.class);
+            } else {
+                context.add(installedVersion);
             }
         });
+    }
+
+    /**
+     * Identify based on the Minecraft Home, whether there is an installed version of
+     * BetterThanWolves present.
+     * <p>
+     * This will only identify versions installed by this utility. Other versions will
+     * be ignored completely.
+     * <p>
+     * If there was a problem with reading the version information, we can proceed with
+     * the {@link Version#NOT_RECOGNISED} version.
+     *
+     * @param home Non null home folder.
+     * @return {@code null} if no version could be found, otherwise non null.
+     */
+    private InstalledVersion identifyInstalledVersion(MinecraftHome home) {
+        PathResolver pathResolver = new PathResolver(home.getFolder());
+        File installedJar = new File(pathResolver.betterThanWolves(), "BetterThanWolves.jar");
+        if (!installedJar.exists()) return null;
+
+        VersionManager manager = VersionManager.getVersionManager(pathResolver);
+        Version version = manager.getVersion().orElse(Version.NOT_RECOGNISED);
+        return new InstalledVersion(installedJar, version);
     }
 
     public static void main(String... args) {

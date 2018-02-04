@@ -11,10 +11,9 @@ import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.actions.ChoosePatch;
-import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
-import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
+import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
-import uk.co.gencoreoperative.btw.ui.signals.Versioned;
+import uk.co.gencoreoperative.btw.version.Version;
 
 public class SelectPatchPanel extends JPanel {
     private final Context context;
@@ -28,7 +27,7 @@ public class SelectPatchPanel extends JPanel {
                 "fillx, insets 10, wrap 1"));
 
         add(selectPatch());
-        add(versionPanel(context, PatchFile.class));
+        add(versionPanel(context));
     }
 
     private JPanel selectPatch() {
@@ -54,7 +53,7 @@ public class SelectPatchPanel extends JPanel {
         return panel;
     }
 
-    private JPanel versionPanel(Context context, Class<? extends Versioned> type) {
+    private JPanel versionPanel(Context context) {
         JPanel panel = new JPanel(new MigLayout(
                 "fillx, insets 0",
                 "[min!][grow][min!]"));
@@ -63,7 +62,13 @@ public class SelectPatchPanel extends JPanel {
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(versionLabel.getFont().deriveFont(Font.ITALIC));
         versionLabel.setEnabled(false);
-        MinecraftHomePanel.register(context, type, versionLabel);
+        context.register(PatchFile.class, (o, arg) -> {
+            String text = "";
+            if (context.contains(PatchFile.class)) {
+                text = context.get(PatchFile.class).getPatchVersion();
+            }
+            versionLabel.setText(text);
+        });
 
         panel.add(versionLabel);
         return panel;

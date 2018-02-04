@@ -6,7 +6,7 @@
 
     <groupId>uk.co.gencoreoperative</groupId>
     <artifactId>btw-installer</artifactId>
-    <version>0.9.8</version>
+    <version>0.10.1</version>
     <build>
         <plugins>
             <!-- Java 8 required -->
@@ -104,6 +104,12 @@
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <version>1.32</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.2</version>
         </dependency>
 
         <dependency>

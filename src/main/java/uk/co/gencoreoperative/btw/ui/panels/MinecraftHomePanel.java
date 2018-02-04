@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ui.Context;
@@ -16,7 +15,7 @@ import uk.co.gencoreoperative.btw.ui.actions.MinecraftHomeMenuAction;
 import uk.co.gencoreoperative.btw.ui.actions.RemoveAction;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
-import uk.co.gencoreoperative.btw.ui.signals.Versioned;
+import uk.co.gencoreoperative.btw.version.Version;
 
 public class MinecraftHomePanel extends JPanel {
 
@@ -35,7 +34,7 @@ public class MinecraftHomePanel extends JPanel {
                 "",
                 "[min!]"));
         add(selectMinecraftHome(), "grow");
-        add(versionPanel(context, InstalledVersion.class), "grow");
+        add(versionPanel(context), "grow");
     }
 
     private JPanel selectMinecraftHome() {
@@ -75,7 +74,7 @@ public class MinecraftHomePanel extends JPanel {
         return panel;
     }
 
-    private JPanel versionPanel(Context context, Class<? extends Versioned> type) {
+    private JPanel versionPanel(Context context) {
         JPanel panel = new JPanel(new MigLayout(
                 "fillx, insets 0",
                 "[min!][grow]"));
@@ -84,20 +83,18 @@ public class MinecraftHomePanel extends JPanel {
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(versionLabel.getFont().deriveFont(Font.ITALIC));
         versionLabel.setEnabled(false);
-        register(context, type, versionLabel);
+        context.register(InstalledVersion.class, (o, arg) -> {
+            String text = "";
+            if (context.contains(InstalledVersion.class)) {
+                InstalledVersion installedVersion = context.get(InstalledVersion.class);
+                Version version = installedVersion.getVersion().orElse(Version.NOT_RECOGNISED);
+                text = version.getPatchVersion();
+            }
+            versionLabel.setText(text);
+        });
 
         panel.add(versionLabel);
 
         return panel;
-    }
-
-    static void register(Context context, Class<? extends Versioned> type, JLabel field) {
-        context.register(type, (o, arg) -> {
-            String text = "";
-            if (context.contains(type)) {
-                text = context.get(type).getVersion();
-            }
-            field.setText(text);
-        });
     }
 }
