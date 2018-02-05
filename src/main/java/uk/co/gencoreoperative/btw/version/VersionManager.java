@@ -1,7 +1,10 @@
 package uk.co.gencoreoperative.btw.version;
 
+import static java.text.MessageFormat.*;
+
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -10,6 +13,7 @@ import java.util.Set;
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
+import uk.co.gencoreoperative.btw.utils.Logger;
 
 /**
  * VersionManager is responsible for reading and writing the version information
@@ -79,15 +83,39 @@ public class VersionManager {
     }
 
     /**
-     * Initialise the Version object.
+     * Initialise the Version object based on the currently selected {@link PatchFile}.
+     * <p>
+     * During patching we need to initialise the Version, the starting point for this
+     * will always be an empty Version with the patch file version string added.
      *
      * @param patchFile The PatchFile being installed is the starting point for
      *                  the version.
      *
      * @return Non null Version.
      */
-    public Version createVersion(PatchFile patchFile) {
+    public static Version createVersion(PatchFile patchFile) {
         return new Version(patchFile.getPatchVersion());
+    }
+
+    /**
+     * Prior to installing a new patch in the clients installation folder, we should
+     * remove any previous version information.
+     * <p>
+     * After this method has been invoked there should be no version information in
+     * the folder.
+     */
+    public void cleanVersionInformation() {
+        resolvers.stream()
+                .filter(VersionResolver::isApplicable)
+                .forEach(r -> {
+                    try {
+                        r.cleanVersionFile();
+                    } catch (IOException e) {
+                        Logger.error(format(
+                                "Clean Version Information for {0} failed",
+                                r.getClass().getSimpleName()), e);
+                    }
+                });
     }
 
     /**

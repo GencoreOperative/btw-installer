@@ -47,6 +47,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         Optional<Version> previousVersion = manager.getVersion();
 
         // Remove previous installation.
+        // TODO Convert this to "Clean Previous Installation" if detected.
         publish(REMOVE_PREVIOUS);
         factory.removePreviousInstallation(pathResolver);
         if (pathResolver.betterThanWolves().exists()) {
@@ -56,6 +57,8 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         }
 
         publish(CREATE_FOLDER);
+        // TODO This logic will link to the outcome of the previous, link together
+        // TODO in a new SwingWorker.
         File installationFolder = factory.createInstallationFolder(pathResolver);
         if (!installationFolder.exists()) {
             return new Status(format("{0}\n{1}",

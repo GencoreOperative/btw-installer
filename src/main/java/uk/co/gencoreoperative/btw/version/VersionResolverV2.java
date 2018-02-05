@@ -1,5 +1,7 @@
 package uk.co.gencoreoperative.btw.version;
 
+import static java.text.MessageFormat.format;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,5 +42,12 @@ public class VersionResolverV2 implements VersionResolver {
                 new FileOutputStream(versionFile),
                 true,
                 true);
+    }
+
+    @Override
+    public void cleanVersionFile() throws IOException {
+        if (!versionFile.delete()) {
+            throw new IOException(format("Failed to delete {0}", versionFile.getPath()));
+        }
     }
 }

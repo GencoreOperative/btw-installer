@@ -8,6 +8,7 @@ import static org.forgerock.cuppa.Cuppa.describe;
 import static org.forgerock.cuppa.Cuppa.it;
 import static org.forgerock.cuppa.Cuppa.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -20,12 +21,28 @@ import java.io.IOException;
 import org.forgerock.cuppa.Test;
 import org.forgerock.cuppa.junit.CuppaRunner;
 import org.junit.runner.RunWith;
+import org.mockito.BDDMockito;
+import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 @Test
 @RunWith(CuppaRunner.class)
 public class VersionManagerTest {
     {
+        describe("Version creation", () -> {
+
+            when("initialising with a PatchFile", () -> {
+
+                PatchFile mockPatchFile = mock(PatchFile.class);
+                given(mockPatchFile.getPatchVersion()).willReturn("badger");
+
+                it("creates a Version", () -> {
+                    Version version = VersionManager.createVersion(mockPatchFile);
+                    assertThat(version.getPatchVersion()).isEqualTo("badger");
+                });
+            });
+        });
+
         describe("Version Resolver Selection", () -> {
             when("Given no VersionResolvers", () -> {
                 it("Throws an error", () -> {
@@ -112,6 +129,49 @@ public class VersionManagerTest {
                     manager.save(new Version("badger"));
                     assertThat(versionResolverV1.isApplicable()).isFalse();
                     assertThat(versionResolverV2.isApplicable()).isTrue();
+                });
+            });
+        });
+
+        describe("Cleaning Version Information", () -> {
+            final File tmpFolder = getTmpFolder();
+            after("Cleanup Folder", () -> {
+                FileUtils.recursiveDelete(tmpFolder);
+            });
+
+            when("V1 information is present", () -> {
+
+                VersionResolverV1 versionResolverV1 = spy(new VersionResolverV1(tmpFolder));
+                // V1 is deprecated, spy this and override.
+                given(versionResolverV1.isDeprecated()).willReturn(false);
+                final VersionManager manager = new VersionManager(versionResolverV1);
+
+                try {
+                    // V1 is deprecated and does not support writing. Use static test only method
+                    VersionResolverV1.writeVersion(tmpFolder, "badger");
+                } catch (IOException e) {
+                    fail(e.getMessage());
+                }
+
+                it("cleans it", () -> {
+                    manager.cleanVersionInformation();
+                    assertThat(versionResolverV1.isApplicable()).isFalse();
+                });
+            });
+
+            when("V2 information is present", () -> {
+
+                VersionResolverV2 versionResolverV2 = new VersionResolverV2(tmpFolder);
+                final VersionManager manager = new VersionManager(versionResolverV2);
+                try {
+                    versionResolverV2.writeVersion(new Version("badger"));
+                } catch (IOException e) {
+                    fail(e.getMessage());
+                }
+
+                it("cleans it", () -> {
+                    manager.cleanVersionInformation();
+                    assertThat(versionResolverV2.isApplicable()).isFalse();
                 });
             });
         });

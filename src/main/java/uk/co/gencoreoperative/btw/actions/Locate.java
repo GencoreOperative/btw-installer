@@ -2,7 +2,6 @@ package uk.co.gencoreoperative.btw.actions;
 
 import static java.text.MessageFormat.format;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,6 +14,7 @@ import java.util.Optional;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.utils.CheckSumVerifier;
+import uk.co.gencoreoperative.btw.utils.Logger;
 import uk.co.gencoreoperative.btw.utils.UrlResolver;
 
 /**
@@ -73,10 +73,10 @@ public class Locate {
     private InputStream downloadOneFiveTwo() {
         try {
             InputStream inputStream = new UrlResolver().streamURLContents(new URL(MOJANG_1_5_2));
+            Logger.info("Opened stream to 1.5.2 jar from Majong server");
             return CheckSumVerifier.verifiableStream(MD5_1_5_2, inputStream);
         } catch (IOException e) {
-            // TODO - log this?
-            // throw new IOException("Unable to download 1.5.2 client jar from Mojang", e);
+            Logger.error("Unable to download 1.5.2 Client Jar", e);
             return null;
         }
     }
@@ -120,6 +120,7 @@ public class Locate {
         }
 
         if (jar.isPresent()) {
+            Logger.info(format("Located 1.5.2 Jar {0}", jar.get().getPath()));
             try {
                 return new FileInputStream(jar.get());
             } catch (FileNotFoundException e) {
