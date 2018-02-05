@@ -11,7 +11,8 @@ create a new configuration called "BetterThanWolves" which will contain
 the Minecraft 1.5.2 client with the Better Than Wolves patch applied 
 to it.
 
-This project is provided as is, and is licensed under a [MIT license](Extra.MD).
+This project is provided as is, and is licensed under a MIT license. 
+For more details and other acknowledgements see [here](Extra.MD).
 
 Virus scan provided by [VirusTotal.com](https://www.virustotal.com/#/file/86a9a0b01712bb0cc164470c20240d472e564ac5dc6faad2435fc20892f17e4a/detection)
 and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/vqsdbstwof).
