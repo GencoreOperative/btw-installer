@@ -40,6 +40,14 @@ public class PathResolver implements Supplier<File> {
         return new File(versions(), "BetterThanWolves");
     }
 
+    public File betterThanWolvesJson() {
+        return new File(betterThanWolves(), "BetterThanWolves.json");
+    }
+
+    public File betterThanWolvesJar() {
+        return new File(betterThanWolves(), "BetterThanWolves.jar");
+    }
+
     private static File folder(String parent, String child) {
         return new File(parent, child);
     }

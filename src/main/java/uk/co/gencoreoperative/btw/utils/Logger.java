@@ -20,6 +20,10 @@ public class Logger {
         lines.add(format("Error: {0}\n{1}", reason, cause.getMessage()));
     }
 
+    public static void error(String reason) {
+        lines.add(format("Error: {0}\n{1}", reason, "<no cause>"));
+    }
+
     public void printLines() {
         lines.forEach(System.out::println);
     }

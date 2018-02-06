@@ -1,6 +1,6 @@
 package uk.co.gencoreoperative.btw.version;
 
-import static java.text.MessageFormat.*;
+import static java.text.MessageFormat.format;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,9 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.text.MessageFormat;
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 /**
  * Responsible for resolving the version of an installed version of

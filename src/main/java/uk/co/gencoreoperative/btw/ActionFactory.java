@@ -43,15 +43,8 @@ public class ActionFactory {
         return resolver.betterThanWolves();
     }
 
-    // TODO: Fold into FileUtils, test and indicate error
-    public File createInstallationFolder(PathResolver resolver) {
-        File targetFolder = resolver.betterThanWolves();
-        targetFolder.mkdirs();
-        return targetFolder;
-    }
-
-    public File copyJsonToInstallation(File folder) {
-        File targetJson = new File(folder, "BetterThanWolves.json");
+    public File copyJsonToInstallation(PathResolver resolver) {
+        File targetJson = resolver.betterThanWolvesJson();
         FileUtils.copyStream(ActionFactory.class.getResourceAsStream("/json/BetterThanWolves.json"),
                 write(targetJson),
                 true, true);
@@ -91,7 +84,7 @@ public class ActionFactory {
     }
 
     public File writeToTarget(PathResolver resolver, MonitoredSet monitoredSet) {
-        File target = new File(resolver.betterThanWolves(), "BetterThanWolves.jar");
+        File target = resolver.betterThanWolvesJar();
         return writeStreamToZipFile(monitoredSet.stream(), target);
     }
 

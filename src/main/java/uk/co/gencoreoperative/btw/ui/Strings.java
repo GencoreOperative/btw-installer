@@ -35,17 +35,17 @@ public enum Strings {
     CANCELLED_DETAIL("Cancelled by user"),
     INFORMATION_TITLE("Information"),
 
-    STATE_REMOVE_PREVIOUS("Remove previous"),
-    STATE_CREATE_FOLDER("Create installation folder"),
     STATE_COPY_JSON("Write JSON"),
     STATE_CREATE_JAR("Writing Jar"),
     STATE_WRITE_VERSION("Writing version"),
     STATE_COMPLETE("Patch complete"),
     STATE_LOCATE_1_5_2("Copying 1.5.2 Client Jar"),
+    STATE_CLEAN_PREVIOUS("Clean Previous Installation"),
 
     ACTION_REMOVE_PATCH("Remove Patch..."),
 
     NOT_RECOGNISED("Not Recognised");
+
 
     private final String text;
 

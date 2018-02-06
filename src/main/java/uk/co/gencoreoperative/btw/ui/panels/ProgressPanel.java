@@ -115,8 +115,7 @@ public class ProgressPanel extends JPanel {
      * The possible states of installation for the patch.
      */
     public enum State {
-        REMOVE_PREVIOUS(Icons.FOLDER_DELETE.getIcon(), Strings.STATE_REMOVE_PREVIOUS.getText()),
-        CREATE_FOLDER(Icons.FOLDER_ADD.getIcon(), Strings.STATE_CREATE_FOLDER.getText()),
+        CLEAN_PREVIOUS_INSTALLATION(Icons.BIN_EMPTY.getIcon(), Strings.STATE_CLEAN_PREVIOUS.getText()),
         COPY_1_5_2(Icons.MAGNIFIER.getIcon(), Strings.STATE_LOCATE_1_5_2.getText()),
         COPY_JSON(Icons.PAGE_GO.getIcon(), Strings.STATE_COPY_JSON.getText()),
         CREATE_JAR(Icons.COMPRESS.getIcon(), Strings.STATE_CREATE_JAR.getText()),

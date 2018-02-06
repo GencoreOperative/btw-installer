@@ -19,7 +19,8 @@ public enum Icons {
     MAGNIFIER("magnifier.png"),
     PAGE_GO("page_go.png"),
     PAGE_WHITE_TEXT("page_white_text.png"),
-    SQUID("squid.png"), COG("cog.png");
+    SQUID("squid.png"), COG("cog.png"),
+    BIN_EMPTY("bin_empty.png");
 
     private final ImageIcon icon;
     Icons(String path) {

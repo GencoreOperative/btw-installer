@@ -5,6 +5,8 @@ import static uk.co.gencoreoperative.btw.ui.panels.ProgressPanel.State.*;
 import static uk.co.gencoreoperative.btw.utils.Timer.*;
 
 import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.utils.Logger;
 import uk.co.gencoreoperative.btw.version.Version;
 import uk.co.gencoreoperative.btw.version.VersionManager;
 import uk.co.gencoreoperative.btw.ui.Context;
@@ -22,6 +25,11 @@ import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
+/**
+ * PatchWorker will handle the actual work of performing the patching process.
+ *
+ * Progress will be indicated directly to the {@link ProgressPanel}.
+ */
 public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.State> {
     private final PatchFile patchFile;
     private final ActionFactory factory;
@@ -46,24 +54,15 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         // Read previous version - before folder is deleted.
         Optional<Version> previousVersion = manager.getVersion();
 
-        // Remove previous installation.
-        // TODO Convert this to "Clean Previous Installation" if detected.
-        publish(REMOVE_PREVIOUS);
-        factory.removePreviousInstallation(pathResolver);
-        if (pathResolver.betterThanWolves().exists()) {
-            return new Status(format("{0}\n{1}",
-                    Errors.FAILED_TO_DELETE_INSTALLATION.getReason(),
-                    pathResolver.betterThanWolves().getAbsolutePath()));
-        }
-
-        publish(CREATE_FOLDER);
-        // TODO This logic will link to the outcome of the previous, link together
-        // TODO in a new SwingWorker.
-        File installationFolder = factory.createInstallationFolder(pathResolver);
-        if (!installationFolder.exists()) {
-            return new Status(format("{0}\n{1}",
-                    Errors.FAILED_TC_CREATE_FOLDER.getReason(),
-                    installationFolder.getAbsolutePath()));
+        // Run the Initialise Worker to setup the installation folder.
+        publish(ProgressPanel.State.CLEAN_PREVIOUS_INSTALLATION);
+        InitialiseWorker initialiseWorker = new InitialiseWorker(pathResolver);
+        initialiseWorker.addPropertyChangeListener(evt -> panel.setProgress(initialiseWorker.getProgress()));
+        initialiseWorker.execute();
+        Status status = initialiseWorker.get();
+        if (!status.isSuccess()) {
+            Logger.error(status.getError());
+            return status;
         }
 
         // Locate Client Jar
@@ -84,7 +83,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         // Write JSON
         publish(COPY_JSON);
-        File json = factory.copyJsonToInstallation(installationFolder);
+        File json = factory.copyJsonToInstallation(pathResolver);
         if (!json.exists()) {
             return new Status(format("{0}\n{1}",
                     Errors.FAILED_TO_WRITE_JSON.getReason(),
@@ -99,7 +98,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         // Write the version to the installation folder
         publish(WRITE_VERSION);
-        Version version = manager.createVersion(patchFile);
+        Version version = VersionManager.createVersion(patchFile);
         manager.save(version);
 
         // Signal to the application that BTW has been installed
