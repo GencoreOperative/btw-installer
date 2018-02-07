@@ -122,6 +122,7 @@
                                 </goals>
                                 <configuration>
                                     <headerType>gui</headerType>
+                                    <stayAlive>true</stayAlive>
                                     <jar>${project.build.directory}/btw-installer-${project.version}-jar-with-dependencies.jar</jar>
                                     <outfile>${project.build.directory}/installer.exe</outfile>
                                     <downloadUrl>http://java.com/download</downloadUrl>
@@ -135,13 +136,15 @@
                                         <jdkPreference>preferJre</jdkPreference>
                                     </jre>
                                     <versionInfo>
-                                        <fileVersion>${project.version}</fileVersion>
+                                        <fileVersion>${project.version}.0</fileVersion>
                                         <txtFileVersion>${project.version}</txtFileVersion>
                                         <fileDescription>${project.name}</fileDescription>
                                         <copyright>2018</copyright>
-                                        <productVersion>${project.version}</productVersion>
+                                        <productVersion>${project.version}.0</productVersion>
                                         <txtProductVersion>${project.version}</txtProductVersion>
                                         <productName>${project.name}</productName>
+                                        <internalName>installer</internalName>
+                                        <originalFilename>installer.exe</originalFilename>
                                     </versionInfo>
                                 </configuration>
                             </execution>
