@@ -98,6 +98,60 @@
         </resources>
     </build>
 
+    <!-- Windows only - Build Executable -->
+    <profiles>
+        <profile>
+            <id>Test</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>1.5.1</version>
+                        <executions>
+                            <execution>
+                                <id>l4j-clui</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <headerType>gui</headerType>
+                                    <jar>${project.build.directory}/btw-installer-${project.version}-jar-with-dependencies.jar</jar>
+                                    <outfile>${project.build.directory}/installer.exe</outfile>
+                                    <downloadUrl>http://java.com/download</downloadUrl>
+                                    <classPath>
+                                        <mainClass>uk.co.gencoreoperative.btw.ui.NewUI</mainClass>
+                                        <preCp>anything</preCp>
+                                    </classPath>
+                                    <icon>src/main/resources/icons/squid.ico</icon>
+                                    <jre>
+                                        <minVersion>1.8.0</minVersion>
+                                        <jdkPreference>preferJre</jdkPreference>
+                                    </jre>
+                                    <versionInfo>
+                                        <fileVersion>${project.version}</fileVersion>
+                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <fileDescription>${project.name}</fileDescription>
+                                        <copyright>2018</copyright>
+                                        <productVersion>${project.version}</productVersion>
+                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <productName>${project.name}</productName>
+                                    </versionInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <!-- Command line parsing -->
         <dependency>

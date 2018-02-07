@@ -1,16 +1,9 @@
-Installation Folder
-Do not delete the folder, but rather clean out the known files
-in case the user has things in there already.
-VersionResolver#clean - to remove version related file
-PathResolver#clean - to clean other known artefacts.
-
 Windows Executable
 Given that Windows is the primary platform, we can simplify the experience
 of using this platform by creating an executable.
 
 Errors
-If an error occurs during ProgressWorker, it is currently not shown with
-a dialog.
+If an error occurs during ProgressWorker, it is currently not shown with a dialog.
 Create a dialog that shows the current log, with a Copy to Clipboard action.
 
 ----- Release on MC Forum
