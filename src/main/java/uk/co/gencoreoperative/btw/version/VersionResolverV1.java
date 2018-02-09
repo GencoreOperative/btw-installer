@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+import uk.co.gencoreoperative.btw.utils.Logger;
+
 /**
  * Responsible for resolving the version of an installed version of
  * Better Than Wolves by this patching utility.
@@ -50,6 +52,7 @@ public class VersionResolverV1 implements VersionResolver {
 
     @Override
     public void cleanVersionFile() throws IOException {
+        Logger.info("Clean version file {0}", versionFile.getPath());
         if (!versionFile.delete()) {
             throw new IOException(format("Failed to delete version file {0}", versionFile.getPath()));
         }

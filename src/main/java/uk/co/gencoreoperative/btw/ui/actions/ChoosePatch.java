@@ -20,6 +20,7 @@ public class ChoosePatch extends AbstractAction {
         this.dialogFactory = dialogFactory;
 
         putValue(Action.NAME, Strings.BUTTON_CHOOSE_PATCH.getText());
+        putValue(Action.SHORT_DESCRIPTION, Strings.TOOLTIP_SELECT_PATCH.getText());
     }
 
     @Override

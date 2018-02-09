@@ -53,6 +53,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
     protected Status doInBackground() throws Exception {
         // Read previous version - before folder is deleted.
         Optional<Version> previousVersion = manager.getVersion();
+        previousVersion.ifPresent(v -> Logger.info("Previous Version: " + v.getPatchVersion()));
 
         // Run the Initialise Worker to setup the installation folder.
         publish(ProgressPanel.State.CLEAN_PREVIOUS_INSTALLATION);
@@ -84,6 +85,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         // Write JSON
         publish(COPY_JSON);
         File json = factory.copyJsonToInstallation(pathResolver);
+        Logger.info("Copy JSON {0}", json.getPath());
         if (!json.exists()) {
             return new Status(format("{0}\n{1}",
                     Errors.FAILED_TO_WRITE_JSON.getReason(),
@@ -95,11 +97,13 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         final ActionFactory.MonitoredSet monitoredSet = factory.mergeClientWithPatch(clientJar, patchFile.getFile());
         monitoredSet.addObserver((o, arg) -> setProgress(monitoredSet.getProgress()));
         File jar = timeAndReturn("Creating Jar", () -> factory.writeToTarget(pathResolver, monitoredSet));
+        Logger.info("Created patched Jar {0}", jar.getPath());
 
         // Write the version to the installation folder
         publish(WRITE_VERSION);
         Version version = VersionManager.createVersion(patchFile);
         manager.save(version);
+        Logger.info("Write version information for {0}", version.getPatchVersion());
 
         // Signal to the application that BTW has been installed
         publish(COMPLETE);

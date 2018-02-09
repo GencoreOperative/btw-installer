@@ -9,6 +9,7 @@ import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.Icons;
+import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.DefaultMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.MinecraftHomeMenuAction;
@@ -60,7 +61,6 @@ public class MinecraftHomePanel extends JPanel {
 
         // Advanced Menu Button
         final JButton minecraftMenuButton = new JButton();
-        minecraftMenuButton.setToolTipText("Advanced Options");
 
         JPopupMenu menu = new JPopupMenu();
         menu.setInvoker(minecraftMenuButton);
@@ -70,6 +70,7 @@ public class MinecraftHomePanel extends JPanel {
         menu.add(new JMenuItem(new RemoveAction(this, context)));
 
         minecraftMenuButton.setAction(new MinecraftHomeMenuAction(menu));
+        minecraftMenuButton.setToolTipText(Strings.TOOLTIP_ADVANCED.getText());
         panel.add(minecraftMenuButton, "wrap");
         return panel;
     }

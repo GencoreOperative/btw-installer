@@ -20,7 +20,8 @@ public enum Icons {
     PAGE_GO("page_go.png"),
     PAGE_WHITE_TEXT("page_white_text.png"),
     SQUID("squid.png"), COG("cog.png"),
-    BIN_EMPTY("bin_empty.png");
+    BIN_EMPTY("bin_empty.png"),
+    SCRIPT("script.png");
 
     private final ImageIcon icon;
     Icons(String path) {

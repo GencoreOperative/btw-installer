@@ -1,5 +1,6 @@
 package uk.co.gencoreoperative.btw.ui;
 
+import static uk.co.gencoreoperative.btw.ui.ToolTipHelper.withToolTip;
 import static uk.co.gencoreoperative.btw.utils.OSUtils.setIcon;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.ui.actions.ShowLogAction;
 import uk.co.gencoreoperative.btw.version.Version;
 import uk.co.gencoreoperative.btw.version.VersionManager;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
@@ -35,33 +37,46 @@ public class NewUI extends JPanel {
 
         setLayout(new BorderLayout(0, 0));
 
-        // Center
-        JPanel centre = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
-        centre.add(new SelectPatchPanel(context, dialogFactory), "grow");
-        centre.add(new MinecraftHomePanel(context, dialogFactory), "grow");
-        add(centre, BorderLayout.CENTER);
+        // Center - For main user interaction panels
+        add(createCentrePanel(), BorderLayout.CENTER);
 
         // South - Splits into two sections
         JPanel buttonSouth = new JPanel(new BorderLayout());
         buttonSouth.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
         // South, West - for help button
-        FlowLayout southWestLayout = new FlowLayout(FlowLayout.LEADING);
-        southWestLayout.setAlignOnBaseline(true);
-        JPanel helpPanel = new JPanel(southWestLayout);
-        helpPanel.add(new AboutLabel());
-        buttonSouth.add(helpPanel, BorderLayout.WEST);
+        buttonSouth.add(helpButtonsLayout(frame), BorderLayout.WEST);
 
         // South, Center - for action buttons.
-        FlowLayout southCenterLayout = new FlowLayout(FlowLayout.TRAILING);
-        southCenterLayout.setAlignOnBaseline(true);
-        JPanel buttons = new JPanel(southCenterLayout);
-        buttons.add(new JButton(new PatchAction(context, dialogFactory)));
-        buttons.add(new JButton(new CloseAction(frame)));
-        buttonSouth.add(buttons, BorderLayout.CENTER);
+        buttonSouth.add(actionButtons(frame), BorderLayout.CENTER);
         add(buttonSouth, BorderLayout.SOUTH);
 
         initialiseListenersOnContext();
+    }
+
+    private JPanel createCentrePanel() {
+        JPanel panel = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
+        panel.add(new SelectPatchPanel(context, dialogFactory), "grow");
+        panel.add(new MinecraftHomePanel(context, dialogFactory), "grow");
+        return panel;
+    }
+
+    private JPanel helpButtonsLayout(JFrame frame) {
+        FlowLayout layout = new FlowLayout(FlowLayout.LEADING);
+        layout.setAlignOnBaseline(true);
+        JPanel panel = new JPanel(layout);
+        panel.add(new AboutLabel());
+        panel.add(withToolTip(new JButton(new ShowLogAction(frame))));
+        return panel;
+    }
+
+    private JPanel actionButtons(JFrame frame) {
+        FlowLayout layout = new FlowLayout(FlowLayout.TRAILING);
+        layout.setAlignOnBaseline(true);
+        JPanel buttons = new JPanel(layout);
+        buttons.add(withToolTip(new JButton(new PatchAction(context, dialogFactory))));
+        buttons.add(withToolTip(new JButton(new CloseAction(frame, true))));
+        return buttons;
     }
 
     private void initialiseListenersOnContext() {
@@ -128,13 +143,8 @@ public class NewUI extends JPanel {
 
         NewUI ui = new NewUI(frame);
         frame.add(ui);
-        frame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                new CloseAction(frame).actionPerformed(null);
-            }
-        });
+        CloseAction closeAction = new CloseAction(frame, true);
+        CloseAction.apply(frame, closeAction);
 
         // Determine the smallest size
         frame.pack();

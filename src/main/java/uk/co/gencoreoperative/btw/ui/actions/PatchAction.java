@@ -36,6 +36,7 @@ public class PatchAction extends AbstractAction implements Observer {
 
         putValue(Action.NAME, Strings.BUTTON_PATCH.getText());
         putValue(Action.SMALL_ICON, Icons.ARROW_RIGHT.getIcon());
+        putValue(Action.SHORT_DESCRIPTION, Strings.TOOLTIP_PATCH.getText());
 
         context.register(MinecraftHome.class, this);
         context.register(PatchFile.class, this);

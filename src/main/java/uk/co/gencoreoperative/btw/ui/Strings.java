@@ -19,6 +19,14 @@ public enum Strings {
     BUTTON_DIALOG_SELECT("Select"),
     BUTTON_PATCH("Patch"),
     BUTTON_CHOOSE_PATCH("Choose..."),
+    BUTTON_COPY_TO_CLIPBOARD("Copy to Clipboard"),
+
+    TOOLTIP_COPY_TO_CLIPBOARD("<html>Copy the contents of the <br>application log to the clipboard</html>"),
+    TOOLTIP_SHOW_LOG("Show the current patch log"),
+    TOOLTIP_PATCH("Start the patching process with the selected Patch Zip"),
+    TOOLTIP_CLOSE("Close this window"),
+    TOOLTIP_ADVANCED("Advanced configuration options"),
+    TOOLTIP_SELECT_PATCH("Select a Better Than Wolves patch to apply"),
 
     MENU_DEFAULT_MINECRAFT_HOME("Default Minecraft Home"),
     MENU_CHANGE_MINECRAFT_HOME("Custom Minecraft Home..."),

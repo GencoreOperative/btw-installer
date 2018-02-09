@@ -73,7 +73,7 @@ public class Locate {
     private InputStream downloadOneFiveTwo() {
         try {
             InputStream inputStream = new UrlResolver().streamURLContents(new URL(MOJANG_1_5_2));
-            Logger.info("Opened stream to 1.5.2 jar from Majong server");
+            Logger.info("Download 1.5.2 jar from Majong server");
             return CheckSumVerifier.verifiableStream(MD5_1_5_2, inputStream);
         } catch (IOException e) {
             Logger.error("Unable to download 1.5.2 Client Jar", e);
@@ -120,7 +120,7 @@ public class Locate {
         }
 
         if (jar.isPresent()) {
-            Logger.info(format("Located 1.5.2 Jar {0}", jar.get().getPath()));
+            Logger.info("Located 1.5.2 Jar {0}", jar.get().getPath());
             try {
                 return new FileInputStream(jar.get());
             } catch (FileNotFoundException e) {

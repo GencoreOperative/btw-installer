@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 import uk.co.gencoreoperative.btw.utils.FileUtils;
+import uk.co.gencoreoperative.btw.utils.Logger;
 
 public class VersionResolverV2 implements VersionResolver {
     private final File versionFile;
@@ -46,6 +47,7 @@ public class VersionResolverV2 implements VersionResolver {
 
     @Override
     public void cleanVersionFile() throws IOException {
+        Logger.info("Clean version file {0}", versionFile.getPath());
         if (!versionFile.delete()) {
             throw new IOException(format("Failed to delete {0}", versionFile.getPath()));
         }

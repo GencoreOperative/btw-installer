@@ -8,6 +8,7 @@ import java.text.MessageFormat;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.Errors;
+import uk.co.gencoreoperative.btw.utils.Logger;
 import uk.co.gencoreoperative.btw.utils.Percentage;
 import uk.co.gencoreoperative.btw.version.Version;
 import uk.co.gencoreoperative.btw.version.VersionManager;
@@ -59,6 +60,7 @@ public class InitialiseWorker extends SwingWorker<PatchWorker.Status, Void> {
         // Clean JSON
         File json = resolver.betterThanWolvesJson();
         if (json.exists() && !json.delete()) {
+            Logger.info("Remove previous JSON {0}", json.getPath());
             String reason = MessageFormat.format("{0}\n{1}",
                     Errors.FAILED_TO_DELETE_FILE.getReason(),
                     json.getPath());
@@ -69,6 +71,7 @@ public class InitialiseWorker extends SwingWorker<PatchWorker.Status, Void> {
         // Clean Jar
         File jar = resolver.betterThanWolvesJar();
         if (jar.exists() && !jar.delete()) {
+            Logger.info("Remove previous Jar {0}", jar.getPath());
             String reason = MessageFormat.format("{0}\n{1}",
                     Errors.FAILED_TO_DELETE_FILE.getReason(),
                     jar.getPath());
