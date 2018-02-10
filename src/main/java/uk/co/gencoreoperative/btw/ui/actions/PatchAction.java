@@ -2,18 +2,15 @@ package uk.co.gencoreoperative.btw.ui.actions;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
-import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
-import uk.co.gencoreoperative.btw.ui.Errors;
 import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.Strings;
+import uk.co.gencoreoperative.btw.ui.panels.LogPanel;
 import uk.co.gencoreoperative.btw.ui.panels.ProgressPanel;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
@@ -59,9 +56,8 @@ public class PatchAction extends AbstractAction implements Observer {
         PatchWorker worker = new PatchWorker(minecraftHome, patchFile, factory, context, panel, dialogFactory);
         worker.addPropertyChangeListener(evt -> panel.setProgress(worker.getProgress()));
 
-        JDialog dialog = panel.createDialog(dialogFactory.getParentFrame(), panel);
         worker.execute();
-        dialog.setVisible(true);
+        LogPanel.show(panel, dialogFactory.getParentFrame());
     }
 
     /**

@@ -122,12 +122,12 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         private final boolean success;
         private final String error;
 
-        public Status(String error) {
+        private Status(String error) {
             success = false;
             this.error = error;
         }
 
-        public Status() {
+        private Status() {
             success = true;
             error = null;
         }
@@ -138,6 +138,14 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
         public String getError() {
             return error;
+        }
+
+        public static Status success() {
+            return new Status();
+        }
+
+        public static Status failed(String reason) {
+            return new Status(reason);
         }
     }
 }

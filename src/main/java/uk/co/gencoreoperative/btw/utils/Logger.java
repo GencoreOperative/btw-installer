@@ -18,11 +18,11 @@ public class Logger {
     private final static List<String> lines = new ArrayList<>();
 
     public static void error(String reason, Exception cause) {
-        lines.add(format("Error: {0}\n{1}", reason, cause.getMessage()));
+        error(format("{0}\n{1}", reason, cause.getMessage()));
     }
 
     public static void error(String reason) {
-        lines.add(format("Error: {0}\n{1}", reason, "<no cause>"));
+        lines.add(format("Error: {0}", reason));
     }
 
     public static void info(String message) {

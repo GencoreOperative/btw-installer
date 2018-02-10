@@ -29,6 +29,7 @@ public class CloseAction extends AbstractAction {
         }
     }
 
+    // TODO - Can we de-duplicate these?
     public static void apply(JDialog dialog, Action close) {
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         dialog.addWindowListener(new WindowAdapter() {
@@ -37,6 +38,10 @@ public class CloseAction extends AbstractAction {
                 close.actionPerformed(null);
             }
         });
+        dialog.getRootPane().registerKeyboardAction(
+                close,
+                (KeyStroke) close.getValue(Action.ACCELERATOR_KEY),
+                JComponent.WHEN_FOCUSED);
     }
 
     public static void apply(JFrame frame, Action close) {
@@ -47,5 +52,9 @@ public class CloseAction extends AbstractAction {
                 close.actionPerformed(null);
             }
         });
+        frame.getRootPane().registerKeyboardAction(
+                close,
+                (KeyStroke) close.getValue(Action.ACCELERATOR_KEY),
+                JComponent.WHEN_FOCUSED);
     }
 }

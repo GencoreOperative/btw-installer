@@ -8,7 +8,7 @@ public enum Errors {
     FAILED_TC_CREATE_FOLDER("Unable to create installation folder."),
     FAILED_TO_WRITE_JSON("Failed to write JSON required for installation."),
     FAILED_FILE_IN_THE_WAY("Failed to patch, file in the way"),
-    FAILED_TO_DELETE_FILE("Failed to delete a previously installed file.");
+    FAILED_TO_DELETE_FILE("Failed to delete a previously installed file");
 
 
     private String reason;

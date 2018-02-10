@@ -4,6 +4,7 @@ import static uk.co.gencoreoperative.btw.ui.ToolTipHelper.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
 import java.util.stream.Collectors;
 
 import net.miginfocom.swing.MigLayout;
@@ -21,11 +22,13 @@ public class LogPanel extends JDialog {
 
     private CloseAction closeAction = new CloseAction(LogPanel.this, false);
     private JTextArea logArea;
+    private CopyToClipboardAction action = new CopyToClipboardAction(() -> logArea.getText());
 
     public LogPanel() {
         setLayout(new BorderLayout());
         setTitle("Patch Log");
         setModal(true);
+        setResizable(false);
 
         add(initialiseComponents(), BorderLayout.CENTER);
         add(initialiseButtons(), BorderLayout.SOUTH);
@@ -35,14 +38,14 @@ public class LogPanel extends JDialog {
 
     private JPanel initialiseComponents() {
         JPanel panel = new JPanel(new MigLayout(
-                "fillx, insets 10",
-                "[pref!]",
+                "insets 10",
+                "",
                 ""));
 
         logArea = new JTextArea(10, 30);
         logArea.setEditable(false);
         logArea.setText(Logger.getLines().stream().collect(Collectors.joining("\n")));
-        panel.add(logArea, "grow");
+        panel.add(new JScrollPane(logArea), "grow");
         return panel;
     }
 
@@ -50,7 +53,8 @@ public class LogPanel extends JDialog {
         FlowLayout flowLayout = new FlowLayout(FlowLayout.TRAILING);
         flowLayout.setAlignOnBaseline(true);
         JPanel panel = new JPanel(flowLayout);
-        panel.add(withToolTip(new JButton(new CopyToClipboardAction(() -> logArea.getText()))));
+
+        panel.add(withToolTip(new JButton(action)));
         panel.add(new JButton(closeAction));
         return panel;
     }

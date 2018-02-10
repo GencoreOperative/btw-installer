@@ -4,7 +4,10 @@ import static java.text.MessageFormat.format;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.Errors;
@@ -41,15 +44,15 @@ public class InitialiseWorker extends SwingWorker<PatchWorker.Status, Void> {
             String reason = format("{0}\n{1}",
                     Errors.FAILED_FILE_IN_THE_WAY.getReason(),
                     folder.getPath());
-            return new PatchWorker.Status(reason);
+            return PatchWorker.Status.failed(reason);
         }
 
         // Create the folder if it doesn't exist
         if (!folder.exists() && !folder.mkdirs()) {
-            String reason = MessageFormat.format("{0}\n{1}",
+            String reason = format("{0}\n{1}",
                     Errors.FAILED_TC_CREATE_FOLDER.getReason(),
                     folder.getPath());
-            return new PatchWorker.Status(reason);
+            return PatchWorker.Status.failed(reason);
         }
 
         // Clean the version file
@@ -59,26 +62,43 @@ public class InitialiseWorker extends SwingWorker<PatchWorker.Status, Void> {
 
         // Clean JSON
         File json = resolver.betterThanWolvesJson();
-        if (json.exists() && !json.delete()) {
+        Optional<PatchWorker.Status> jsonResult = delete(json);
+        if (jsonResult.isPresent()) {
             Logger.info("Remove previous JSON {0}", json.getPath());
-            String reason = MessageFormat.format("{0}\n{1}",
-                    Errors.FAILED_TO_DELETE_FILE.getReason(),
-                    json.getPath());
-            return new PatchWorker.Status(reason);
+            if (!jsonResult.get().isSuccess()) return jsonResult.get();
         }
         setProgress(Percentage.getProgress(2, 3));
 
         // Clean Jar
         File jar = resolver.betterThanWolvesJar();
-        if (jar.exists() && !jar.delete()) {
-            Logger.info("Remove previous Jar {0}", jar.getPath());
-            String reason = MessageFormat.format("{0}\n{1}",
-                    Errors.FAILED_TO_DELETE_FILE.getReason(),
-                    jar.getPath());
-            return new PatchWorker.Status(reason);
+        Optional<PatchWorker.Status> jarResult = delete(jar);
+        if (jarResult.isPresent()) {
+            Logger.info("Remove previous Jar {0}", json.getPath());
+            if (!jarResult.get().isSuccess()) return jarResult.get();
         }
         setProgress(Percentage.getProgress(3, 3));
 
-        return new PatchWorker.Status();
+        return PatchWorker.Status.success();
+    }
+
+    /**
+     * Delete a file if it exists.
+     * @param file Non null, possibly non-existing file to attempt deletion on.
+     * @return {@link Optional#empty()} if the file did not exist. Otherwise a {@link PatchWorker.Status}
+     * indicating if the operation was successful or not.
+     */
+    private Optional<PatchWorker.Status> delete(File file) {
+        if (!file.exists()) return Optional.empty();
+        try {
+            Files.delete(file.toPath());
+            return Optional.of(PatchWorker.Status.success());
+        } catch (IOException e) {
+            String reason = format("{0}\n  File: {1}\n  Cause: {2}\n  Type: {3}",
+                    Errors.FAILED_TO_DELETE_FILE.getReason(),
+                    file.getPath(),
+                    e.getMessage(),
+                    e.getClass().getSimpleName());
+            return Optional.of(PatchWorker.Status.failed(reason));
+        }
     }
 }
