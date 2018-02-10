@@ -1,5 +1,5 @@
-*0.10.1*: Reworked UI to make separation between Minecraft Home and Patch selection
-easier. Refined patching UI. Added Windows Executable.
+*0.10.1*: Reworked UI to improve feedback, error handling and user interaction. Introduced
+beta Windows Installer. Improved patch folder cleaning. Version future-proofing.
 
 *0.9.7*: Resolved performance issue with Copy 1.5.2
 1/58 https://www.virustotal.com/#/file/ef112be782ba2451fa1fe50f3b178c5b22b6c072620f0dc40d9c5fa8337877eb/detection
