@@ -3,7 +3,11 @@ package uk.co.gencoreoperative.btw.ui;
 import java.io.File;
 import java.util.prefs.Preferences;
 
-public class FileChooser {
+/**
+ * Provides the ability to recall the last selected location for a
+ * requested key.
+ */
+public class FileChooserPreferences {
     /**
      * Retrieve the last file the user selected for the specific key.
      *

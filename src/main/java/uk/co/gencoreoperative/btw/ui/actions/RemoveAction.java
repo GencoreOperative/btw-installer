@@ -1,9 +1,14 @@
 package uk.co.gencoreoperative.btw.ui.actions;
 
+import static java.text.MessageFormat.*;
+import static uk.co.gencoreoperative.btw.utils.FileUtils.recursiveDelete;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
@@ -13,11 +18,18 @@ import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
+import uk.co.gencoreoperative.btw.utils.FileUtils;
+import uk.co.gencoreoperative.btw.utils.Logger;
 
+/**
+ * Removes the previously installed patch if one was present.
+ *
+ * Valid only if a {@link MinecraftHome} signal is present
+ * AND a {@link InstalledVersion} signal.
+ */
 public class RemoveAction extends AbstractAction {
     private Component parent;
     private final Context context;
-    private final ActionFactory actionFactory = new ActionFactory();
 
     public RemoveAction(Component dialog, Context context) {
         this.parent = dialog;
@@ -40,10 +52,7 @@ public class RemoveAction extends AbstractAction {
 
         if (response == JOptionPane.YES_OPTION) {
             PathResolver resolver = new PathResolver(context.get(MinecraftHome.class).getFolder());
-            File folder = actionFactory.removePreviousInstallation(resolver);
-            if (folder.exists()) {
-
-            } else {
+            if (deleteFolder(resolver.betterThanWolves())) {
                 context.remove(InstalledVersion.class);
             }
         }
@@ -51,5 +60,18 @@ public class RemoveAction extends AbstractAction {
 
     private boolean isApplicable() {
         return context.contains(MinecraftHome.class, InstalledVersion.class);
+    }
+
+    /**
+     * @param folder Non null folder to delete.
+     * @return {@code true} if the folder was deleted.
+     */
+    private boolean deleteFolder(File folder) {
+        try {
+            recursiveDelete(folder);
+        } catch (IOException e) {
+            Logger.error(format("Error whilst deleting {0}", folder.getPath()), e);
+        }
+        return !folder.exists();
     }
 }

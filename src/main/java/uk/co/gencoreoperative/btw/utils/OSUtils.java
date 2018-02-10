@@ -34,7 +34,7 @@ public class OSUtils {
             Class<?> aClass = Class.forName("com.apple.eawt.Application", false, null);
             aClass.getDeclaredMethod("setDockIconImage", Image.class).invoke(aClass.newInstance(), icn);
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            Logger.error("Failed to set the MacOS Doc Icon", e);
             return;
         }
     }

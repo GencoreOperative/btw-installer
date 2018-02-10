@@ -1,13 +1,10 @@
 package uk.co.gencoreoperative.btw;
 
-import uk.co.gencoreoperative.btw.ui.DialogFactory;
-import uk.co.gencoreoperative.btw.ui.FileChooser;
-import uk.co.gencoreoperative.btw.ui.Strings;
-import uk.co.gencoreoperative.btw.utils.FileUtils;
-import uk.co.gencoreoperative.btw.utils.PathAndData;
+import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
+import static uk.co.gencoreoperative.btw.utils.ZipFileStream.streamZip;
+import static uk.co.gencoreoperative.btw.utils.ZipFileStream.writeStreamToZipFile;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
@@ -17,10 +14,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static uk.co.gencoreoperative.btw.utils.FileUtils.write;
-import static uk.co.gencoreoperative.btw.utils.ZipFileStream.*;
-
-import javax.swing.*;
+import uk.co.gencoreoperative.btw.utils.FileUtils;
+import uk.co.gencoreoperative.btw.utils.PathAndData;
 
 /**
  * Captures the ability to describe actions that can be performed.
@@ -32,15 +27,6 @@ public class ActionFactory {
     private static final String PATCH_FOLDER = "MINECRAFT-JAR/";
 
     public ActionFactory() {
-    }
-
-    // TODO: Fold into FileUtils, test and indicate error
-    public File removePreviousInstallation(PathResolver resolver) {
-        File targetFolder = resolver.betterThanWolves();
-        if (targetFolder.exists()) {
-            FileUtils.recursiveDelete(targetFolder);
-        }
-        return resolver.betterThanWolves();
     }
 
     public File copyJsonToInstallation(PathResolver resolver) {

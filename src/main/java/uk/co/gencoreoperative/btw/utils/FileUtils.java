@@ -49,15 +49,11 @@ public class FileUtils {
         }
     }
 
-    public static void recursiveDelete(File f) {
-        try {
-            Files.walk(f.toPath())
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+    public static void recursiveDelete(File f) throws IOException {
+        Files.walk(f.toPath())
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
     }
 
 }

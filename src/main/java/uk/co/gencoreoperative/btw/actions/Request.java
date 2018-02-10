@@ -4,7 +4,7 @@ import java.io.File;
 
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
-import uk.co.gencoreoperative.btw.ui.FileChooser;
+import uk.co.gencoreoperative.btw.ui.FileChooserPreferences;
 import uk.co.gencoreoperative.btw.ui.Strings;
 
 /**
@@ -18,27 +18,27 @@ public class Request {
     }
 
     public static File requestMinecraftHome(DialogFactory dialogFactory) {
-        File previous = FileChooser.getLastOpenedPath(MINECRAFT_LOCATION);
+        File previous = FileChooserPreferences.getLastOpenedPath(MINECRAFT_LOCATION);
         File selected = dialogFactory.requestFolderLocation(
                 Strings.SELECT_MC_HOME,
                 previous,
                 PathResolver.getDefaultMinecraftPath(),
                 File::isDirectory);
         if (selected != null) {
-            FileChooser.setLastOpenedPath(MINECRAFT_LOCATION, selected);
+            FileChooserPreferences.setLastOpenedPath(MINECRAFT_LOCATION, selected);
         }
         return selected;
     }
 
     public static File requestPatchZip(DialogFactory dialogFactory) {
-        File previous = FileChooser.getLastOpenedPath(PATCH_LOCATION);
+        File previous = FileChooserPreferences.getLastOpenedPath(PATCH_LOCATION);
         File selected = dialogFactory.requestFileLocation(
                 Strings.SELECT_ZIP_TITLE,
                 previous,
                 new File(System.getProperty("user.home")),
                 file -> file.getName().toLowerCase().endsWith("zip"));
         if (selected != null) {
-            FileChooser.setLastOpenedPath(PATCH_LOCATION, selected);
+            FileChooserPreferences.setLastOpenedPath(PATCH_LOCATION, selected);
         }
         return selected;
     }
