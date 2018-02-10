@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.util.stream.Collectors;
 
 import net.miginfocom.swing.MigLayout;
+import uk.co.gencoreoperative.btw.ui.Icons;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.CopyToClipboardAction;
 import uk.co.gencoreoperative.btw.utils.Logger;
@@ -25,11 +26,13 @@ public class LogPanel extends JDialog {
     private CopyToClipboardAction action = new CopyToClipboardAction(() -> logArea.getText());
 
     public LogPanel() {
-        setLayout(new BorderLayout());
         setTitle("Patch Log");
+        setIconImage(Icons.SQUID.getIcon().getImage());
         setModal(true);
         setResizable(false);
 
+        setLayout(new BorderLayout());
+        
         add(initialiseComponents(), BorderLayout.CENTER);
         add(initialiseButtons(), BorderLayout.SOUTH);
 

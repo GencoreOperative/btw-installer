@@ -29,6 +29,7 @@ public class ProgressPanel extends JDialog {
     public ProgressPanel() {
         setModal(true);
         setTitle(TITLE_PROGRESS.getText());
+        setIconImage(Icons.SQUID.getIcon().getImage());
 
         setLayout(new BorderLayout());
 
