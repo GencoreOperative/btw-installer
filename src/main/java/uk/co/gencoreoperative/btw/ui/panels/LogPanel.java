@@ -59,10 +59,27 @@ public class LogPanel extends JDialog {
         return panel;
     }
 
-    public static void show(JDialog dialog, Component parent) {
+    /**
+     * Given a {@link JDialog} show the dialog by preparing it for showing to the user.
+     *
+     * @param dialog Non null dialog to show.
+     * @param parent Possibly null component the dialog should appear in-front of.
+     * @throws NullPointerException If dialog was null.
+     */
+    public static void show(JDialog dialog, Component parent) throws NullPointerException {
+        if (dialog == null) throw new NullPointerException();
         dialog.pack();
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
+    }
+
+    /**
+     * Hide the Dialog and dispose of it.
+     * @param dialog Non null.
+     */
+    public static void hide(JDialog dialog) {
+        dialog.setVisible(false);
+        dialog.dispose();
     }
 
     public static void main(String... args) {

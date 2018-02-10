@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 
 import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
+import uk.co.gencoreoperative.btw.ui.Strings;
+import uk.co.gencoreoperative.btw.ui.panels.LogPanel;
 import uk.co.gencoreoperative.btw.utils.Logger;
 import uk.co.gencoreoperative.btw.version.Version;
 import uk.co.gencoreoperative.btw.version.VersionManager;
@@ -116,6 +118,23 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
     @Override
     protected void process(List<ProgressPanel.State> chunks) {
         chunks.forEach(panel::setState);
+    }
+
+    @Override
+    protected void done() {
+        super.done();
+        try {
+            Status status = get();
+            LogPanel.hide(panel);
+            if (status.isSuccess()) {
+                dialogFactory.success(Strings.TITLE_PATCH.getText(), Strings.MSG_PATCH_SUCCESS.getText());
+            } else {
+                dialogFactory.failed(status.getError());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            Logger.error("Error whilst collecting result of PatchWorker", e);
+        }
+
     }
 
     public static class Status {

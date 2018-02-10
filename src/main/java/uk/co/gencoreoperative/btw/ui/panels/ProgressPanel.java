@@ -45,7 +45,6 @@ public class ProgressPanel extends JDialog {
         JPanel panel = new JPanel(new MigLayout("wrap 1, insets 10",
                 "[min!]"));
 
-
         // State Rows
         Arrays.stream(State.values()).forEach(s -> {
             JLabel label = new JLabel(s.getText(), s.getIcon(), JLabel.LEADING);
@@ -109,6 +108,6 @@ public class ProgressPanel extends JDialog {
     // Testing only
     public static void main(String... args) {
         ProgressPanel panel = new ProgressPanel();
-        LogPanel.show(null, panel);
+        LogPanel.show(panel, null);
     }
 }

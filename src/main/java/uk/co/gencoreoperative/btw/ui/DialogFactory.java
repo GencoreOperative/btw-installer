@@ -72,7 +72,7 @@ public class DialogFactory {
 
 
     public void success(String title, String content) {
-        JOptionPane.showMessageDialog(parent, content, title, JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(parent, content, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void failed(AbstractCommand command) {
