@@ -14,24 +14,18 @@ to it.
 This project is provided as is, and is licensed under a MIT license. 
 For more details and other acknowledgements see [here](Extra.MD).
 
-Virus scan provided by [VirusTotal.com](https://www.virustotal.com/#/file/86a9a0b01712bb0cc164470c20240d472e564ac5dc6faad2435fc20892f17e4a/detection)
-and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/vqsdbstwof).
+Virus scan provided by [VirusTotal.com](https://www.virustotal.com/#/file/ce6c84625790d6a05e74d819210223eb8eb4d135cdd71c1e06c83c1aa6ca7034/detection)
+and malware scan by [Jotti](https://virusscan.jotti.org/en-GB/filescanjob/ij2bfsxzur).
 
 ## Before You Start
 
 Before you can use this utility you will the following:
 
-* **[Java](https://java.com/en/download/)** - the utility requires a 
+* **[Java](https://java.com/en/download/)** - the installer requires a 
 Java 8 or greater to work.
 
 * **[Latest Patch](http://www.sargunster.com/btwforum/viewforum.php?f=3)** - Download the latest version of the Better Than Wolves
 patch from the Better Than Wolves Forum.
-
-* **A Minecraft 1.5.2 configuration** -  Better Than Wolves requires a 
-Minecraft 1.5.2 configuration which this installer will look for as part of 
-installation. If you do not have a 1.5.2 configuration already, the installer
-will download it automatically as long as you are online and can access the 
-Internet.
 
 ## Download and Run
 
@@ -51,14 +45,7 @@ $ java -jar installer.jar
 
 The utility will guide you through the installation process.
 
-1) **Select Minecraft Installation**
-
-If you are happy to install the patch into the default Minecraft location
-then you can skip this step. If you would like to install the patch to a different
- version of Minecraft, use the "Change..." button to select
-the location of where Minecraft is installed.
-
-2) **Select Better Than Wolves Patch**
+1) **Select Better Than Wolves Patch**
 
 Then select the downloaded Better Than Wolves zip file which you 
 can download from the Better Than Wolves Forum [here](http://www.sargunster.com/btwforum/viewforum.php?f=3).
@@ -69,7 +56,7 @@ The selected version will be shown in the version field.
 
 ![Version selected](images/patch-version-selected.png)
 
-3) **Choose "Patch" to install this version**
+2) **Choose "Patch" to install this version**
 
 The utility will create a new Configuration called "BetterThanWolves" which 
 will be a copy of the 1.5.2 client with the BetterThanWolves patch merged in.
@@ -95,7 +82,7 @@ version.
 
 - **Name**: "BetterThanWolves"
 - **Version**: release BetterThanWolves
-- **Game Directory**: Choose a location other than the default Mincraft location
+- **Game Directory**: Choose a location other than the default Minecraft location
 
 **Note:** The Game Directory location cannot be the Minecraft
 default as 1.5.2 is not compatible with the latest Minecraft layout. If
