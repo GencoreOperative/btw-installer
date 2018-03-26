@@ -1,3 +1,7 @@
+Introduce a Patching Service class which provides the highest level of
+function below the user interface. This can be used to automated patch
+testing which can be performed per release.
+
 Automated Patch Testing
 Each patch in the /static folder should be tested automatically with
 the installer on each platform to simplify the process of testing and
