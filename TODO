@@ -1,3 +1,23 @@
+REF: If the user has not copied over their sound files, they need to do
+that for BTW to work correctly. Likely not something the installer should
+do, but certainly we can check and warn the user.
+http://www.sargunster.com/btwforum/viewtopic.php?f=9&t=9378
+has the details.
+
+---
+"the problem seems to be with the missing files from resorces they are placed in .minecraft\assets\virtual\legacy
+it seems that this is a work around so the new launcher works with the older versions but it is done poorly or there is a bug and the music files will not be read from there, the logs say that they are missing from .minecraft\resources
+so a work around seems to be that you have to move everything from .minecraft\assets\virtual\legacy\sounds into .minecraft\resources\sound3
+but i'm not sure that this is the same for everyone you should look in the console to see from where the launcher is trying to read the music files from and place them there"
+---
+
+RFE: If there is no version installed, we should indicate this to the
+user in the 'installed version' label. Something like: BTW not installed
+
+Documentation: The installer does not refresh the installed versions
+view at runtime and so you will need to restart the launcher if it is
+already open after installation. Or install before launching.
+
 Introduce a Patching Service class which provides the highest level of
 function below the user interface. This can be used to automated patch
 testing which can be performed per release.
@@ -9,11 +29,6 @@ verifying behaviour.
 Robot tests?
 What are we trying to test? Patching behaviour is critical and should
 be tested on each build. User Interface behaviour is harder to test.
-
-Server Mode
-Update the patcher to support Server Mode, as well as Client Mode.
-Question is answer is - how can the user easily select which mode?
-Preferred Option is to create a separate installer which the user can opt to download.
 
 Drop Target
 Update the Patch chooser to support Drag and Drop for File targets
@@ -37,34 +52,3 @@ Body: Base64 encoded?
 Automate VirusTotal scan
 http://www.mashthatkey.com/2014/09/using-curl-to-retrieve-virustotal.html
 https://www.virustotal.com/en/documentation/private-api/
-
-===
-#!/bin/bash
-# A script which automates the installation of a new version of BTW
-
-# Cleanup
-[ -f minecraft_server.jar ] && rm minecraft_server.jar
-
-# Merge in patch
-#VERSION=BTWMod4-A2TimingRodentb
-VERSION=BTWMod4-A3HeadedBeastie
-
-[ ! -d $VERSION ] && echo "BTW Folder $VERSION missing" && exit -1
-
-# Download and unpack server
-mkdir tmp
-curl https://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/minecraft_server.1.5.2.jar -o tmp/minecraft_server.jar
-cd tmp && jar xf minecraft_server.jar && rm minecraft_server.jar && cd ..
-
-# Overlay the new patch files
-cp $VERSION/MINECRAFT_SERVER-JAR/* tmp
-
-# Package minecraft server
-cd tmp && jar cvfe minecraft_server.jar net.minecraft.server.MinecraftServer * && mv minecraft_server.jar ../minecraft_server.jar && cd ..
-
-# Cleanup
-rm -rf tmp
-
-# Copy the BTW Config
-cp $VERSION/BTWConfig.txt .
-===
