@@ -28,9 +28,15 @@ import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.ui.signals.PatchFile;
 
 /**
- * PatchWorker will handle the actual work of performing the patching process.
- *
- * Progress will be indicated directly to the {@link ProgressPanel}.
+ * {@link PatchWorker} will handle the actual work of performing the patching process.
+ * <p>
+ * This {@link SwingWorker} signals progress in two ways. The first is the intermediate
+ * progress updates which are used for the {@link ProgressPanel}. This panel is expecting
+ * {@link uk.co.gencoreoperative.btw.ui.panels.ProgressPanel.State} signals to update the
+ * user on the stages of the installation.
+ * <p>
+ * The second is the {@link Status} used to signal the end state of the patching process.
+ * This will either be successful or a failure case with the error and code indicated.
  */
 public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.State> {
     private final PatchFile patchFile;
@@ -91,7 +97,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         if (!json.exists()) {
             return new Status(format("{0}\n{1}",
                     Errors.FAILED_TO_WRITE_JSON.getReason(),
-                    json.getAbsolutePath()));
+                    json.getAbsolutePath()), Errors.FAILED_TO_WRITE_JSON);
         }
 
         // Create the Better Than Wolves Jar
@@ -137,34 +143,62 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
 
     }
 
+    /**
+     * Output status of a UI Worker thread.
+     * Captures human and machine readable status.
+     */
     public static class Status {
         private final boolean success;
         private final String error;
+        private final Errors code;
 
-        private Status(String error) {
+        private Status(String errorMessage, Errors code) {
+            this.code = code;
             success = false;
-            this.error = error;
+            this.error = errorMessage;
         }
 
         private Status() {
             success = true;
             error = null;
+            code = null;
         }
 
+        /**
+         * @return True if the worker thread completed successfully.
+         */
         public boolean isSuccess() {
             return success;
         }
 
+        /**
+         * @return If {@link #isSuccess()} is false, this will contain the reason.
+         */
         public String getError() {
             return error;
         }
 
+        /**
+         * @return If {@link #isSuccess()} is false, this will contain the reason code.
+         */
+        public Errors getCode() {
+            return code;
+        }
+
+        /**
+         * @return A successful status.
+         */
         public static Status success() {
             return new Status();
         }
 
-        public static Status failed(String reason) {
-            return new Status(reason);
+        /**
+         * @param reason Human readable error reason.
+         * @param code Error code enumeration.
+         * @return A failure {@link Status} along with reason.
+         */
+        public static Status failed(String reason, Errors code) {
+            return new Status(reason, code);
         }
     }
 }

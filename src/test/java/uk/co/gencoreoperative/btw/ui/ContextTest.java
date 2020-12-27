@@ -1,14 +1,10 @@
 package uk.co.gencoreoperative.btw.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.forgerock.cuppa.Cuppa.before;
-import static org.forgerock.cuppa.Cuppa.beforeEach;
-import static org.forgerock.cuppa.Cuppa.describe;
 import static org.forgerock.cuppa.Cuppa.it;
 import static org.forgerock.cuppa.Cuppa.when;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.verify;
 import static org.mockito.Mockito.times;
@@ -16,13 +12,11 @@ import static org.mockito.Mockito.times;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.StringJoiner;
 
 import org.forgerock.cuppa.Test;
 import org.forgerock.cuppa.junit.CuppaRunner;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 @RunWith(CuppaRunner.class)
 @Test

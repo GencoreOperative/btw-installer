@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.MessageFormat;
 import java.util.Optional;
 
 import uk.co.gencoreoperative.btw.PathResolver;
@@ -40,19 +39,19 @@ public class InitialiseWorker extends SwingWorker<PatchWorker.Status, Void> {
         File folder = resolver.betterThanWolves();
 
         // Check there isn't a file in the way
-        if (folder.isFile()) {
+        if (resolver.get().isFile()) {
             String reason = format("{0}\n{1}",
                     Errors.FAILED_FILE_IN_THE_WAY.getReason(),
                     folder.getPath());
-            return PatchWorker.Status.failed(reason);
+            return PatchWorker.Status.failed(reason, Errors.FAILED_FILE_IN_THE_WAY);
         }
 
         // Create the folder if it doesn't exist
         if (!folder.exists() && !folder.mkdirs()) {
             String reason = format("{0}\n{1}",
-                    Errors.FAILED_TC_CREATE_FOLDER.getReason(),
+                    Errors.FAILED_TO_CREATE_FOLDER.getReason(),
                     folder.getPath());
-            return PatchWorker.Status.failed(reason);
+            return PatchWorker.Status.failed(reason, Errors.FAILED_TO_CREATE_FOLDER);
         }
 
         // Clean the version file
@@ -98,7 +97,7 @@ public class InitialiseWorker extends SwingWorker<PatchWorker.Status, Void> {
                     file.getPath(),
                     e.getMessage(),
                     e.getClass().getSimpleName());
-            return Optional.of(PatchWorker.Status.failed(reason));
+            return Optional.of(PatchWorker.Status.failed(reason, Errors.FAILED_TO_DELETE_FILE));
         }
     }
 }
