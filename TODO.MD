@@ -15,6 +15,23 @@ already open after installation. Or install before launching.
 Update Documentation
 - Include remove instructions on separate page
 
+## Reflection Access Warning
+On start up we see the following error which needs to be investigated and fixed.
+```
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by uk.co.gencoreoperative.btw.utils.OSUtils (file:/Users/robert.wapshott/Dropbox/dev/bitbucket/btw-installer/installer.jar) to method com.apple.eawt.Application.setDockIconImage(java.awt.Image)
+WARNING: Please consider reporting this to the maintainers of uk.co.gencoreoperative.btw.utils.OSUtils
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+```
+
+## Investigate signing of the Jar so that MacOS Gatekeeper allows it to run
+https://www.baeldung.com/java14-jpackage
+https://blog.dgunia.de/2020/02/12/signed-macos-programs-with-java-14/
+It is possible to create a self-contained application which installs
+our application. This would also be signed as well. This could
+be interesting, but might add a layer of complexity we don't need.
+
 ## Improve feedback when no mod is installed
 RFE: If there is no version installed, we should indicate this to the
 user in the 'installed version' label. Something like: BTW not installed
