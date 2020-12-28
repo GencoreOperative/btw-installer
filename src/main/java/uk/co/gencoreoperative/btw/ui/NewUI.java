@@ -1,28 +1,32 @@
 package uk.co.gencoreoperative.btw.ui;
 
-import static uk.co.gencoreoperative.btw.ui.ToolTipHelper.withToolTip;
-import static uk.co.gencoreoperative.btw.utils.OSUtils.setIcon;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.Optional;
-
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.PathResolver;
-import uk.co.gencoreoperative.btw.ui.actions.ShowLogAction;
-import uk.co.gencoreoperative.btw.version.Version;
-import uk.co.gencoreoperative.btw.version.VersionManager;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
+import uk.co.gencoreoperative.btw.ui.actions.ShowLogAction;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
 import uk.co.gencoreoperative.btw.utils.OSUtils;
+import uk.co.gencoreoperative.btw.utils.os.AppleUtils;
+import uk.co.gencoreoperative.btw.version.Version;
+import uk.co.gencoreoperative.btw.version.VersionManager;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import java.io.File;
+
+import static uk.co.gencoreoperative.btw.ui.ToolTipHelper.withToolTip;
 
 /**
  * Updated user interface to better capture the details required from the user in order
@@ -138,7 +142,7 @@ public class NewUI extends JPanel {
         frame.setIconImage(squid);
         // MacOS Specific Dock Icon
         if (OSUtils.isMacOS()) {
-            setIcon(squid);
+            new AppleUtils().setIcon(squid);
         }
 
         NewUI ui = new NewUI(frame);

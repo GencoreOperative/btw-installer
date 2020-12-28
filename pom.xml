@@ -159,6 +159,14 @@
             <version>5.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
+        <!-- MacOS specific UI functionality -->
+        <dependency>
+            <groupId>com.apple</groupId>
+            <artifactId>AppleJavaExtensions</artifactId>
+            <version>1.4</version>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>

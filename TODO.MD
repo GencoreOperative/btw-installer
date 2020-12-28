@@ -1,30 +1,3 @@
-## Update README
-The README currently recommends using an external Game Directory for 
-BTW because of a client launch failure. This does not seem to be the 
-case any more and instead there is a different issue around save
-game files.
-
-As such we should update the documentation to guide the user to use
-the default installation folder now as this will work around the 
-save game issue.
-
-Documentation: The installer does not refresh the installed versions
-view at runtime and so you will need to restart the launcher if it is
-already open after installation. Or install before launching.
-
-Update Documentation
-- Include remove instructions on separate page
-
-## Reflection Access Warning
-On start up we see the following error which needs to be investigated and fixed.
-```
-WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by uk.co.gencoreoperative.btw.utils.OSUtils (file:/Users/robert.wapshott/Dropbox/dev/bitbucket/btw-installer/installer.jar) to method com.apple.eawt.Application.setDockIconImage(java.awt.Image)
-WARNING: Please consider reporting this to the maintainers of uk.co.gencoreoperative.btw.utils.OSUtils
-WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-WARNING: All illegal access operations will be denied in a future release
-```
-
 ## Investigate signing of the Jar so that MacOS Gatekeeper allows it to run
 https://www.baeldung.com/java14-jpackage
 https://blog.dgunia.de/2020/02/12/signed-macos-programs-with-java-14/

@@ -31,7 +31,7 @@ import uk.co.gencoreoperative.btw.utils.FileUtils;
 @Test
 public class InitialiseWorkerTest {
     {
-        describe("InitialiseWorker", () -> {
+        describe(InitialiseWorkerTest.class.getSimpleName(), () -> {
 
             // Setup a PathResolver and ensure it is a valid folder for each test
             PathResolver resolver = new PathResolver(temporaryFile());
