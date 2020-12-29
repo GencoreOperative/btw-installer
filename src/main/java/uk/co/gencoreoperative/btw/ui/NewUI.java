@@ -2,7 +2,6 @@ package uk.co.gencoreoperative.btw.ui;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.PathResolver;
-import uk.co.gencoreoperative.btw.ui.actions.ChooseMinecraftHome;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.actions.ShowLogAction;
@@ -10,8 +9,6 @@ import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
 import uk.co.gencoreoperative.btw.ui.signals.MinecraftHome;
-import uk.co.gencoreoperative.btw.utils.OSUtils;
-import uk.co.gencoreoperative.btw.utils.os.AppleUtils;
 import uk.co.gencoreoperative.btw.version.Version;
 import uk.co.gencoreoperative.btw.version.VersionManager;
 
@@ -19,11 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Image;
 import java.io.File;
 
 import static uk.co.gencoreoperative.btw.ui.ToolTipHelper.withToolTip;
@@ -126,39 +120,6 @@ public class NewUI extends JPanel {
         VersionManager manager = VersionManager.getVersionManager(pathResolver);
         Version version = manager.getVersion().orElse(Version.NOT_RECOGNISED);
         return new InstalledVersion(installedJar, version);
-    }
-
-    public static void main(String... args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            JFrame.setDefaultLookAndFeelDecorated(true);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) {
-        }
-
-        JFrame frame = new JFrame();
-        frame.setTitle(Strings.TITLE_PATCH.getText());
-
-        Image squid = Icons.SQUID.getIcon().getImage();
-        frame.setIconImage(squid);
-        // MacOS Specific Dock Icon
-        if (OSUtils.isMacOS()) {
-            new AppleUtils().setIcon(squid);
-        }
-
-        NewUI ui = new NewUI(frame);
-        frame.add(ui);
-        CloseAction closeAction = new CloseAction(frame, true);
-        CloseAction.apply(frame, closeAction);
-
-        // Determine the smallest size
-        frame.pack();
-        frame.setMinimumSize(frame.getPreferredSize());
-
-        // Location by OS default, center
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        ChooseMinecraftHome.initaliseMinecraftHome(ui.getContext());
     }
 
     public Context getContext() {

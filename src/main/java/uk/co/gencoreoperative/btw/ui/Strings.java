@@ -10,7 +10,8 @@ import java.io.InputStreamReader;
  */
 public enum Strings {
     VERSION(readProperty("/app.version")),
-    TITLE_PATCH("BTW Installer - " + VERSION.getText()),
+    TITLE("BTW Installer"),
+    TITLE_VERSION("BTW Installer - " + VERSION.getText()),
 
     TITLE_REMOVE_CONFIRM("Confirm Removal"),
     TITLE_PROGRESS("Patching in progress"),

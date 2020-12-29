@@ -5,8 +5,6 @@ import static uk.co.gencoreoperative.btw.ui.panels.ProgressPanel.State.*;
 import static uk.co.gencoreoperative.btw.utils.Timer.*;
 
 import javax.swing.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -133,7 +131,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
             Status status = get();
             LogPanel.hide(panel);
             if (status.isSuccess()) {
-                dialogFactory.success(Strings.TITLE_PATCH.getText(), Strings.MSG_PATCH_SUCCESS.getText());
+                dialogFactory.success(Strings.TITLE_VERSION.getText(), Strings.MSG_PATCH_SUCCESS.getText());
             } else {
                 dialogFactory.failed(status.getError());
             }

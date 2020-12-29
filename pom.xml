@@ -7,6 +7,11 @@
     <groupId>uk.co.gencoreoperative</groupId>
     <artifactId>btw-installer</artifactId>
     <version>0.10.2</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <plugins>
             <!-- Java 8 required -->
@@ -35,7 +40,7 @@
                             <minimizeJar>true</minimizeJar>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>uk.co.gencoreoperative.btw.ui.NewUI</mainClass>
+                                    <mainClass>uk.co.gencoreoperative.btw.Main</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -111,7 +116,7 @@
                                     <outfile>${project.build.directory}/installer.exe</outfile>
                                     <downloadUrl>http://java.com/download</downloadUrl>
                                     <classPath>
-                                        <mainClass>uk.co.gencoreoperative.btw.ui.NewUI</mainClass>
+                                        <mainClass>uk.co.gencoreoperative.btw.Main</mainClass>
                                         <preCp>anything</preCp>
                                     </classPath>
                                     <icon>src/main/resources/icons/squid.ico</icon>
@@ -141,11 +146,11 @@
 
     <dependencies>
         <!-- Command line parsing -->
-        <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-            <version>1.32</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.beust</groupId>-->
+<!--            <artifactId>jcommander</artifactId>-->
+<!--            <version>1.32</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -165,6 +170,12 @@
             <groupId>com.apple</groupId>
             <artifactId>AppleJavaExtensions</artifactId>
             <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+            <version>12.0</version>
         </dependency>
 
         <!-- Test Dependencies -->
