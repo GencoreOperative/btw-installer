@@ -21,21 +21,21 @@ import uk.co.gencoreoperative.btw.utils.FileUtils;
 
 /**
  * Demonstrates the functionality of the {@link InitialiseWorker}.
- *
- * Note: This {@link Cuppa} test uses a subtly different style to typical
- * test recommendations with variables defined outside of the
- * {@link Cuppa#when(String, TestBlockFunction)} and {@link Cuppa#it(String, TestFunction)}
- * blocks.
  */
 @RunWith(CuppaRunner.class)
 @Test
 public class InitialiseWorkerTest {
+
+    private PathResolver resolver;
+
     {
         describe(InitialiseWorkerTest.class.getSimpleName(), () -> {
 
-            // Setup a PathResolver and ensure it is a valid folder for each test
-            PathResolver resolver = new PathResolver(temporaryFile());
-            beforeEach(() -> assertThat(resolver.get().mkdirs()).isTrue());
+            beforeEach(() -> {
+                // Setup a PathResolver and ensure it is a valid folder for each test
+                resolver = new PathResolver(temporaryFile());
+                assertThat(resolver.get().mkdirs()).isTrue();
+            });
             afterEach(() -> FileUtils.recursiveDelete(resolver.get()));
 
             when("initialise into an empty folder", () -> {
