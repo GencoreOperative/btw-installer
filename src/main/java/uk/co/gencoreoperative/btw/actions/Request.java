@@ -13,6 +13,7 @@ import uk.co.gencoreoperative.btw.ui.Strings;
 public class Request {
     private static final String MINECRAFT_LOCATION = "minecraft.location";
     private static final String PATCH_LOCATION = "patch.location";
+    private static final String ADDON_LOCATION = "addon.location";
 
     private Request() {
     }
@@ -39,6 +40,19 @@ public class Request {
                 file -> file.getName().toLowerCase().endsWith("zip"));
         if (selected != null) {
             FileChooserPreferences.setLastOpenedPath(PATCH_LOCATION, selected);
+        }
+        return selected;
+    }
+
+    public static File requestAddonZip(DialogFactory dialogFactory) {
+        File previous = FileChooserPreferences.getLastOpenedPath(ADDON_LOCATION);
+        File selected = dialogFactory.requestFileLocation(
+                Strings.SELECT_ADDON_TITLE,
+                previous,
+                new File(System.getProperty("user.home")),
+                file -> file.getName().toLowerCase().endsWith("zip"));
+        if (selected != null) {
+            FileChooserPreferences.setLastOpenedPath(ADDON_LOCATION, selected);
         }
         return selected;
     }

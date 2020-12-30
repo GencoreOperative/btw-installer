@@ -85,6 +85,7 @@ public class ProgressPanel extends JDialog {
         COPY_1_5_2(Icons.MAGNIFIER.getIcon(), Strings.STATE_LOCATE_1_5_2.getText()),
         COPY_JSON(Icons.PAGE_GO.getIcon(), Strings.STATE_COPY_JSON.getText()),
         CREATE_JAR(Icons.COMPRESS.getIcon(), Strings.STATE_CREATE_JAR.getText()),
+        ADD_ADDONS(Icons.COMPRESS.getIcon(), Strings.STATE_ADD_ADDONS.getText()),
         WRITE_VERSION(Icons.PAGE_WHITE_TEXT.getIcon(), Strings.STATE_WRITE_VERSION.getText()),
         COMPLETE(Icons.ACCEPT.getIcon(), Strings.STATE_COMPLETE.getText());
 

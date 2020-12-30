@@ -14,6 +14,7 @@ import uk.co.gencoreoperative.btw.ActionFactory;
 import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.Strings;
 import uk.co.gencoreoperative.btw.ui.panels.LogPanel;
+import uk.co.gencoreoperative.btw.ui.signals.AddonFiles;
 import uk.co.gencoreoperative.btw.utils.Logger;
 import uk.co.gencoreoperative.btw.version.Version;
 import uk.co.gencoreoperative.btw.version.VersionManager;
@@ -104,6 +105,15 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         monitoredSet.addObserver((o, arg) -> setProgress(monitoredSet.getProgress()));
         File jar = timeAndReturn("Creating Jar", () -> factory.writeToTarget(pathResolver, monitoredSet));
         Logger.info("Created patched Jar {0}", jar.getPath());
+
+        // Add addons to Better Than Wolves Jar
+        publish(ADD_ADDONS);
+        for (int i = 0; i < AddonFiles.getAddons().size(); i++) {
+            ActionFactory.MonitoredSet monitoredAddonSet = factory.mergePatchWithAddon(jar, AddonFiles.getAddon(i), AddonFiles.getZipPath(i));
+            monitoredAddonSet.addObserver((o, arg) -> setProgress(monitoredAddonSet.getProgress()));
+            File addonJar = timeAndReturn("Adding addon", () -> factory.writeToTarget(pathResolver, monitoredAddonSet));
+            Logger.info("Added addon to Jar {0}", addonJar.getPath());
+        }
 
         // Write the version to the installation folder
         publish(WRITE_VERSION);
