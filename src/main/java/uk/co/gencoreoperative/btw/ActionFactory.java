@@ -51,6 +51,13 @@ public class ActionFactory {
                 .peek(p -> p.setPath(p.getPath().substring(PATCH_FOLDER.length())));
     }
 
+    public Stream<PathAndData> streamAddonZip(File addonZip, String addonFolder) {
+        return streamZip(addonZip)
+                .filter(PathAndData::isFile)
+                .filter(p -> p.getPath().startsWith(addonFolder))
+                .peek(p -> p.setPath(p.getPath().substring(addonFolder.length())));
+    }
+
     /**
      * Places the 'first' stream into a set, and then applies the 'second' stream
      * to this. The set acts as a de-duplication mechanism using object equality.
@@ -67,6 +74,12 @@ public class ActionFactory {
         Stream<PathAndData> client = streamClientJar(clientJar);
         Stream<PathAndData> patch = streamPatchZip(patchZip);
         return new MonitoredSet(removeDuplicates(patch, client));
+    }
+
+    public MonitoredSet mergePatchWithAddon(File patchJar, File addonZip, String addonFolder) {
+        Stream<PathAndData> client = streamClientJar(patchJar);
+        Stream<PathAndData> addon = streamAddonZip(addonZip, addonFolder);
+        return new MonitoredSet(removeDuplicates(addon, client));
     }
 
     public File writeToTarget(PathResolver resolver, MonitoredSet monitoredSet) {

@@ -5,6 +5,7 @@ import uk.co.gencoreoperative.btw.PathResolver;
 import uk.co.gencoreoperative.btw.ui.actions.CloseAction;
 import uk.co.gencoreoperative.btw.ui.actions.PatchAction;
 import uk.co.gencoreoperative.btw.ui.actions.ShowLogAction;
+import uk.co.gencoreoperative.btw.ui.panels.AddonsPanel;
 import uk.co.gencoreoperative.btw.ui.panels.MinecraftHomePanel;
 import uk.co.gencoreoperative.btw.ui.panels.SelectPatchPanel;
 import uk.co.gencoreoperative.btw.ui.signals.InstalledVersion;
@@ -54,8 +55,9 @@ public class NewUI extends JPanel {
 
     private JPanel createCentrePanel() {
         JPanel panel = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
-        panel.add(new SelectPatchPanel(context, dialogFactory), "grow");
         panel.add(new MinecraftHomePanel(context, dialogFactory), "grow");
+        panel.add(new SelectPatchPanel(context, dialogFactory), "grow");
+        panel.add(new AddonsPanel(context, dialogFactory), "grow");
         return panel;
     }
 
