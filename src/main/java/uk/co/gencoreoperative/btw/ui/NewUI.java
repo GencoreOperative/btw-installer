@@ -55,9 +55,9 @@ public class NewUI extends JPanel {
 
     private JPanel createCentrePanel() {
         JPanel panel = new JPanel(new MigLayout("fillx, wrap 1, insets 10"));
-        panel.add(new MinecraftHomePanel(context, dialogFactory), "grow");
         panel.add(new SelectPatchPanel(context, dialogFactory), "grow");
         panel.add(new AddonsPanel(context, dialogFactory), "grow");
+        panel.add(new MinecraftHomePanel(context, dialogFactory), "grow");
         return panel;
     }
 

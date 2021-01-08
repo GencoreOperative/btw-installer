@@ -11,8 +11,6 @@ public enum Icons {
     ACCEPT("accept.png"),
     ADD("add.png"),
     DELETE("delete.png"),
-    ARROW_UP("arrow_up.png"),
-    ARROW_DOWN("arrow_down.png"),
     ARROW_RIGHT("arrow_right.png"),
     BIN_CLOSED("bin_closed.png"),
     COMPRESS("compress.png"),
