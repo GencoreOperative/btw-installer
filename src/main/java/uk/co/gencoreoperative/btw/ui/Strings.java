@@ -36,8 +36,6 @@ public enum Strings {
     TOOLTIP_SELECT_ADDON("Select an addon to apply"),
     TOOLTIP_SELECT_ZIP("Select the folder to import"),
     TOOLTIP_REMOVE_ADDON("Remove the addon selected"),
-    TOOLTIP_ADDON_UP("Move the selected addon up"),
-    TOOLTIP_ADDON_DOWN("Move the selected addon down"),
     TOOLTIP_CANCEL("Cancel importing addon"),
 
     MENU_DEFAULT_MINECRAFT_HOME("Default Minecraft Home"),
