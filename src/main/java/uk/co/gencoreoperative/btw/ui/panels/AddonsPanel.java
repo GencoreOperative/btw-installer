@@ -4,8 +4,6 @@ import net.miginfocom.swing.MigLayout;
 import uk.co.gencoreoperative.btw.ui.Context;
 import uk.co.gencoreoperative.btw.ui.DialogFactory;
 import uk.co.gencoreoperative.btw.ui.actions.ChooseAddon;
-import uk.co.gencoreoperative.btw.ui.actions.MoveAddonDown;
-import uk.co.gencoreoperative.btw.ui.actions.MoveAddonUp;
 import uk.co.gencoreoperative.btw.ui.actions.RemoveAddon;
 import uk.co.gencoreoperative.btw.ui.signals.AddonFiles;
 
@@ -17,8 +15,6 @@ public class AddonsPanel extends JPanel {
     private final DialogFactory dialogFactory;
 
     private RemoveAddon removeAddon;
-    private MoveAddonUp moveAddonUp;
-    private MoveAddonDown moveAddonDown;
 
     public AddonsPanel(Context context, DialogFactory dialogFactory) {
         this.context = context;
@@ -40,17 +36,10 @@ public class AddonsPanel extends JPanel {
 
         // Row 1
         removeAddon = new RemoveAddon(context, dialogFactory);
-        moveAddonUp = new MoveAddonUp(context, dialogFactory);
-        moveAddonDown = new MoveAddonDown(context, dialogFactory);
-
         removeAddon.setEnabled(false);
-        moveAddonUp.setEnabled(false);
-        moveAddonDown.setEnabled(false);
 
-        panel.add(new JButton(new ChooseAddon(context, dialogFactory)), "w 25%");
-        panel.add(new JButton(removeAddon), "w 25%");
-        panel.add(new JButton(moveAddonUp), "w 25%");
-        panel.add(new JButton(moveAddonDown), "w 25%, wrap");
+        panel.add(new JButton(new ChooseAddon(context, dialogFactory)), "w 50%");
+        panel.add(new JButton(removeAddon), "w 50%, wrap");
 
         return panel;
     }
@@ -84,8 +73,6 @@ public class AddonsPanel extends JPanel {
                     AddonFiles.selectedIndex = addonsList.getSelectedIndex();
                 }
                 removeAddon.setSelectedIndex(addonsList.getSelectedIndex());
-                moveAddonUp.setSelectedIndex(addonsList.getSelectedIndex());
-                moveAddonDown.setSelectedIndex(addonsList.getSelectedIndex());
             }
         });
 
