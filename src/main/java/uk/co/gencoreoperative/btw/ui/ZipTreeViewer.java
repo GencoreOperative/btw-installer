@@ -15,6 +15,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ZipTreeViewer {
+    final String DECO_CLIENT = "minecraft";
+    final String JORGE_CLIENT = "JAR - CLIENT";
+
     JFrame frame = new JFrame();
     JDialog dialog = new JDialog(frame, true);
 
@@ -23,6 +26,18 @@ public class ZipTreeViewer {
     public void view(ZipFile zipFile) throws IOException {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("/");
         constructTree(zipFile, root);
+        boolean visible = false;
+
+        // "Smart" auto selection, only asks user to specify what folder in the zip files if none of these match.
+        if (doesChildHaveSubstring(root, ".class")) {
+            pathString = "";
+        } else if (doesChildHaveString(root, DECO_CLIENT)) {
+            pathString = DECO_CLIENT + "/";
+        } else if (doesChildHaveString(root, JORGE_CLIENT)) {
+            pathString = JORGE_CLIENT + "/";
+        } else {
+            visible = true;
+        }
 
         JTree tree = new JTree(root);
         tree.setShowsRootHandles(true);
@@ -56,6 +71,7 @@ public class ZipTreeViewer {
         });
         panel.add(cancelButton);
 
+        // Selection changed.
         tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
@@ -71,7 +87,7 @@ public class ZipTreeViewer {
         dialog.setTitle("Select the folder to import");
         dialog.setSize(512, 420);
         dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
+        dialog.setVisible(visible);
     }
 
     public String getPathString() {
@@ -83,15 +99,13 @@ public class ZipTreeViewer {
         while(entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
 
-            if (entry.isDirectory()) {
-                String[] path = entry.getName().split("/");
-                DefaultMutableTreeNode prevRoot = root;
+            String[] path = entry.getName().split("/");
+            DefaultMutableTreeNode prevRoot = root;
 
-                for (String filename : path) {
-                    DefaultMutableTreeNode newNode = getChild(prevRoot, filename);
-                    prevRoot.add(newNode);
-                    prevRoot = newNode;
-                }
+            for (String filename : path) {
+                DefaultMutableTreeNode newNode = getChild(prevRoot, filename);
+                prevRoot.add(newNode);
+                prevRoot = newNode;
             }
         }
         zipFile.close();
@@ -109,10 +123,32 @@ public class ZipTreeViewer {
     }
 
     private String constructPath(DefaultMutableTreeNode node) {
+        if (node.toString().contains(".")) {
+            return Strings.NOT_RECOGNISED.getText();
+        }
+
         StringBuilder nodePath = new StringBuilder();
         for (TreeNode o : node.getPath()) {
             nodePath.append(o.toString()).append("/");
         }
         return nodePath.substring(2);
+    }
+
+    private boolean doesChildHaveString(DefaultMutableTreeNode root, String s) {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            if (root.getChildAt(i).toString().matches(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean doesChildHaveSubstring(DefaultMutableTreeNode root, CharSequence s) {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            if (root.getChildAt(i).toString().contains(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
