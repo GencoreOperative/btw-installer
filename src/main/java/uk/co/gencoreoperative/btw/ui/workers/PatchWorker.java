@@ -110,6 +110,7 @@ public class PatchWorker extends SwingWorker<PatchWorker.Status, ProgressPanel.S
         publish(ADD_ADDONS);
         for (int i = 0; i < AddonFiles.getAddons().size(); i++) {
             ActionFactory.MonitoredSet monitoredAddonSet = factory.mergePatchWithAddon(jar, AddonFiles.getAddon(i), AddonFiles.getZipPath(i));
+            System.out.println(AddonFiles.getAddon(i).toString() + AddonFiles.getZipPath(i));
             monitoredAddonSet.addObserver((o, arg) -> setProgress(monitoredAddonSet.getProgress()));
             File addonJar = timeAndReturn("Adding addon", () -> factory.writeToTarget(pathResolver, monitoredAddonSet));
             Logger.info("Added addon to Jar {0}", addonJar.getPath());
