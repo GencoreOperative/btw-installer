@@ -1,3 +1,40 @@
+# Fix bug with 2023 launcher
+There is an error with the 2023 installer. It seems that it does not
+know how to download the assets needed for 1.5.2 any more.
+https://bugs.mojang.com/browse/MCL-23639
+The solution in this ticket appears to solve the issue,
+therefore, we should install this json file automatically
+as part of installation, and not that we need to remove it
+if the user removes BTW.
+
+```
+Download this legacy.json file: legacy.json
+
+(VirusTotal scan results)
+
+Navigate to %AppData%\Roaming\.minecraft\assets\indexes
+
+Drop the file in that folder. Then try to start the Minecraft launcher.
+```
+https://bugs.mojang.com/secure/attachment/546166/546166_legacy.json
+static/legacy.json
+
+# Add version information for installed AddOns
+This installer supports upgrading existing installations. Now that we 
+support including AddOns in the installation, it would be useful to 
+warn the user that they are about to patch an installation that 
+previously included addons. This would only be a warning dialog and
+the user can still proceed with the patching.
+
+# Add an About dialog
+Include license and credits.
+
+# Include an AddOn Icon
+The patch progress dialog could do with an additional icon.
+
+# Release 0.11.0
+This is the point when we can release the new feature.
+
 ## Investigate signing of the Jar so that MacOS Gatekeeper allows it to run
 https://www.baeldung.com/java14-jpackage
 https://blog.dgunia.de/2020/02/12/signed-macos-programs-with-java-14/
